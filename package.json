@@ -1,0 +1,15 @@
+{
+  "name": "erudio",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {},
+  "private": true,
+  "dependencies": {
+    "@nxrs/cargo": "^0.3.3"
+  },
+  "devDependencies": {
+    "@nrwl/nx-cloud": "latest",
+    "nx": "15.0.7",
+    "prettier": "^2.6.2"
+  }
+}

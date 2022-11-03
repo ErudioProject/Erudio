@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "packages/api-app",
+    "packages/prisma-cli"
+]
