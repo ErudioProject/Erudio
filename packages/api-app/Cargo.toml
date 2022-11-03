@@ -18,3 +18,5 @@ rspc = { version = "^0", features = ["axum"] }
 env_logger = "^0"
 log = "^0"
 color-eyre = "^0"
+tower-cookies = "^0"
+rust-argon2 = "1.0"

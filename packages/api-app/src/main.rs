@@ -1,3 +1,5 @@
+extern crate argon2;
+
 mod prisma;
 mod routes;
 
@@ -10,13 +12,16 @@ use std::sync::Arc;
 use axum::extract::Path;
 use axum::routing::get;
 use color_eyre::eyre;
-use log::{error, info};
+use log::{debug, error, info};
 use rspc::Config;
 use tokio::signal;
+use tower_cookies::{Cookie, CookieManagerLayer, Cookies};
 use tower_http::cors;
 use tower_http::cors::CorsLayer;
 use crate::routes::{Ctx, router};
 
+
+// TODO clean up a bit
 pub fn main() {
     dotenv::dotenv().ok();
     env_logger::init();
@@ -29,20 +34,24 @@ pub fn main() {
 
 #[tokio::main]
 async fn start() -> eyre::Result<()> {
-    let client: PrismaClient = new_client().await.unwrap(); // Update on new release
+    let client: Arc<PrismaClient> = Arc::new(new_client().await?); // Update on new release
     let router = router().arced();
 
     let app = axum::Router::new()
         .route("/", get(|| async { "Hello 'rspc'!" }))
-        .route("/rspc/:id", router.endpoint(|Path(path): Path<String>| {
-            println!("Client requested operation '{}'", path);
-            Ctx {  }
+        .route("/rspc/:id", router.endpoint(move |cookies: Cookies| {
+            Ctx {
+                db: client.clone(),
+                cookies
+            }
         }).axum())
         .layer(
             CorsLayer::new()
                 .allow_origin(cors::Any)
+                .allow_headers(cors::Any)
                 .allow_methods(cors::Any),
-        );
+        )
+        .layer(CookieManagerLayer::new());;
 
     let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, 3000));
 
