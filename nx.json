@@ -10,5 +10,13 @@
       }
     }
   },
-  "plugins": ["@nxrs/cargo"]
+  "plugins": ["@nxrs/cargo"],
+  "targetDefaults": {
+    "lint": {
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+    },
+    "test": {
+      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"]
+    }
+  }
 }
