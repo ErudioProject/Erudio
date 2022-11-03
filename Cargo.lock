@@ -70,6 +70,7 @@ dependencies = [
  "log",
  "prisma-client-rust",
  "prisma-client-rust-cli",
+ "rand 0.8.5",
  "rspc",
  "rust-argon2",
  "serde",

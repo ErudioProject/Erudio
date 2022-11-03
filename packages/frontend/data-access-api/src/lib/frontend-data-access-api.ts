@@ -2,8 +2,8 @@
 
 export type Procedures = {
     queries: 
-        { key: "public.login", input: LoginRequest, result: null } | 
-        { key: "public.register", input: RegisterRequest, result: RegisterResponse } | 
+        { key: "public.login", input: LoginRequest, result: LoginResponse } | 
+        { key: "public.register", input: RegisterRequest, result: null } | 
         { key: "public.version", input: never, result: string },
     mutations: never,
     subscriptions: never
@@ -11,8 +11,8 @@ export type Procedures = {
 
 export interface LoginRequest { email: string, password: string }
 
-export interface RegisterRequest { email: string, password: string, code: null }
+export type LoginResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
 
-export type RegisterResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
+export interface RegisterRequest { email: string, password: string, code: null }
 
 export type TwoFactorAuthType = "GoogleAuth" | "SMS" | "EMail"

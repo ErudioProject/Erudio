@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use rspc::{Config, ErrorCode};
 use tower_cookies::Cookies;
-use crate::{Cookie, GrammaticalForm, PrismaClient};
+use crate::{GrammaticalForm, PrismaClient};
 use super::prisma::user::Data as User;
 
 pub type RspcResult<T> = Result<T, rspc::Error>;
@@ -56,6 +56,8 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 
 #[cfg(test)]
 mod tests {
+    use crate::router;
+
     #[test]
     fn test_rspc_router() {
         router();

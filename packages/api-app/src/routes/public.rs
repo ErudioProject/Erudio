@@ -1,11 +1,12 @@
 use argon2::{Config, ThreadMode, Variant, Version};
 use log::debug;
-use prisma_client_rust::QueryError::Deserialize;
-use rspc::{Router, RouterBuilder, Type};
-use crate::{Ctx, eyre};
+use rand::RngCore;
+use rspc::{ErrorCode, Router, RouterBuilder, Type};
+use crate::{Ctx, GrammaticalForm};
 use crate::routes::RspcResult;
+use crate::prisma::{user, pii_data};
 
-static ARGON_CONFIG: Config = Config{
+const ARGON_CONFIG: Config = Config{
     variant: Variant::Argon2i,
     version: Version::Version13,
     mem_cost: 16384,
@@ -16,11 +17,12 @@ static ARGON_CONFIG: Config = Config{
     ad: &[],
     hash_length: 32
 };
+const SALT_SIZE: usize = 16;
 
 pub fn mount() -> RouterBuilder::<Ctx> {
     Router::<Ctx>::new()
         .query("version", |t| {
-            t(|ctx: Ctx, _: ()| -> RspcResult<String> {
+            t(|_, _: ()| -> RspcResult<String> {
                 Ok(env!("CARGO_PKG_VERSION").to_string())
             })
         })
@@ -32,23 +34,9 @@ pub fn mount() -> RouterBuilder::<Ctx> {
                 pub password: String ,
             }
 
-            t(|ctx: Ctx, req: LoginRequest| -> RspcResult<()> {
-                debug!("Login Request : {:?}", req);
-                Ok(())
-            })
-        })
-        .query("register", |t| {
-
-            #[derive(Type, serde::Deserialize, Debug)]
-            pub struct RegisterRequest {
-                pub email: String,
-                pub password: String,
-                pub code: (),
-            }
-
             #[derive(Type, serde::Serialize, Debug)]
             #[serde(tag = "t", content = "c")]
-            pub enum RegisterResponse {
+            pub enum LoginResponse {
                 Success,
                 TwoFactorAuth(TwoFactorAuthType),
             }
@@ -60,11 +48,52 @@ pub fn mount() -> RouterBuilder::<Ctx> {
                 EMail
             }
 
+            t(|_ctx: Ctx, req: LoginRequest| -> RspcResult<LoginResponse> {
+                debug!("Login Request : {:?}", req);
+                Ok(LoginResponse::Success)
+            })
+        })
+        .query("register", |t| {
 
-            t(|ctx: Ctx, req: RegisterRequest| -> RspcResult<RegisterResponse> {
+            #[derive(Type, serde::Deserialize, Debug)]
+            pub struct RegisterRequest {
+                pub email: String,
+                pub password: String,
+                pub code: (),
+            }
+
+
+            t(|ctx: Ctx, req: RegisterRequest| async move {
                 debug!("Register Request : {:?}", req);
-                let rng = rand::thread_rng();
-                Ok(RegisterResponse::Success)
+                let mut buf = [0].repeat(SALT_SIZE);
+                {
+                    let mut rng = rand::thread_rng();
+                    rng.fill_bytes(&mut buf);
+                }
+                let user = ctx.db
+                    .user()
+                    .create(
+                        argon2::hash_raw(req.password.as_bytes(), &buf, &ARGON_CONFIG)
+                            .map_err(|err| rspc::Error::with_cause(ErrorCode::InternalServerError, "Argon2 error".into(), err))?,
+                        false,
+                        GrammaticalForm::Indeterminate,
+                        vec![]
+                    )
+                    .exec()
+                    .await.unwrap();// TODO change
+
+                ctx.db
+                    .pii_data()
+                    .create(
+                        user::id::equals(user.id),
+                        vec![
+                            pii_data::email::Set(Some(req.email)).into()
+                        ]
+                    )
+                    .exec()
+                    .await.unwrap();// TODO change
+
+                Ok(())
             })
         })
 }
