@@ -2,7 +2,17 @@
 
 export type Procedures = {
     queries: 
-        { key: "version", input: never, result: string },
+        { key: "public.login", input: LoginRequest, result: null } | 
+        { key: "public.register", input: RegisterRequest, result: RegisterResponse } | 
+        { key: "public.version", input: never, result: string },
     mutations: never,
     subscriptions: never
 };
+
+export interface LoginRequest { email: string, password: string }
+
+export interface RegisterRequest { email: string, password: string, code: null }
+
+export type RegisterResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
+
+export type TwoFactorAuthType = "GoogleAuth" | "SMS" | "EMail"
