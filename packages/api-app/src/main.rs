@@ -1,10 +1,13 @@
 mod prisma;
+mod routes;
 
 use prisma_client_rust::NewClientError;
 use crate::prisma::{GrammaticalForm, new_client, PrismaClient};
 use std::env;
 use std::net::{Ipv4Addr, SocketAddr};
 use std::path::PathBuf;
+use std::sync::Arc;
+use axum::extract::Path;
 use axum::routing::get;
 use color_eyre::eyre;
 use log::{error, info};
@@ -12,6 +15,7 @@ use rspc::Config;
 use tokio::signal;
 use tower_http::cors;
 use tower_http::cors::CorsLayer;
+use crate::routes::{Ctx, router};
 
 pub fn main() {
     dotenv::dotenv().ok();
@@ -22,16 +26,6 @@ pub fn main() {
     }
 }
 
-fn router() -> rspc::Router {
-    rspc::Router::<()>::new()
-        .config(
-            Config::new()
-                // Doing this will automatically export the bindings when the `build` function is called.
-                .export_ts_bindings(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("./bindings.ts"))
-        )
-        .query("version",  |t| t(|_ctx, _: ()| env!("CARGO_PKG_VERSION").to_string()))
-        .build()
-}
 
 #[tokio::main]
 async fn start() -> eyre::Result<()> {
@@ -40,7 +34,10 @@ async fn start() -> eyre::Result<()> {
 
     let app = axum::Router::new()
         .route("/", get(|| async { "Hello 'rspc'!" }))
-        .route("/rspc/:id", router.endpoint(|| ()).axum())
+        .route("/rspc/:id", router.endpoint(|Path(path): Path<String>| {
+            println!("Client requested operation '{}'", path);
+            Ctx {  }
+        }).axum())
         .layer(
             CorsLayer::new()
                 .allow_origin(cors::Any)
@@ -82,12 +79,4 @@ async fn shutdown_signal() {
     }
 
     info!("signal received, starting graceful shutdown");
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_rspc_router() {
-        super::router();
-    }
 }
