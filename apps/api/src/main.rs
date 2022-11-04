@@ -4,8 +4,8 @@ mod prisma;
 mod routes;
 mod shutdown_signal;
 
-use crate::eyre::eyre;
-use crate::prisma::{new_client, GrammaticalForm, PrismaClient};
+use crate::eyre::{eyre, Context};
+use crate::prisma::{new_client, new_client_with_url, GrammaticalForm, PrismaClient};
 use crate::routes::{router, Ctx};
 use axum::routing::get;
 use color_eyre::eyre;
@@ -29,8 +29,13 @@ pub fn main() {
 
 #[tokio::main]
 async fn start() -> eyre::Result<()> {
+    #[cfg(target_family = "unix")]
+    let url = env::var("DATABASE_URL").context("No DATABASE_URL environmental variable")?;
+    #[cfg(target_family = "windows")]
+    let url = env::var("DATABASE_URL_WIN").context("No DATABASE_URL_WIN environmental variable")?;
+
     let client: Arc<PrismaClient> = Arc::new(
-        new_client()
+        new_client_with_url(&url)
             .await
             .map_err(|err| eyre!("Database client error: {:?}", err))?,
     ); // Update on new release

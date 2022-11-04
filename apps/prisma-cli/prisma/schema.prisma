@@ -3,7 +3,7 @@
 
 generator client {
   provider = "cargo +nightly prisma"
-  output   = "../../api-app/src/prisma.rs"
+  output   = "../../api/src/prisma.rs"
 }
 
 datasource db {
