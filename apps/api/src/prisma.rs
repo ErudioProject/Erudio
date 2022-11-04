@@ -2,7 +2,7 @@
 
 #![allow(warnings, unused)]
 pub static DATAMODEL_STR: &'static str =
-    include_str!("/home/kuba/Projects/Erudio/packages/prisma-cli/prisma/schema.prisma");
+    include_str!("/home/kuba/Projects/Erudio/apps/prisma-cli/prisma/schema.prisma");
 static DATABASE_STR: &'static str = "postgresql";
 pub async fn new_client() -> Result<PrismaClient, ::prisma_client_rust::NewClientError> {
     let config = ::prisma_client_rust::datamodel::parse_configuration(DATAMODEL_STR)?.subject;

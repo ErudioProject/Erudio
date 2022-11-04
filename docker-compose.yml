@@ -9,3 +9,15 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: erudio
       POSTGRES_PASSWORD: password
+  redis:
+    image: redis:7.0.5
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass password
+    volumes:
+      - cache:/data
+
+volumes:
+  cache:
+    driver: local
