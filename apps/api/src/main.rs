@@ -5,11 +5,11 @@ mod routes;
 mod shutdown_signal;
 
 use crate::eyre::{eyre, Context};
-use crate::prisma::{new_client, new_client_with_url, GrammaticalForm, PrismaClient};
+use crate::prisma::{new_client_with_url, GrammaticalForm, PrismaClient};
 use crate::routes::{router, Ctx};
 use axum::routing::get;
 use color_eyre::eyre;
-use log::{error, info, trace};
+use log::{error, info};
 use std::env;
 use std::net::{Ipv4Addr, SocketAddr};
 use std::sync::Arc;
@@ -19,7 +19,7 @@ use tower_http::cors::CorsLayer;
 
 // TODO clean up a bit
 pub fn main() {
-    dotenv::dotenv().ok();
+    dotenvy::dotenv().ok();
     env_logger::init();
     let result = start();
     if let Some(err) = result.err() {

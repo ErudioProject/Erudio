@@ -1,2 +1,8 @@
 target/
 node_modules/
+.git/
+.cargo/
+.run/
+.idea/
+.vscode/
+/apps/api/src/prisma.rs

@@ -5,11 +5,6 @@ members = [
     "apps/prisma-cli"
 ]
 
-[profile.dev]
-opt-level = 3
-lto = true
-
-
 [workspace.dependencies]
 prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.2", default-features = false, features=["postgresql"]}
 prisma-client-rust-cli = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.2", default-features = false, features=["postgresql"] }

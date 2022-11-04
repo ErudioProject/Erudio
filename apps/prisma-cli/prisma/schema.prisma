@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "cargo +nightly prisma"
+  provider = "cargo +nightly run --bin prisma_cli --"
   output   = "../../api/src/prisma.rs"
 }
 
