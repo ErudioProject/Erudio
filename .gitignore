@@ -40,3 +40,4 @@ Thumbs.db
 /target
 
 **/Root.toml
+/apps/api/src/prisma.rs

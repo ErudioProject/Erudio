@@ -2,14 +2,14 @@ version: "3.9"
 services:
   api:
     build:
-      context: .
+      context: ./
       dockerfile: apps/api/Dockerfile
     ports:
-      - "3000:3000"
+      - "8000:3000"
     environment:
-      DATABASE_URL: postgres
+      DATABASE_URL: postgresql://postgres:password@db:5432/erudio?schema=public
       RUST_LOG: info,hyper=warn
-      RUST_LOG_STYLE: password
+      RUST_LOG_STYLE: always
     depends_on:
       - db
       - redis
