@@ -7,9 +7,7 @@
     "strict": true,
     "skipLibCheck": true,
     "paths": {
-      "frontend/data-access-api": [
-        "packages/frontend/data-access-api/src/index.ts"
-      ]
+      "frontend/data-access/api": ["packfrontend/data-access/api/src/index.ts"]
     }
   }
 }
