@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-prisma-client-rust.workspace = true
-prisma-client-rust-cli.workspace = true
+prisma-client-rust = {workspace = true, features = ["postgresql", "rspc"]}
+prisma-client-rust-cli = {workspace = true, features = ["postgresql", "rspc"]}
 tokio = { version= "^1", features=["full"]}
 hyper = { version = "0.14", features = ["full"] }
 tower-http = { version = "^0.3", features = ["cors"] }
@@ -19,4 +19,5 @@ env_logger = "^0"
 log = "^0"
 color-eyre = "^0"
 tower-cookies = "^0"
-rust-argon2 = "1.0"
+rust-argon2 = "^1.0"
+rand = "^0.8"
