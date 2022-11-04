@@ -1,8 +1,8 @@
 [workspace]
 resolver = "2"
 members = [
-    "packages/api-app",
-    "packages/prisma-cli"
+    "apps/api-app",
+    "apps/prisma-cli"
 ]
 
 [workspace.dependencies]
