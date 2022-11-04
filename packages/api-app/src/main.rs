@@ -1,18 +1,27 @@
+extern crate argon2;
+
 mod prisma;
+mod routes;
 
 use prisma_client_rust::NewClientError;
 use crate::prisma::{GrammaticalForm, new_client, PrismaClient};
 use std::env;
 use std::net::{Ipv4Addr, SocketAddr};
 use std::path::PathBuf;
+use std::sync::Arc;
+use axum::extract::Path;
 use axum::routing::get;
 use color_eyre::eyre;
-use log::{error, info};
+use log::{debug, error, info};
 use rspc::Config;
 use tokio::signal;
+use tower_cookies::{Cookie, CookieManagerLayer, Cookies};
 use tower_http::cors;
 use tower_http::cors::CorsLayer;
+use crate::routes::{Ctx, router};
 
+
+// TODO clean up a bit
 pub fn main() {
     dotenv::dotenv().ok();
     env_logger::init();
@@ -22,30 +31,27 @@ pub fn main() {
     }
 }
 
-fn router() -> rspc::Router {
-    rspc::Router::<()>::new()
-        .config(
-            Config::new()
-                // Doing this will automatically export the bindings when the `build` function is called.
-                .export_ts_bindings(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("./bindings.ts"))
-        )
-        .query("version",  |t| t(|_ctx, _: ()| env!("CARGO_PKG_VERSION").to_string()))
-        .build()
-}
 
 #[tokio::main]
 async fn start() -> eyre::Result<()> {
-    let client: PrismaClient = new_client().await.unwrap(); // Update on new release
+    let client: Arc<PrismaClient> = Arc::new(new_client().await?); // Update on new release
     let router = router().arced();
 
     let app = axum::Router::new()
         .route("/", get(|| async { "Hello 'rspc'!" }))
-        .route("/rspc/:id", router.endpoint(|| ()).axum())
+        .route("/rspc/:id", router.endpoint(move |cookies: Cookies| {
+            Ctx {
+                db: client.clone(),
+                cookies
+            }
+        }).axum())
         .layer(
             CorsLayer::new()
                 .allow_origin(cors::Any)
+                .allow_headers(cors::Any)
                 .allow_methods(cors::Any),
-        );
+        )
+        .layer(CookieManagerLayer::new());;
 
     let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, 3000));
 
@@ -82,12 +88,4 @@ async fn shutdown_signal() {
     }
 
     info!("signal received, starting graceful shutdown");
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_rspc_router() {
-        super::router();
-    }
 }
