@@ -1,2 +1,5 @@
 [alias]
 prisma = "run --bin prisma_cli --"
+
+[build]
+rustc-wrapper = "sccache"

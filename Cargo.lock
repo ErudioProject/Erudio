@@ -733,7 +733,7 @@ dependencies = [
  "prisma-value",
  "serde",
  "serde_json",
- "uuid",
+ "uuid 0.8.2",
 ]
 
 [[package]]
@@ -2194,7 +2194,7 @@ dependencies = [
  "postgres-protocol",
  "serde",
  "serde_json",
- "uuid",
+ "uuid 0.8.2",
 ]
 
 [[package]]
@@ -2224,13 +2224,14 @@ dependencies = [
  "prisma-models",
  "query-connector",
  "query-core",
+ "rspc",
  "schema",
  "serde",
  "serde-value",
  "serde_json",
  "thiserror",
  "user-facing-errors",
- "uuid",
+ "uuid 0.8.2",
 ]
 
 [[package]]
@@ -2301,7 +2302,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
- "uuid",
+ "uuid 0.8.2",
 ]
 
 [[package]]
@@ -2364,7 +2365,7 @@ dependencies = [
  "tracing",
  "tracing-core",
  "url",
- "uuid",
+ "uuid 0.8.2",
 ]
 
 [[package]]
@@ -2400,7 +2401,7 @@ dependencies = [
  "serde_json",
  "thiserror",
  "user-facing-errors",
- "uuid",
+ "uuid 0.8.2",
 ]
 
 [[package]]
@@ -2447,7 +2448,7 @@ dependencies = [
  "tracing-subscriber",
  "url",
  "user-facing-errors",
- "uuid",
+ "uuid 0.8.2",
 ]
 
 [[package]]
@@ -2978,10 +2979,13 @@ version = "0.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5886f252f583ae32d4ae21c228c7a4ab3da40a7ebed646886b942f4085047394"
 dependencies = [
+ "chrono",
  "convert_case 0.6.0",
+ "indexmap",
  "serde_json",
  "specta-macros",
  "termcolor",
+ "uuid 1.2.1",
 ]
 
 [[package]]
@@ -3042,7 +3046,7 @@ dependencies = [
  "tracing-futures",
  "url",
  "user-facing-errors",
- "uuid",
+ "uuid 0.8.2",
 ]
 
 [[package]]
@@ -3074,7 +3078,7 @@ dependencies = [
  "tracing-futures",
  "tracing-opentelemetry",
  "user-facing-errors",
- "uuid",
+ "uuid 0.8.2",
 ]
 
 [[package]]
@@ -3223,7 +3227,7 @@ dependencies = [
  "tokio",
  "tokio-util 0.6.10",
  "tracing",
- "uuid",
+ "uuid 0.8.2",
  "winauth",
 ]
 
@@ -3685,6 +3689,12 @@ dependencies = [
  "getrandom 0.2.8",
  "serde",
 ]
+
+[[package]]
+name = "uuid"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "feb41e78f93363bb2df8b0e86a2ca30eed7806ea16ea0c790d757cf93f79be83"
 
 [[package]]
 name = "valuable"
