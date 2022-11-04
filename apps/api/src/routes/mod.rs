@@ -27,7 +27,7 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
             Config::new()
                 // Doing this will automatically export the bindings when the `build` function is called.
                 .export_ts_bindings(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(
-                    "../../packages/frontend/data-access-api/src/lib/frontend-data-access-api.ts",
+                    "../../libs/frontend/data-access/api/src/lib/frontend-data-access-api.ts",
                 )),
         )
         .merge("public.", public::mount())
