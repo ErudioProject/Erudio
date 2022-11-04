@@ -1,0 +1,14 @@
+{
+  "name": "erudio-solid",
+  "scripts": {
+    "dev": "solid-start dev",
+    "build": "solid-start build",
+    "start": "solid-start start"
+  },
+  "type": "module",
+  "devDependencies": {},
+  "dependencies": {},
+  "engines": {
+    "node": ">=16"
+  }
+}
