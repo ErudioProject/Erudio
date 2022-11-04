@@ -14,5 +14,5 @@ let
 in pkgs.mkShell {
   name = "nix-shell";
 
-  packages = with pkgs; [ bashInteractive nodejs nodePackages.pnpm ];
+  packages = with pkgs; [ bashInteractive nodejs nodePackages.pnpm docker ];
 }

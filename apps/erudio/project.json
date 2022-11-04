@@ -6,9 +6,12 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nxext/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "executor": "nx:run-script",
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
+        "script": "build",
         "outputPath": "dist/apps/erudio",
         "frameworkConfigFile": "@nxext/solid/plugins/vite"
       },
@@ -17,22 +20,29 @@
       }
     },
     "serve": {
-      "executor": "@nxext/vite:dev",
+      "executor": "nx:run-script",
       "options": {
+        "script": "dev",
         "outputPath": "dist/apps/erudio",
         "frameworkConfigFile": "@nxext/solid/plugins/vite"
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/erudio/**/*.{ts,spec.ts,tsx}"]
+        "lintFilePatterns": [
+          "apps/erudio/**/*.{ts,spec.ts,tsx}"
+        ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "apps/erudio/jest.config.ts",
         "passWithNoTests": true
