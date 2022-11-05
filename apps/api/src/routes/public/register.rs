@@ -1,15 +1,17 @@
 use crate::{
-	error_mapping::RspcError,
-	prisma::{pii_data, user},
 	routes::{
 		public::{ARGON_CONFIG, SALT_SIZE, SECRET_SIZE},
 		RspcResult, SESSION_COOKIE_NAME,
 	},
-	Ctx, GrammaticalForm,
+	Ctx,
 };
+use backend_error_handler::ApiError;
+use backend_prisma_client::prisma::{pii_data, user, GrammaticalForm};
+use backend_session_manager::init_session;
+use cookie::SameSite;
 use log::debug;
 use rand::RngCore;
-use redis::AsyncCommands;
+use redis::{AsyncCommands, Commands};
 use rspc::{RouterBuilder, Type};
 use tower_cookies::Cookie;
 
@@ -41,7 +43,7 @@ impl RegisterBuilder for RouterBuilder<Ctx> {
 					.user()
 					.create(
 						argon2::hash_raw(req.password.as_bytes(), &salt, &ARGON_CONFIG)
-							.map_err(Into::<RspcError>::into)?,
+							.map_err(Into::<ApiError>::into)?,
 						false,
 						GrammaticalForm::Indeterminate,
 						vec![],
@@ -64,18 +66,16 @@ impl RegisterBuilder for RouterBuilder<Ctx> {
 					..user
 				};
 
-				let json = serde_json::to_string(&user).map_err(Into::<RspcError>::into)?;
-				{
-					let mut conn = ctx.redis.lock().await;
-					conn.set(&connection_secret, json)
-						.await
-						.map_err(Into::<RspcError>::into)?;
-					conn.lpush(user.id, connection_secret.clone())
-						.await
-						.map_err(Into::<RspcError>::into)?; // Reverse record for fast logout
-				}
-				ctx.cookies
-					.add(Cookie::build(SESSION_COOKIE_NAME, hex::encode(&connection_secret)).finish());
+				ctx.cookies.add(
+					Cookie::build(
+						SESSION_COOKIE_NAME,
+						init_session(ctx.db, ctx.redis, user, connection_secret).await?,
+					)
+					.secure(false) // TODO change one we have ssl set up
+					.http_only(true)
+					.same_site(SameSite::Strict)
+					.finish(),
+				);
 
 				Ok(()) as RspcResult<()>
 			})
