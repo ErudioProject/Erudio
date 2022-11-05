@@ -63,13 +63,15 @@ name = "api"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "backend_error_handler",
+ "backend_prisma_client",
+ "backend_session_manager",
  "color-eyre",
+ "cookie",
  "dotenvy",
  "env_logger",
- "hex",
  "hyper",
  "log",
- "prisma-client-rust",
  "rand 0.8.5",
  "redis",
  "rspc",
@@ -247,6 +249,37 @@ dependencies = [
  "mime",
  "tower-layer",
  "tower-service",
+]
+
+[[package]]
+name = "backend_error_handler"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "redis",
+ "rspc",
+ "rust-argon2",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "backend_prisma_client"
+version = "0.1.0"
+dependencies = [
+ "prisma-client-rust",
+ "serde",
+]
+
+[[package]]
+name = "backend_session_manager"
+version = "0.1.0"
+dependencies = [
+ "backend_error_handler",
+ "backend_prisma_client",
+ "hex",
+ "redis",
+ "tokio",
 ]
 
 [[package]]

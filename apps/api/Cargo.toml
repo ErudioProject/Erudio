@@ -7,9 +7,11 @@ license = "AGPL-3.0-or-later"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-prisma-client-rust = {workspace = true, features = ["postgresql", "rspc"]}
+backend_prisma_client.workspace = true
+backend_session_manager.workspace = true
+backend_error_handler.workspace = true
 redis = { version = "^0.21", features = ["aio", "tokio-comp", "connection-manager"] }
-tokio = { version = "^1", features = ["full"] }
+tokio = { version = "^1.21", features = ["full"] }
 hyper = { version = "0.14", features = ["full"] }
 tower-http = { version = "^0.3", features = ["cors"] }
 axum = "^0.5"
@@ -20,7 +22,7 @@ rspc = { version = "^0", features = ["axum"] }
 env_logger = "^0"
 log = "^0"
 color-eyre = "^0"
-tower-cookies = "^0"
+tower-cookies = "^0.7"
+cookie = "^0.16"
 rust-argon2 = "^1.0"
 rand = "^0.8"
-hex = "0.4"

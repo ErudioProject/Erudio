@@ -3,7 +3,7 @@
 
 generator client {
   provider = "cargo +nightly run --bin prisma_cli --"
-  output   = "../../api/src/prisma.rs"
+  output   = "../../../libs/backend/prisma-client/src/prisma.rs"
 }
 
 datasource db {
