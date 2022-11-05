@@ -1,10 +1,16 @@
 [workspace]
 resolver = "2"
 members = [
+    "libs/backend/error-handler",
+    "libs/backend/prisma-client",
+    "libs/backend/session-manager",
     "apps/api",
     "apps/prisma-cli"
 ]
 
 [workspace.dependencies]
+backend_prisma_client = { path = "libs/backend/prisma-client"}
+backend_session_manager = { path = "libs/backend/session-manager"}
+backend_error_handler = { path = "libs/backend/error-handler"}
 prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.2", default-features = false, features=["postgresql"]}
 prisma-client-rust-cli = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.2", default-features = false, features=["postgresql"] }

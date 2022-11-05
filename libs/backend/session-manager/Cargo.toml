@@ -1,0 +1,13 @@
+[package]
+name = "backend_session_manager"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+backend_prisma_client.workspace = true
+backend_error_handler.workspace = true
+tokio = "^1.21"
+redis = {version = "^0.21", features = ["aio", "tokio-comp", "connection-manager"]}
+hex = "^0.4"

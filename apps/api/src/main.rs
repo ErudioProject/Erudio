@@ -1,17 +1,14 @@
-#![feature(type_alias_impl_trait)]
 extern crate argon2;
 
-mod error_mapping;
-mod prisma;
 mod routes;
 mod shutdown_signal;
 
 use crate::{
 	eyre::{eyre, Context},
-	prisma::{new_client_with_url, GrammaticalForm, PrismaClient},
 	routes::{router, Ctx},
 };
 use axum::routing::get;
+use backend_prisma_client::prisma::{new_client_with_url, PrismaClient};
 use color_eyre::eyre;
 use log::{error, info};
 use std::{
