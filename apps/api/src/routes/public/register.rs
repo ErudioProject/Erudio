@@ -11,8 +11,7 @@ use backend_session_manager::init_session;
 use cookie::SameSite;
 use log::debug;
 use rand::RngCore;
-use redis::{AsyncCommands, Commands};
-use rspc::{RouterBuilder, Type};
+use rspc::Type;
 use tower_cookies::Cookie;
 
 #[derive(Type, serde::Deserialize, Debug)]

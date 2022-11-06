@@ -8,7 +8,7 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 
 pub async fn init_session(
-	db: Arc<PrismaClient>,
+	_db: Arc<PrismaClient>, // TODO
 	redis: Arc<Mutex<redis::aio::Connection>>,
 	user: user::Data,
 	client_secret: Vec<u8>,
@@ -26,7 +26,7 @@ pub async fn init_session(
 	Ok(hex::encode(client_secret))
 }
 pub async fn load_session(
-	db: Arc<PrismaClient>,
+	_db: Arc<PrismaClient>, // TODO
 	redis: Arc<Mutex<redis::aio::Connection>>,
 	client_secret: &str,
 ) -> Result<Option<User>, ApiError> {
