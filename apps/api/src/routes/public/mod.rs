@@ -29,7 +29,7 @@ const SECRET_SIZE: usize = 512;
 
 pub fn mount() -> RouterBuilder<Ctx> {
 	Router::<Ctx>::new()
-		.version_query("version")
-		.login_query("login")
-		.register_query("register")
+		.query("version", |t| t(version))
+		.query("login", |t| t(login))
+		.query("register", |t| t(register))
 }

@@ -7,10 +7,6 @@ use redis::AsyncCommands;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-pub fn backend_session_manager() -> String {
-	"backend_session_manager".into()
-}
-
 pub async fn init_session(
 	db: Arc<PrismaClient>,
 	redis: Arc<Mutex<redis::aio::Connection>>,
@@ -44,6 +40,10 @@ pub async fn load_session(
 		None => Ok(None),
 		Some(json) => Ok(Some(serde_json::from_str(&json).map_err(Into::<ApiError>::into)?)),
 	}
+}
+
+pub fn backend_session_manager() -> String {
+	"backend_session_manager".into()
 }
 
 #[cfg(test)]
