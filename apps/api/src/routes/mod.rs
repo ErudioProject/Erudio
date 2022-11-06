@@ -1,9 +1,8 @@
 mod public;
 
-use backend_error_handler::ApiError;
 use backend_prisma_client::{prisma::PrismaClient, User};
 use backend_session_manager::load_session;
-use redis::{aio, AsyncCommands};
+use redis::aio;
 use rspc::{Config, ErrorCode};
 use std::{path::PathBuf, sync::Arc};
 use tokio::sync::Mutex;
@@ -20,6 +19,7 @@ pub struct Ctx {
 }
 
 #[derive(Clone)]
+#[allow(dead_code)] // TODO
 pub struct AuthCtx {
 	db: Arc<PrismaClient>,
 	redis: Arc<Mutex<aio::Connection>>,
@@ -33,7 +33,7 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 				// Doing this will automatically export the bindings when the `build` function is called.
 				.export_ts_bindings(
 					PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-						.join("../../libs/frontend/data-access/api/src/lib/frontend-data-access-api.ts"),
+						.join("../../libs/frontend/data-access/api/src/lib/bindings.ts"),
 				),
 		)
 		.merge("public.", public::mount())
@@ -41,7 +41,7 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 			mw.middleware(|mw| async move {
 				let old_ctx: Ctx = mw.ctx.clone();
 				match old_ctx.cookies.get(SESSION_COOKIE_NAME) {
-					Some(ref session_id) => {
+					Some(session_id) => {
 						match load_session(old_ctx.db.clone(), old_ctx.redis.clone(), session_id.value()).await? {
 							Some(user) => Ok(mw.with_ctx(AuthCtx {
 								db: old_ctx.db,
