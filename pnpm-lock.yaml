@@ -14,6 +14,7 @@ importers:
       '@nrwl/workspace': ^15.0.8
       '@nxext/solid': ^14.0.2
       '@nxrs/cargo': ^0.3.3
+      '@rspc/client': ^0.1.2
       '@solidjs/meta': ^0.28.0
       '@solidjs/router': ^0.5.0
       '@stitches/core': ^1.2.8
@@ -55,6 +56,7 @@ importers:
       '@nrwl/workspace': 15.0.8_tucv5c4m3cw6bv47rlcnz7vm7i
       '@nxext/solid': 14.0.2_pd27qylatvul5hgqmcoajrrijy
       '@nxrs/cargo': 0.3.3_@nrwl+devkit@15.0.8
+      '@rspc/client': 0.1.2
       '@solidjs/meta': 0.28.2_solid-js@1.6.1
       '@solidjs/router': 0.5.0_solid-js@1.6.1
       '@stitches/core': 1.2.8
@@ -2515,6 +2517,10 @@ packages:
     dependencies:
       estree-walker: 2.0.2
       picomatch: 2.3.1
+
+  /@rspc/client/0.1.2:
+    resolution: {integrity: sha512-MfgSZkrqVzzqCN4GU3LKhfy4qG+PS1LpEz/MMays6rtz5EFNJIvEVMA5Ooc+DH8KLe5h4/3bf4dfyEs7czhA2w==}
+    dev: true
 
   /@sideway/address/4.1.4:
     resolution: {integrity: sha512-7vwq+rOHVWjyXxVlR76Agnvhy8I9rpzjosTESvmhNeXOXdZZB15Fl+TI9x1SiHZH5Jv2wTGduSxFDIaq0m3DUw==}
