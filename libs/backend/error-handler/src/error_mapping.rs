@@ -6,7 +6,8 @@ use rspc::ErrorCode;
 #[derive(Debug)]
 pub enum ApiError {
 	Rspc(rspc::Error),
-	Unreachable, // This error should be unreachable
+	Unreachable,       // This error should be unreachable
+	TestError(String), // This error should be unreachable
 }
 pub type ApiResult<T> = Result<T, ApiError>;
 
@@ -70,6 +71,9 @@ impl From<ApiError> for rspc::Error {
 				ErrorCode::InternalServerError,
 				"This should have been unreachable".to_string(),
 			),
+			ApiError::TestError(_) => {
+				rspc::Error::new(ErrorCode::InternalServerError, "This is a test error".to_string())
+			}
 		}
 	}
 }

@@ -4,13 +4,13 @@ use backend_prisma_client::{
 	User,
 };
 use redis::AsyncCommands;
-use std::{future::join, sync::Arc};
+use std::future::join;
 use tokio::sync::Mutex;
 
 pub async fn destroy_all_sessions_for_user(
-	db: Arc<PrismaClient>,
-	redis: Arc<Mutex<redis::aio::Connection>>,
-	user: User,
+	db: &PrismaClient,
+	redis: &Mutex<redis::aio::Connection>,
+	user: &User,
 ) -> Result<(), ApiError> {
 	let sessions = db
 		.session()
@@ -33,9 +33,9 @@ async fn destroy_redis(redis: &Mutex<redis::aio::Connection>, sessions: Vec<sess
 	Ok(())
 }
 
-async fn destroy_db(db: &PrismaClient, user: User) -> ApiResult<()> {
+async fn destroy_db(db: &PrismaClient, user: &User) -> ApiResult<()> {
 	db.session()
-		.delete_many(vec![session::user_id::equals(user.id)])
+		.delete_many(vec![session::user_id::equals(user.id.clone())])
 		.exec()
 		.await?;
 	Ok(())
