@@ -17,12 +17,23 @@ enum GrammaticalForm {
   Indeterminate
 }
 
+model Session {
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  sessionId  Bytes    @unique
+  validUntil DateTime
+
+  @@index([userId])
+  @@index([validUntil])
+}
+
 model User {
-  id              String         @id @default(uuid())
+  id              String          @id @default(uuid())
   passwordHash    Bytes
   twoFactorAuth   Boolean
   grammaticalForm GrammaticalForm
   piiData         PiiData?
+  Session         Session[]
 }
 
 model PiiData {

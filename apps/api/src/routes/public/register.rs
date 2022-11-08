@@ -26,7 +26,7 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 	let mut salt = [0].repeat(SALT_SIZE);
 	let mut connection_secret = [0].repeat(SECRET_SIZE);
 	{
-		let mut rng = rand::thread_rng(); // Maybe change
+		let mut rng = rand::thread_rng(); // TODO Maybe change
 		rng.fill_bytes(&mut salt);
 		rng.fill_bytes(&mut connection_secret);
 	}
@@ -60,7 +60,7 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 	ctx.cookies.add(
 		Cookie::build(
 			SESSION_COOKIE_NAME,
-			init_session(ctx.db, ctx.redis, user, connection_secret).await?,
+			init_session(&ctx.db, &ctx.redis, &user, &connection_secret).await?,
 		)
 		.secure(false) // TODO change one we have ssl set up
 		.http_only(true)
