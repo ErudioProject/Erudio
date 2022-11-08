@@ -20,12 +20,12 @@ async fn init_load_destroy() -> ApiResult<()> {
 	let redis_url = env::var("REDIS_URL").expect("set REDIS_URL env");
 
 	let redis_client = redis::Client::open(redis_url).expect("Redis not found");
-	let redis = Arc::new(Mutex::new(
+	let redis = Mutex::new(
 		redis_client
 			.get_async_connection()
 			.await
 			.expect("Some redis Error"),
-	));
+	);
 
 	let mut connection_secret = [0].repeat(512);
 	let mut random_data_for_email = [0].repeat(512);
