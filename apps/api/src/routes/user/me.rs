@@ -5,7 +5,15 @@ use prisma_client_rust;
 use rspc::{internal::specta::Type, selection, ErrorCode};
 use serde::Serialize;
 
-user::include!(user_data { pii_data }); // TODO create issue for select and include
+user::include!(user_data { pii_data: select {
+	email
+	pesel
+	birth_date
+	legal_name
+	display_name
+	phone_prefix
+	phone_number
+} }); // TODO create issue for select and include
 
 pub(crate) async fn me(ctx: AuthCtx, _: ()) -> RspcResult<impl Type + Serialize> {
 	let user = ctx
