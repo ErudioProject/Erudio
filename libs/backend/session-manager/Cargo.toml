@@ -9,6 +9,11 @@ edition = "2021"
 backend_prisma_client.workspace = true
 backend_error_handler.workspace = true
 tokio = "^1.21"
-redis = {version = "^0.21", features = ["aio", "tokio-comp", "connection-manager"]}
+redis = {version = "^0.21", features = ["tokio-comp"]}
 hex = "^0.4"
 chrono = "^0.4"
+
+[dev-dependencies]
+openssl.workspace = true
+rand = "^0.8"
+dotenvy = "^0"

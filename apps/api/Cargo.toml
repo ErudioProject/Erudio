@@ -10,7 +10,8 @@ license = "AGPL-3.0-or-later"
 backend_prisma_client.workspace = true
 backend_session_manager.workspace = true
 backend_error_handler.workspace = true
-redis = { version = "^0.21", features = ["aio", "tokio-comp", "connection-manager"] }
+openssl.workspace = true
+redis = { version = "^0.21", features = ["aio", "tokio-comp"] }
 tokio = { version = "^1.21", features = ["full"] }
 hyper = { version = "0.14", features = ["full"] }
 tower-http = { version = "^0.3", features = ["cors"] }
@@ -26,4 +27,3 @@ tower-cookies = "^0.7"
 cookie = "^0.16"
 rust-argon2 = "^1.0"
 rand = "^0.8"
-openssl = { version = "^0.10", features = ["vendored"] } # daem openssl
