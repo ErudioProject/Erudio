@@ -3,10 +3,10 @@
 export type Procedures = {
     queries: 
         { key: "public.login", input: LoginRequest, result: LoginResponse } | 
-        { key: "public.register", input: RegisterRequest, result: null } | 
         { key: "public.version", input: never, result: string } | 
         { key: "user.me", input: never, result: { two_factor_auth: boolean, grammatical_form: GrammaticalForm, pii_data: PiiData | null } },
-    mutations: never,
+    mutations: 
+        { key: "public.register", input: RegisterRequest, result: null },
     subscriptions: never
 };
 

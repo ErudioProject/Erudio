@@ -29,5 +29,5 @@ pub fn mount() -> RouterBuilder<Ctx> {
 	Router::<Ctx>::new()
 		.query("version", |t| t(version))
 		.query("login", |t| t(login))
-		.query("register", |t| t(register))
+		.mutation("register", |t| t(register))
 }
