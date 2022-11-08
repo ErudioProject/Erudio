@@ -23,8 +23,8 @@ pub struct RegisterRequest {
 
 pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 	debug!("Register Request : {:?}", req);
-	let mut salt = [0].repeat(SALT_SIZE);
-	let mut connection_secret = [0].repeat(SECRET_SIZE);
+	let mut salt = vec![0; SALT_SIZE];
+	let mut connection_secret = vec![0; SECRET_SIZE];
 	{
 		let mut rng = rand::thread_rng(); // TODO Maybe change
 		rng.fill_bytes(&mut salt);
