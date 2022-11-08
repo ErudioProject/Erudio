@@ -18,6 +18,7 @@
                 "@nrwl/workspace": "^15.0.8",
                 "@nxext/solid": "^14.0.2",
                 "@nxrs/cargo": "^0.3.3",
+                "@rspc/client": "^0.1.2",
                 "@solidjs/meta": "^0.28.0",
                 "@solidjs/router": "^0.5.0",
                 "@stitches/core": "^1.2.8",
