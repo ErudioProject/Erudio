@@ -77,23 +77,15 @@ async fn init_load_destroy_inner(
 	user: &User,
 	connection_secret: &Vec<u8>,
 ) -> ApiResult<()> {
-	let client_secret = init_session(db, redis, user, connection_secret, Some(10))
-		.await
-		.expect("Init  error");
+	let client_secret = init_session(db, redis, user, connection_secret, Some(10)).await?;
 
-	let user = load_session(db, redis, &client_secret)
-		.await
-		.expect("Load error");
+	let user = load_session(db, redis, &client_secret).await?;
 
 	user.ok_or_else(|| ApiError::TestError("User is none".into()))?;
 
-	destroy_session(db, redis, &client_secret)
-		.await
-		.expect("Destruction error");
+	destroy_session(db, redis, &client_secret).await?;
 
-	let user = load_session(&db, &redis, &client_secret)
-		.await
-		.expect("Load error");
+	let user = load_session(db, redis, &client_secret).await?;
 
 	if user.is_some() {
 		return Err(ApiError::TestError("Session din't got deleted".into()));
