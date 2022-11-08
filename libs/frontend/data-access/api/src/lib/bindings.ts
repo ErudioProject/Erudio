@@ -4,7 +4,7 @@ export type Procedures = {
     queries: 
         { key: "public.login", input: LoginRequest, result: LoginResponse } | 
         { key: "public.version", input: never, result: string } | 
-        { key: "user.me", input: never, result: { two_factor_auth: boolean, grammatical_form: GrammaticalForm, pii_data: PiiData | null } },
+        { key: "user.me", input: never, result: { two_factor_auth: boolean, grammatical_form: GrammaticalForm, pii_data: { email: string | null, pesel: string | null, birth_date: string | null, legal_name: string | null, display_name: string | null, phone_prefix: string | null, phone_number: string | null } | null } },
     mutations: 
         { key: "public.register", input: RegisterRequest, result: null },
     subscriptions: never
@@ -15,8 +15,6 @@ export type GrammaticalForm = "Masculinine" | "Feminine" | "Indeterminate"
 export interface LoginRequest { email: string, password: string }
 
 export type LoginResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
-
-export interface PiiData { id: string, userId: string, email: string | null, pesel: string | null, birthDate: string | null, legalName: string | null, displayName: string | null, phonePrefix: string | null, phoneNumber: string | null }
 
 export interface RegisterRequest { email: string, password: string, code: null }
 
