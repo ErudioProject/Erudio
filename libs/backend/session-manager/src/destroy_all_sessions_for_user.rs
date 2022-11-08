@@ -27,8 +27,8 @@ pub async fn destroy_all_sessions_for_user(
 async fn destroy_redis(redis: &Mutex<redis::aio::Connection>, sessions: Vec<session::Data>) -> ApiResult<()> {
 	let session_ids = sessions
 		.iter()
-		.map(|s| s.session_id.clone())
-		.collect::<Vec<Vec<u8>>>();
+		.map(|s| hex::encode(s.session_id.clone()))
+		.collect::<Vec<String>>();
 	redis.lock().await.del(session_ids).await?;
 	Ok(())
 }

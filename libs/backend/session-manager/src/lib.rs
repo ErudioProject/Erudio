@@ -17,18 +17,19 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 
 pub async fn load_session(
-	db: Arc<PrismaClient>,
-	redis: Arc<Mutex<redis::aio::Connection>>,
+	db: &PrismaClient,
+	redis: &Mutex<redis::aio::Connection>,
 	client_secret: &str,
 ) -> Result<Option<User>, ApiError> {
-	let session_id = hex::decode(client_secret)?;
 	let json: Option<String> = {
 		let mut conn = redis.lock().await;
-		conn.get(&session_id).await?
+		conn.get(client_secret).await?
 	};
 
 	match json {
 		None => {
+			// Todo outdated check
+			let session_id = hex::decode(client_secret)?;
 			let result = db
 				.session()
 				.find_unique(session::session_id::equals(session_id.clone()))
@@ -46,32 +47,21 @@ pub async fn load_session(
 }
 
 pub async fn destroy_session(
-	db: Arc<PrismaClient>,
-	redis: Arc<Mutex<redis::aio::Connection>>,
+	db: &PrismaClient,
+	redis: &Mutex<redis::aio::Connection>,
 	client_secret: &str,
 ) -> Result<(), ApiError> {
 	let session_id = hex::decode(client_secret)?;
-	let deleted = db
+	let _ = db
 		.session()
 		.delete(session::session_id::equals(session_id))
 		.exec()
 		.await?;
 	{
-		redis.lock().await.del(deleted.session_id).await?
+		redis.lock().await.del(client_secret).await?
 	}
 	Ok(())
 }
 
-pub fn backend_session_manager() -> String {
-	"backend_session_manager".into()
-}
-
 #[cfg(test)]
-mod tests {
-	use super::*;
-
-	#[test]
-	fn it_works() {
-		assert_eq!(backend_session_manager(), "backend_session_manager".to_string());
-	}
-}
+mod tests;

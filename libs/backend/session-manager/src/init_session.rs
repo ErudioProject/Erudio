@@ -15,15 +15,17 @@ pub async fn init_session(
 	client_secret: &Vec<u8>,
 ) -> Result<String, ApiError> {
 	let json = serde_json::to_string(&user)?;
-	let redis_async = init_redis(redis, client_secret, json);
+	let encoded = hex::encode(client_secret);
+	let redis_async = init_redis(redis, &encoded, json);
 	let prisma_async = init_prisma(db, client_secret, &user.id);
 	let result = join!(redis_async, prisma_async).await;
 	result.0?;
 	result.1?;
-	Ok(hex::encode(client_secret))
+	Ok(encoded)
 }
 
-async fn init_redis(redis: &Mutex<redis::aio::Connection>, client_secret: &Vec<u8>, json: String) -> ApiResult<()> {
+async fn init_redis(redis: &Mutex<redis::aio::Connection>, client_secret: &String, json: String) -> ApiResult<()> {
+	// Todo discus cache duration and check for extending options
 	let mut conn = redis.lock().await;
 	conn.set(client_secret, json).await?;
 	Ok(())

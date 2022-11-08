@@ -85,12 +85,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "arc-swap"
-version = "1.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "983cd8b9d4b02a6dc6ffa557262eb5858a27a0038ffffe21a0f133eaa819a164"
-
-[[package]]
 name = "arrayref"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -256,7 +250,10 @@ dependencies = [
  "backend_error_handler",
  "backend_prisma_client",
  "chrono",
+ "dotenvy",
  "hex",
+ "openssl",
+ "rand 0.8.5",
  "redis",
  "tokio",
 ]
@@ -2507,11 +2504,9 @@ version = "0.21.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "571c252c68d09a2ad3e49edd14e9ee48932f3e0f27b06b4ea4c9b2a706d31103"
 dependencies = [
- "arc-swap",
  "async-trait",
  "bytes",
  "combine 4.6.6",
- "futures",
  "futures-util",
  "itoa",
  "percent-encoding",

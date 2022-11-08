@@ -41,16 +41,14 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 			mw.middleware(|mw| async move {
 				let old_ctx: Ctx = mw.ctx.clone();
 				match old_ctx.cookies.get(SESSION_COOKIE_NAME) {
-					Some(session_id) => {
-						match load_session(old_ctx.db.clone(), old_ctx.redis.clone(), session_id.value()).await? {
-							Some(user) => Ok(mw.with_ctx(AuthCtx {
-								db: old_ctx.db,
-								redis: old_ctx.redis,
-								user,
-							})),
-							None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
-						}
-					}
+					Some(session_id) => match load_session(&old_ctx.db, &old_ctx.redis, session_id.value()).await? {
+						Some(user) => Ok(mw.with_ctx(AuthCtx {
+							db: old_ctx.db,
+							redis: old_ctx.redis,
+							user,
+						})),
+						None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
+					},
 					None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
 				}
 			})

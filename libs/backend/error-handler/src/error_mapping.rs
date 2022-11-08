@@ -3,6 +3,7 @@ use log::warn;
 use redis::RedisError;
 use rspc::ErrorCode;
 
+#[derive(Debug)]
 pub enum ApiError {
 	Rspc(rspc::Error),
 	Unreachable, // This error should be unreachable
