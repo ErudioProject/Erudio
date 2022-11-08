@@ -10,10 +10,10 @@ pub use init_session::init_session;
 use backend_error_handler::ApiError;
 use backend_prisma_client::{
 	prisma::{session, session::Data, PrismaClient},
-	serde_json, User,
+	prisma_client_rust::serde_json,
+	User,
 };
 use redis::AsyncCommands;
-use std::sync::Arc;
 use tokio::sync::Mutex;
 
 pub async fn load_session(

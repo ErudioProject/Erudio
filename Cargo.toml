@@ -12,6 +12,6 @@ members = [
 backend_prisma_client = { path = "libs/backend/prisma-client"}
 backend_session_manager = { path = "libs/backend/session-manager"}
 backend_error_handler = { path = "libs/backend/error-handler"}
-prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql"], rev = "a0fb19d25d6869c6398a338e5228d80c81a8c354"}
-prisma-client-rust-cli = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql"], rev = "a0fb19d25d6869c6398a338e5228d80c81a8c354"}
+prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc"], rev = "a0fb19d25d6869c6398a338e5228d80c81a8c354"}
+prisma-client-rust-cli = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc"], rev = "a0fb19d25d6869c6398a338e5228d80c81a8c354"}
 openssl = { version = "^0.10", features = ["vendored"] } # daem openssl

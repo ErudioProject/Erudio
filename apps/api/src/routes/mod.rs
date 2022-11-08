@@ -1,4 +1,5 @@
 mod public;
+mod user;
 
 use backend_prisma_client::{prisma::PrismaClient, User};
 use backend_session_manager::load_session;
@@ -53,6 +54,7 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 				}
 			})
 		})
+		.merge("user.", user::mount())
 		.build()
 }
 

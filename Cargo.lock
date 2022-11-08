@@ -73,6 +73,7 @@ dependencies = [
  "hyper",
  "log",
  "openssl",
+ "prisma-client-rust",
  "rand 0.8.5",
  "redis",
  "rspc",
