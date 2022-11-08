@@ -1,45 +1,65 @@
+#![feature(future_join)]
+#![forbid(unsafe_code)]
+
+mod destroy_all_sessions_for_user;
+mod init_session;
+
+pub use destroy_all_sessions_for_user::destroy_all_sessions_for_user;
+pub use init_session::init_session;
+
 use backend_error_handler::ApiError;
 use backend_prisma_client::{
-	prisma::{user, PrismaClient},
+	prisma::{session, session::Data, PrismaClient},
 	serde_json, User,
 };
 use redis::AsyncCommands;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-pub async fn init_session(
-	_db: Arc<PrismaClient>, // TODO
-	redis: Arc<Mutex<redis::aio::Connection>>,
-	user: user::Data,
-	client_secret: Vec<u8>,
-) -> Result<String, ApiError> {
-	let json = serde_json::to_string(&user).map_err(Into::<ApiError>::into)?;
-	{
-		let mut conn = redis.lock().await;
-		conn.set_ex(&client_secret, json, 60 * 60)
-			.await
-			.map_err(Into::<ApiError>::into)?;
-		conn.lpush(user.id, client_secret.clone())
-			.await
-			.map_err(Into::<ApiError>::into)?; // Reverse record for fast logout
-	}
-	Ok(hex::encode(client_secret))
-}
 pub async fn load_session(
-	_db: Arc<PrismaClient>, // TODO
+	db: Arc<PrismaClient>,
 	redis: Arc<Mutex<redis::aio::Connection>>,
 	client_secret: &str,
 ) -> Result<Option<User>, ApiError> {
-	let session_id = hex::decode(client_secret).map_err(Into::<ApiError>::into)?;
+	let session_id = hex::decode(client_secret)?;
 	let json: Option<String> = {
 		let mut conn = redis.lock().await;
-		conn.get(session_id).await.map_err(Into::<ApiError>::into)?
+		conn.get(&session_id).await?
 	};
 
 	match json {
-		None => Ok(None),
-		Some(json) => Ok(Some(serde_json::from_str(&json).map_err(Into::<ApiError>::into)?)),
+		None => {
+			let result = db
+				.session()
+				.find_unique(session::session_id::equals(session_id.clone()))
+				.with(session::user::fetch())
+				.exec()
+				.await?;
+			match result {
+				Some(Data { user: Some(user), .. }) => Ok(Some(*user)),
+				Some(_) => Err(ApiError::Unreachable),
+				None => Ok(None),
+			}
+		}
+		Some(json) => Ok(Some(serde_json::from_str(&json)?)),
 	}
+}
+
+pub async fn destroy_session(
+	db: Arc<PrismaClient>,
+	redis: Arc<Mutex<redis::aio::Connection>>,
+	client_secret: &str,
+) -> Result<(), ApiError> {
+	let session_id = hex::decode(client_secret)?;
+	let deleted = db
+		.session()
+		.delete(session::session_id::equals(session_id))
+		.exec()
+		.await?;
+	{
+		redis.lock().await.del(deleted.session_id).await?
+	}
+	Ok(())
 }
 
 pub fn backend_session_manager() -> String {

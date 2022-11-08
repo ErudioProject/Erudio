@@ -1,6 +1,13 @@
-use crate::{routes::RspcResult, Ctx};
+use crate::{
+	routes::{public::SECRET_SIZE, RspcResult, SESSION_COOKIE_NAME},
+	Ctx,
+};
+use backend_prisma_client::prisma::{pii_data, user};
+use backend_session_manager::init_session;
+use cookie::{Cookie, SameSite};
 use log::debug;
-use rspc::Type;
+use rand::RngCore;
+use rspc::{ErrorCode, Type};
 
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct LoginRequest {
@@ -24,8 +31,33 @@ pub enum TwoFactorAuthType {
 	EMail,
 }
 
-// TODO
-pub(crate) async fn login(_ctx: Ctx, req: LoginRequest) -> RspcResult<LoginResponse> {
+pub(crate) async fn login(ctx: Ctx, req: LoginRequest) -> RspcResult<LoginResponse> {
 	debug!("Login Request: {:?}", req);
+	let mut connection_secret = [0].repeat(SECRET_SIZE);
+	{
+		let mut rng = rand::thread_rng(); // TODO Maybe change
+		rng.fill_bytes(&mut connection_secret);
+	}
+	let user = ctx
+		.db
+		.user()
+		.find_first(vec![user::pii_data::is(vec![pii_data::email::equals(Some(req.email))])]) // IDK why this Some is needed maybe open issue one dat
+		.with(user::pii_data::fetch())
+		.exec()
+		.await?
+		.ok_or_else(|| rspc::Error::new(ErrorCode::NotFound, "Email not found".to_string()))?;
+
+	//TODO 2fa handling
+	ctx.cookies.add(
+		Cookie::build(
+			SESSION_COOKIE_NAME,
+			init_session(&ctx.db, &ctx.redis, &user, &connection_secret).await?,
+		)
+		.secure(false) // TODO change one we have ssl set up
+		.http_only(true)
+		.same_site(SameSite::Strict)
+		.finish(),
+	);
+
 	Ok(LoginResponse::Success)
 }

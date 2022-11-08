@@ -1,3 +1,4 @@
+#![forbid(unsafe_code)]
 pub mod prisma;
 pub use prisma_client_rust::*;
 

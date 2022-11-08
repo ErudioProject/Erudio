@@ -6,9 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+backend_prisma_client.workspace = true
 serde = "^1"
 serde_json = "^1"
 redis = "^0.21"
 rust-argon2 = "^1.0"
 rspc = "^0.1"
 hex = "^0.4"
+log = "^0.4"

@@ -1,3 +1,4 @@
+#![forbid(unsafe_code)]
 extern crate argon2;
 
 mod routes;
