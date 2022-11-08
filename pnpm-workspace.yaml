@@ -1,6 +1,4 @@
 packages:
-  - 'packages/**'
-  - 'apps/**'
-  - 'libs/**'
-nohoist:
-  - '**/solid-start'
+  - "packages/**"
+  - "apps/**"
+  - "libs/**"
