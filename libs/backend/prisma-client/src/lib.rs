@@ -1,6 +1,6 @@
 #![forbid(unsafe_code)]
 pub mod prisma;
-pub use prisma_client_rust::*;
+pub use prisma_client_rust;
 
 pub type User = prisma::user::Data;
 

@@ -1,7 +1,7 @@
 use backend_error_handler::{ApiError, ApiResult};
 use backend_prisma_client::{
 	prisma::{user, PrismaClient},
-	serde_json,
+	prisma_client_rust::serde_json,
 };
 use chrono::{DateTime, Duration, Utc};
 use redis::AsyncCommands;
