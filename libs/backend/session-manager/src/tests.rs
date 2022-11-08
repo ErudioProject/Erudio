@@ -27,8 +27,8 @@ async fn init_load_destroy() -> ApiResult<()> {
 			.expect("Some redis Error"),
 	);
 
-	let mut connection_secret = [0].repeat(512);
-	let mut random_data_for_email = [0].repeat(512);
+	let mut connection_secret = vec![0; 512];
+	let mut random_data_for_email = vec![0; 512];
 	{
 		let mut rng = thread_rng(); // TODO Maybe change
 		rng.fill_bytes(&mut connection_secret);
