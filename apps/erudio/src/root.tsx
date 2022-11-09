@@ -1,8 +1,7 @@
 // @refresh reload
-import { Show, Suspense } from "solid-js";
+import { createSignal, Show, Suspense } from "solid-js";
 import { ColorModeScript, HopeProvider, injectCriticalStyle } from '@hope-ui/core'
 import {
-    A,
     Body,
     ErrorBoundary,
     FileRoutes,
@@ -14,11 +13,17 @@ import {
     Title,
 } from "solid-start";
 import "./root.css";
+import { loadLocaleAsync, TypesafeI18n, usePrefferedLocale } from "@erudio/frontend/data-access/i18n";
 
 export default function Root() {
     injectCriticalStyle();
+    //TODO: fix/file vite issue:
+    //const lang = usePrefferedLocale("pl");
+    const lang = "pl";
+    const [localeLoaded, setLocaleLoaded] = createSignal(false);
+    loadLocaleAsync(lang).then(() => setLocaleLoaded(true));
     return (
-        <Html lang="en">
+        <Html lang={lang}>
             <Head>
                 <Title>SolidStart - Bare</Title>
                 <Meta charset="utf-8" />
@@ -29,11 +34,13 @@ export default function Root() {
                 <HopeProvider>
                     <Suspense>
                         <ErrorBoundary>
-                            <A href="/">Index</A>
-                            <A href="/about">About</A>
-                            <Routes>
-                                <FileRoutes />
-                            </Routes>
+                            <Show when={localeLoaded()}>
+                                <TypesafeI18n locale={lang}>
+                                    <Routes>
+                                        <FileRoutes />
+                                    </Routes>
+                                </TypesafeI18n>
+                            </Show>
                         </ErrorBoundary>
                     </Suspense>
                 </HopeProvider>

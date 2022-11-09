@@ -7,7 +7,12 @@
     "strict": true,
     "skipLibCheck": true,
     "paths": {
-      "frontend/data-access/api": ["packfrontend/data-access/api/src/index.ts"]
+      "@erudio/frontend/data-access/i18n": [
+        "./libs/frontend/data-access/i18n/src/index.ts"
+      ],
+      "@erudio/frontend/data-access/api": [
+        "./libs/frontend/data-access/api/src/index.ts"
+      ]
     }
   }
 }
