@@ -8,13 +8,13 @@ user::select!(user_data {
 	two_factor_auth
 	grammatical_form
 	pii_data: select {
-	email
-	pesel
-	birth_date
-	legal_name
-	display_name
-	phone_prefix
-	phone_number
+		email
+		pesel
+		birth_date
+		legal_name
+		display_name
+		phone_prefix
+		phone_number
 	}
 });
 
