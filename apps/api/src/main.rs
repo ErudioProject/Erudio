@@ -17,7 +17,6 @@ use std::{
 	net::{Ipv4Addr, SocketAddr},
 	sync::Arc,
 };
-use tokio::sync::Mutex;
 use tower_cookies::{CookieManagerLayer, Cookies};
 use tower_http::{cors, cors::CorsLayer};
 
@@ -45,7 +44,7 @@ async fn start() -> eyre::Result<()> {
 	); // Update on new release
 
 	let redis = redis::Client::open("redis://127.0.0.1/")?;
-	let conn = Arc::new(Mutex::new(redis.get_tokio_connection().await?));
+	let conn = redis.get_multiplexed_async_connection().await?;
 
 	let router = router().arced();
 

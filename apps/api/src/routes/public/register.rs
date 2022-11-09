@@ -60,7 +60,7 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 	ctx.cookies.add(
 		Cookie::build(
 			SESSION_COOKIE_NAME,
-			init_session(&ctx.db, &ctx.redis, &user, &connection_secret, None).await?,
+			init_session(&ctx.db, &mut ctx.redis.clone(), &user, &connection_secret, None).await?,
 		)
 		.secure(false) // TODO change one we have ssl set up
 		.http_only(true)
