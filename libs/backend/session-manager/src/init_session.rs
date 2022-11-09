@@ -4,20 +4,19 @@ use backend_prisma_client::{
 	prisma_client_rust::serde_json,
 };
 use chrono::{DateTime, Duration, Utc};
-use redis::AsyncCommands;
+use redis::{aio::MultiplexedConnection, AsyncCommands};
 use std::future::join;
-use tokio::sync::Mutex;
 
 pub async fn init_session(
 	db: &PrismaClient,
-	redis: &Mutex<redis::aio::Connection>,
+	redis: &mut MultiplexedConnection,
 	user: &user::Data,
 	client_secret: &Vec<u8>,
-	expires_seconds: Option<usize>,
+	redis_expires_seconds: Option<usize>,
 ) -> Result<String, ApiError> {
 	let json = serde_json::to_string(&user)?;
 	let encoded = hex::encode(client_secret);
-	let redis_async = init_redis(redis, &encoded, json, expires_seconds);
+	let redis_async = init_redis(redis, &encoded, json, redis_expires_seconds);
 	let prisma_async = init_prisma(db, client_secret, &user.id);
 	let result = join!(redis_async, prisma_async).await;
 	result.0?;
@@ -26,15 +25,14 @@ pub async fn init_session(
 }
 
 async fn init_redis(
-	redis: &Mutex<redis::aio::Connection>,
+	redis: &mut MultiplexedConnection,
 	client_secret: &String,
 	json: String,
 	expires: Option<usize>,
 ) -> ApiResult<()> {
-	let mut conn = redis.lock().await;
 	match expires {
-		None => conn.set(client_secret, json).await?,
-		Some(time) => conn.set_ex(client_secret, json, time).await?,
+		None => redis.set(client_secret, json).await?,
+		Some(time) => redis.set_ex(client_secret, json, time).await?,
 	};
 	Ok(())
 }

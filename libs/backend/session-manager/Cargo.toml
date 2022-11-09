@@ -8,12 +8,15 @@ edition = "2021"
 [dependencies]
 backend_prisma_client.workspace = true
 backend_error_handler.workspace = true
-tokio = "^1.21"
-redis = {version = "^0.21", features = ["tokio-comp"]}
+redis.workspace = true
+log = "^0.4"
 hex = "^0.4"
 chrono = "^0.4"
 
 [dev-dependencies]
+tokio = { version = "^1.21", features = ["full"] }
+backend_error_handler.workspace = true
 openssl.workspace = true
+env_logger = "^0"
 rand = "^0.8"
 dotenvy = "^0"

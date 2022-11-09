@@ -12,8 +12,8 @@ backend_session_manager.workspace = true
 backend_error_handler.workspace = true
 openssl.workspace = true
 prisma-client-rust = {workspace = true, features = ["postgresql", "rspc"]}
-redis = { version = "^0.21", features = ["aio", "tokio-comp"] }
-tokio = { version = "^1.21", features = ["full"] }
+redis.workspace = true
+tokio.workspace = true
 hyper = { version = "0.14", features = ["full"] }
 tower-http = { version = "^0.3", features = ["cors"] }
 axum = "^0.5"

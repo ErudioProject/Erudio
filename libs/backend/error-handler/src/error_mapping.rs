@@ -7,9 +7,15 @@ use rspc::ErrorCode;
 pub enum ApiError {
 	Rspc(rspc::Error),
 	Unreachable,       // This error should be unreachable
-	TestError(String), // This error should be unreachable
+	TestError(String), // This is for tests TODO check if there is a way to enforce it
 }
 pub type ApiResult<T> = Result<T, ApiError>;
+
+impl ApiError {
+	pub fn new_rspc(code: ErrorCode, message: String) -> Self {
+		ApiError::Rspc(rspc::Error::new(code, message))
+	}
+}
 
 impl From<serde_json::Error> for ApiError {
 	fn from(value: serde_json::Error) -> Self {
@@ -71,9 +77,10 @@ impl From<ApiError> for rspc::Error {
 				ErrorCode::InternalServerError,
 				"This should have been unreachable".to_string(),
 			),
-			ApiError::TestError(_) => {
-				rspc::Error::new(ErrorCode::InternalServerError, "This is a test error".to_string())
-			}
+			ApiError::TestError(_) => rspc::Error::new(
+				ErrorCode::InternalServerError,
+				"This is an error that is allowed only in tests".to_string(),
+			),
 		}
 	}
 }
