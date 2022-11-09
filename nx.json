@@ -16,6 +16,11 @@
       }
     }
   },
+  "pluginsConfig": {
+    "@nrwl/js": {
+      "analyzeSourceFiles": true
+    }
+  },
   "workspaceLayout": {
     "appsDir": "apps",
     "libsDir": "libs"
