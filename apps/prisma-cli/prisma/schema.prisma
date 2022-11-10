@@ -24,99 +24,129 @@ enum SchoolRelationType {
 }
 
 model Session {
-  userId     String
-  sessionId  Bytes    @unique
-  validUntil DateTime
+  UserId     String   @db.Uuid
+  SessionId  Bytes    @unique
+  ValidUntil DateTime
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User User @relation(fields: [UserId], references: [Id], onDelete: Cascade)
 
-  @@index([userId])
-  @@index([validUntil])
+  @@index([UserId])
+  @@index([ValidUntil])
 }
 
 model User {
-  id              String          @id @default(uuid())
-  passwordHash    Bytes
-  twoFactorAuth   Boolean
-  grammaticalForm GrammaticalForm
+  Id              String          @id @default(uuid()) @db.Uuid
+  PasswordHash    Bytes
+  TwoFactorAuth   Boolean
+  GrammaticalForm GrammaticalForm
 
-  piiData            PiiData?
+  PiiData            PiiData?
   Session            Session[]
   UserSchoolRelation UserSchoolRelation[]
   UserClasses        Class[]              @relation("UserClass")
   UserPrimaryClasses Class[]              @relation("UserClassPrimary")
+  Mark               Mark[]
 }
 
 model PiiData {
-  id          String    @id @default(uuid())
-  userId      String    @unique
-  email       String?   @unique
-  pesel       String?
-  birthDate   DateTime?
-  legalName   String?
-  displayName String?
-  phonePrefix String?
-  phoneNumber String?   @unique
+  Id          String    @id @default(uuid()) @db.Uuid
+  UserId      String    @unique @db.Uuid
+  //GrammaticalForm GrammaticalForm //TODO idiot check if not follup on enum handling in select
+  Email       String?   @unique
+  Pesel       String?
+  BirthDate   DateTime?
+  LegalName   String?
+  DisplayName String?
+  PhonePrefix String?
+  PhoneNumber String?   @unique
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User User @relation(fields: [UserId], references: [Id], onDelete: Cascade)
 }
 
 model UserSchoolRelation {
-  userId             String
-  schoolId           String
-  schoolRelationType SchoolRelationType
+  UserId             String             @db.Uuid
+  SchoolId           String             @db.Uuid
+  SchoolRelationType SchoolRelationType
 
-  user   User   @relation(fields: [userId], references: [id])
-  school School @relation(fields: [schoolId], references: [id])
+  User   User   @relation(fields: [UserId], references: [Id])
+  School School @relation(fields: [SchoolId], references: [Id])
 
-  @@id([userId, schoolId])
-  @@index([userId])
+  @@id([UserId, SchoolId])
+  @@index([UserId])
 }
 
 model School {
-  id   String @id @default(uuid())
-  name String
+  Id   String @id @default(uuid()) @db.Uuid
+  Name String
 
   SchoolSettings     SchoolSettings?
   Classes            Class[]
   UserSchoolRelation UserSchoolRelation[]
-  Subject            Subject?
+  Subject            Subject[]
 }
 
 model SchoolSettings {
-  id       String @id @default(uuid())
-  schoolId String @unique
+  Id       String @id @default(uuid()) @db.Uuid
+  SchoolId String @unique @db.Uuid
 
-  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  School School @relation(fields: [SchoolId], references: [Id], onDelete: Cascade)
 }
 
 model Class {
-  id       String @id @default(uuid())
-  name     String
-  schoolId String @unique
+  Id       String @id @default(uuid()) @db.Uuid
+  Name     String
+  SchoolId String @unique @db.Uuid
 
-  school       School   @relation(fields: [schoolId], references: [id])
+  school       School   @relation(fields: [SchoolId], references: [Id])
   Users        User[]   @relation("UserClass")
   PrimaryUsers User[]   @relation("UserClassPrimary")
   Lesson       Lesson[] @relation("LessonClasss")
 }
 
 model Lesson {
-  id       String   @id @default(uuid())
-  topic    String
-  presense Json
-  starts   DateTime
-  ends     DateTime
+  Id        String   @id @default(uuid()) @db.Uuid
+  Topic     String
+  Presense  Json
+  Starts    DateTime
+  Ends      DateTime
+  SubjectId String?  @db.Uuid
 
-  class Class[] @relation("LessonClasss")
+  Class       Class[]       @relation("LessonClasss")
+  Subject     Subject?      @relation(fields: [SubjectId], references: [Id])
+  LessonEvent LessonEvent[]
 
-  @@index([starts, ends])
+  @@index([Starts, Ends])
 }
 
 model Subject {
-  id       String @id @default(uuid())
-  name     String
-  schoolId String @unique
+  Id       String @id @default(uuid()) @db.Uuid
+  Name     String
+  SchoolId String @db.Uuid
 
-  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  School      School        @relation(fields: [SchoolId], references: [Id])
+  Lesson      Lesson[]
+  LessonEvent LessonEvent[]
+  Mark        Mark[]
+}
+
+model LessonEvent {
+  Id              String  @id @default(uuid()) @db.Uuid
+  LessonId        String? @db.Uuid
+  SubjectId       String  @db.Uuid // easly and efficently load all mark for a given subject
+  AssociatedMarks Boolean // Weather to show column
+
+  Lesson  Lesson?  @relation(fields: [LessonId], references: [Id])
+  Subject Subject? @relation(fields: [SubjectId], references: [Id])
+  Mark    Mark[]
+}
+
+model Mark {
+  Id            String @id @default(uuid()) @db.Uuid
+  UserId        String @db.Uuid
+  LessonEventId String @db.Uuid
+  SubjectId     String @db.Uuid
+
+  User        User         @relation(fields: [UserId], references: [Id])
+  LessonEvent LessonEvent? @relation(fields: [LessonEventId], references: [Id])
+  Subject     Subject?     @relation(fields: [SubjectId], references: [Id])
 }
