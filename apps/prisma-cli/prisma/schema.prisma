@@ -21,12 +21,37 @@ enum SchoolRelationType {
   Student
   Teacher
   Admin
+  Director
 }
 
 enum MarkType {
   Mark
   Points
   Custom
+}
+
+model UserSchoolRelation {
+  UserId             String             @db.Uuid
+  SchoolId           String             @db.Uuid
+  SchoolRelationType SchoolRelationType
+
+  User   User   @relation(fields: [UserId], references: [Id])
+  School School @relation(fields: [SchoolId], references: [Id])
+
+  @@id([UserId, SchoolId])
+  @@index([UserId])
+}
+
+model TeacherSubjectManager {
+  UserId    String @db.Uuid
+  SubjectId String @db.Uuid
+  Permisson String @db.VarBit
+
+  User    User    @relation(fields: [UserId], references: [Id])
+  Subject Subject @relation(fields: [SubjectId], references: [Id])
+
+  @@id([UserId, SubjectId])
+  @@index([UserId])
 }
 
 model Session {
@@ -46,14 +71,17 @@ model User {
   TwoFactorAuth   Boolean
   GrammaticalForm GrammaticalForm
 
-  PiiData            PiiData?
-  Session            Session[]
-  UserSchoolRelation UserSchoolRelation[]
-  UserClasses        Class[]              @relation("UserClass")
-  UserPrimaryClasses Class[]              @relation("UserClassPrimary")
-  MarkGotten         Mark[]               @relation("StudentMark")
-  MarkGiven          Mark[]               @relation("TeacherMark")
-  TeachedLesson      Lesson[]             @relation("LessonTeacher")
+  PiiData               PiiData?
+  Session               Session[]
+  UserSchoolRelation    UserSchoolRelation[]
+  UserClasses           Class[]                 @relation("UserClass")
+  UserPrimaryClasses    Class[]                 @relation("UserClassPrimary")
+  MarkGotten            Mark[]                  @relation("StudentMark")
+  MarkGiven             Mark[]                  @relation("TeacherMark")
+  TeachedLesson         Lesson[]                @relation("LessonTeacher")
+  Teached               Class[]                 @relation("ClassTeacher")
+  HomeroomTeached       Class[]
+  TeacherSubjectManager TeacherSubjectManager[]
 }
 
 model PiiData {
@@ -69,18 +97,6 @@ model PiiData {
   PhoneNumber String?   @unique
 
   User User @relation(fields: [UserId], references: [Id], onDelete: Cascade)
-}
-
-model UserSchoolRelation {
-  UserId             String             @db.Uuid
-  SchoolId           String             @db.Uuid
-  SchoolRelationType SchoolRelationType
-
-  User   User   @relation(fields: [UserId], references: [Id])
-  School School @relation(fields: [SchoolId], references: [Id])
-
-  @@id([UserId, SchoolId])
-  @@index([UserId])
 }
 
 model School {
@@ -102,14 +118,18 @@ model SchoolSettings {
 }
 
 model Class {
-  Id       String @id @default(uuid()) @db.Uuid
-  Name     String
-  SchoolId String @unique @db.Uuid
+  Id                String @id @default(uuid()) @db.Uuid
+  Name              String
+  SchoolId          String @db.Uuid
+  HomeRoomTeacherId String @db.Uuid
 
-  school       School   @relation(fields: [SchoolId], references: [Id])
-  Users        User[]   @relation("UserClass")
-  PrimaryUsers User[]   @relation("UserClassPrimary")
-  Lesson       Lesson[] @relation("LessonClasss")
+  school          School    @relation(fields: [SchoolId], references: [Id])
+  HomeroomTeacher User      @relation(fields: [HomeRoomTeacherId], references: [Id])
+  Users           User[]    @relation("UserClass")
+  PrimaryUsers    User[]    @relation("UserClassPrimary")
+  Lesson          Lesson[]  @relation("LessonClass")
+  Subject         Subject[] @relation("SubjectClass")
+  Teachers        User[]    @relation("ClassTeacher")
 }
 
 model Lesson {
@@ -119,8 +139,9 @@ model Lesson {
   Starts     DateTime
   Ends       DateTime
   SubjectId  String   @db.Uuid
+  Canceled   Boolean
 
-  Class       Class[]       @relation("LessonClasss")
+  Class       Class[]       @relation("LessonClass")
   Subject     Subject       @relation(fields: [SubjectId], references: [Id])
   LessonEvent LessonEvent[]
   Teachers    User[]        @relation("LessonTeacher")
@@ -134,9 +155,12 @@ model Subject {
   SchoolId String @db.Uuid
 
   School      School        @relation(fields: [SchoolId], references: [Id])
+  Classes     Class[]       @relation("SubjectClass")
   Lesson      Lesson[]
   LessonEvent LessonEvent[]
   Mark        Mark[]
+
+  TeacherSubjectManager TeacherSubjectManager[]
 }
 
 model LessonEvent {
@@ -148,6 +172,7 @@ model LessonEvent {
   Name            String
   Weight          Int // Non optional just se to 0 for irrelevent
   Base            Int
+  Canceled        Boolean
 
   Lesson   Lesson?             @relation(fields: [LessonId], references: [Id])
   Subject  Subject             @relation(fields: [SubjectId], references: [Id])
