@@ -40,9 +40,11 @@ model User {
   twoFactorAuth   Boolean
   grammaticalForm GrammaticalForm
 
-  piiData                 PiiData?
-  Session                 Session[]
-  UserSchoolClassRelation UserSchoolClassRelation[]
+  piiData            PiiData?
+  Session            Session[]
+  UserSchoolRelation UserSchoolRelation[]
+  UserClasses        Class[]              @relation("UserClass")
+  UserPrimaryClasses Class[]              @relation("UserClassPrimary")
 }
 
 model PiiData {
@@ -59,17 +61,15 @@ model PiiData {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model UserSchoolClassRelation {
-  userId       String
-  schoolId     String
-  classId      String
-  relationType SchoolRelationType
+model UserSchoolRelation {
+  userId             String
+  schoolId           String
+  schoolRelationType SchoolRelationType
 
   user   User   @relation(fields: [userId], references: [id])
   school School @relation(fields: [schoolId], references: [id])
-  class  Class  @relation(fields: [classId], references: [id])
 
-  @@id([userId, schoolId, classId])
+  @@id([userId, schoolId])
   @@index([userId])
 }
 
@@ -77,25 +77,46 @@ model School {
   id   String @id @default(uuid())
   name String
 
-  SchoolSettings          SchoolSettings?
-  Class                   Class?
-  UserSchoolClassRelation UserSchoolClassRelation[]
+  SchoolSettings     SchoolSettings?
+  Classes            Class[]
+  UserSchoolRelation UserSchoolRelation[]
+  Subject            Subject?
 }
 
 model SchoolSettings {
   id       String @id @default(uuid())
-  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   schoolId String @unique
+
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model Class {
-  id             String  @id @default(uuid())
-  name           String
-  primaryClassId String?
-  schoolId       String  @unique
+  id       String @id @default(uuid())
+  name     String
+  schoolId String @unique
 
-  school                  School                    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-  primaryClass            Class?                    @relation("PrimarySecondaryClass", fields: [primaryClassId], references: [id])
-  secondaryClasses        Class[]                   @relation("PrimarySecondaryClass")
-  UserSchoolClassRelation UserSchoolClassRelation[]
+  school       School   @relation(fields: [schoolId], references: [id])
+  Users        User[]   @relation("UserClass")
+  PrimaryUsers User[]   @relation("UserClassPrimary")
+  Lesson       Lesson[] @relation("LessonClasss")
+}
+
+model Lesson {
+  id       String   @id @default(uuid())
+  topic    String
+  presense Json
+  starts   DateTime
+  ends     DateTime
+
+  class Class[] @relation("LessonClasss")
+
+  @@index([starts, ends])
+}
+
+model Subject {
+  id       String @id @default(uuid())
+  name     String
+  schoolId String @unique
+
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
