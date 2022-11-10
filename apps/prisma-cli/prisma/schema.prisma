@@ -4,7 +4,6 @@
 generator client {
   provider = "cargo +nightly run --bin prisma_cli --"
   output   = "../../../libs/backend/prisma-client/src/prisma.rs"
-  //module_path = "backend_prisma_client::prisma"
 }
 
 datasource db {
@@ -18,11 +17,18 @@ enum GrammaticalForm {
   Indeterminate
 }
 
+enum SchoolRelationType {
+  Student
+  Teacher
+  Admin
+}
+
 model Session {
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   sessionId  Bytes    @unique
   validUntil DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([validUntil])
@@ -33,13 +39,14 @@ model User {
   passwordHash    Bytes
   twoFactorAuth   Boolean
   grammaticalForm GrammaticalForm
-  piiData         PiiData?
-  Session         Session[]
+
+  piiData                 PiiData?
+  Session                 Session[]
+  UserSchoolClassRelation UserSchoolClassRelation[]
 }
 
 model PiiData {
   id          String    @id @default(uuid())
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String    @unique
   email       String?   @unique
   pesel       String?
@@ -48,4 +55,47 @@ model PiiData {
   displayName String?
   phonePrefix String?
   phoneNumber String?   @unique
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserSchoolClassRelation {
+  userId       String
+  schoolId     String
+  classId      String
+  relationType SchoolRelationType
+
+  user   User   @relation(fields: [userId], references: [id])
+  school School @relation(fields: [schoolId], references: [id])
+  class  Class  @relation(fields: [classId], references: [id])
+
+  @@id([userId, schoolId, classId])
+  @@index([userId])
+}
+
+model School {
+  id   String @id @default(uuid())
+  name String
+
+  SchoolSettings          SchoolSettings?
+  Class                   Class?
+  UserSchoolClassRelation UserSchoolClassRelation[]
+}
+
+model SchoolSettings {
+  id       String @id @default(uuid())
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  schoolId String @unique
+}
+
+model Class {
+  id             String  @id @default(uuid())
+  name           String
+  primaryClassId String?
+  schoolId       String  @unique
+
+  school                  School                    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  primaryClass            Class?                    @relation("PrimarySecondaryClass", fields: [primaryClassId], references: [id])
+  secondaryClasses        Class[]                   @relation("PrimarySecondaryClass")
+  UserSchoolClassRelation UserSchoolClassRelation[]
 }

@@ -40,9 +40,9 @@ async fn init_redis(
 async fn init_prisma(db: &PrismaClient, client_secret: &Vec<u8>, id: &String) -> ApiResult<()> {
 	db.session()
 		.create(
-			user::id::equals(id.clone()),
 			client_secret.clone(),
 			DateTime::from(Utc::now() + Duration::days(365)),
+			user::id::equals(id.clone()),
 			vec![],
 		)
 		.exec()
