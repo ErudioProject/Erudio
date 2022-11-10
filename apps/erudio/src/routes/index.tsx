@@ -1,69 +1,9 @@
 import { useI18nContext } from "@erudio/frontend/data-access/i18n";
-import { Box } from "@hope-ui/core"
+import Button from "@suid/material/Button";
 
 export default function Index() {
     const { LL } = useI18nContext();
     return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            border={({ vars }) => `1px solid ${vars.colors.neutral["200"]}`}
-            rounded="lg"
-            shadow="lg"
-            w="full"
-            maxW={96}
-            bg="white"
-            _dark={{
-                borderColor: "neutral.800",
-                bg: "neutral.900",
-            }}
-        >
-            <Box
-                as="img"
-                src="https://bit.ly/3CVFryX"
-                alt="Yosemite National Park"
-                objectFit="cover"
-                roundedTop="lg"
-                maxH="200px"
-            />
-            <Box p={5}>
-                <Box display="flex" justifyContent="space-between" alignItems="center" w="full" mb={2}>
-                    <Box
-                        as="span"
-                        fontSize="base"
-                        lineHeight={6}
-                        fontWeight="semibold"
-                        _dark={{ color: "neutral.300" }}
-                    >
-                        Yosemite National Park
-                    </Box>
-                    <Box
-                        display="flex"
-                        px={2}
-                        py={1}
-                        alignItems="center"
-                        bgColor="success.50"
-                        color="success.800"
-                        rounded="full"
-                        _dark={{
-                            bgColor: "success.900",
-                            color: "success.300",
-                        }}
-                    >
-                        <Box
-                            as="span"
-                            fontSize="xs"
-                            lineHeight="none"
-                            fontWeight="semibold"
-                            textTransform="uppercase"
-                        >
-                            Nature
-                        </Box>
-                    </Box>
-                </Box>
-                <Box as="p" fontSize="sm" lineHeight={5} color="neutral.500" _dark={{ color: "neutral.400" }}>
-                    {LL().HI({ name: "Patryk" })}
-                </Box>
-            </Box>
-        </Box>)
+        <Button variant="contained">{LL().HI({ name: "Patryk" })}</Button>
+    )
 }
