@@ -23,6 +23,12 @@ enum SchoolRelationType {
   Admin
 }
 
+enum MarkType {
+  Mark
+  Points
+  Custom
+}
+
 model Session {
   UserId     String   @db.Uuid
   SessionId  Bytes    @unique
@@ -45,7 +51,9 @@ model User {
   UserSchoolRelation UserSchoolRelation[]
   UserClasses        Class[]              @relation("UserClass")
   UserPrimaryClasses Class[]              @relation("UserClassPrimary")
-  Mark               Mark[]
+  MarkGotten         Mark[]               @relation("StudentMark")
+  MarkGiven          Mark[]               @relation("TeacherMark")
+  TeachedLesson      Lesson[]             @relation("LessonTeacher")
 }
 
 model PiiData {
@@ -83,6 +91,7 @@ model School {
   Classes            Class[]
   UserSchoolRelation UserSchoolRelation[]
   Subject            Subject[]
+  MarkCategories     LessonEventCategory[]
 }
 
 model SchoolSettings {
@@ -104,16 +113,17 @@ model Class {
 }
 
 model Lesson {
-  Id        String   @id @default(uuid()) @db.Uuid
-  Topic     String
-  Presense  Json
-  Starts    DateTime
-  Ends      DateTime
-  SubjectId String?  @db.Uuid
+  Id         String   @id @default(uuid()) @db.Uuid
+  Topic      String
+  Attendance Json
+  Starts     DateTime
+  Ends       DateTime
+  SubjectId  String   @db.Uuid
 
   Class       Class[]       @relation("LessonClasss")
-  Subject     Subject?      @relation(fields: [SubjectId], references: [Id])
+  Subject     Subject       @relation(fields: [SubjectId], references: [Id])
   LessonEvent LessonEvent[]
+  Teachers    User[]        @relation("LessonTeacher")
 
   @@index([Starts, Ends])
 }
@@ -133,20 +143,41 @@ model LessonEvent {
   Id              String  @id @default(uuid()) @db.Uuid
   LessonId        String? @db.Uuid
   SubjectId       String  @db.Uuid // easly and efficently load all mark for a given subject
+  CategoryId      String  @db.Uuid
   AssociatedMarks Boolean // Weather to show column
+  Name            String
+  Weight          Int // Non optional just se to 0 for irrelevent
+  Base            Int
 
-  Lesson  Lesson?  @relation(fields: [LessonId], references: [Id])
-  Subject Subject? @relation(fields: [SubjectId], references: [Id])
-  Mark    Mark[]
+  Lesson   Lesson?             @relation(fields: [LessonId], references: [Id])
+  Subject  Subject             @relation(fields: [SubjectId], references: [Id])
+  Category LessonEventCategory @relation(fields: [CategoryId], references: [Id])
+  Mark     Mark[]
 }
 
 model Mark {
   Id            String @id @default(uuid()) @db.Uuid
-  UserId        String @db.Uuid
+  StudentId     String @db.Uuid
   LessonEventId String @db.Uuid
   SubjectId     String @db.Uuid
+  TeacherId     String @db.Uuid
+  Description   String
+  Value         Int
 
-  User        User         @relation(fields: [UserId], references: [Id])
+  Student     User         @relation("StudentMark", fields: [StudentId], references: [Id])
   LessonEvent LessonEvent? @relation(fields: [LessonEventId], references: [Id])
   Subject     Subject?     @relation(fields: [SubjectId], references: [Id])
+  Teacher     User         @relation("TeacherMark", fields: [TeacherId], references: [Id])
+}
+
+model LessonEventCategory {
+  Id             String  @id @default(uuid()) @db.Uuid
+  SchoolId       String  @db.Uuid
+  DefaultWeight  Int // Non optional just se to 0 for irrelevent
+  DefaultBase    Int
+  Name           String
+  ForceWeigtBase Boolean
+
+  School      School        @relation(fields: [SchoolId], references: [Id])
+  LessonEvent LessonEvent[]
 }
