@@ -42,17 +42,16 @@ async fn init_load_destroy() -> ApiResult<()> {
 	// TODO replace with transaction once supported Also some auto test user creation maybe
 	let user = db
 		.user()
-		.create(vec![], false, GrammaticalForm::Indeterminate, vec![])
+		.create(vec![], false, vec![])
 		.exec()
 		.await
 		.expect("Db error user");
 
 	let pii_data = db
 		.pii_data()
-		.create(user::id::equals(user.id.clone()), vec![pii_data::email::Set(Some(
-			hex::encode(random_data_for_email),
-		))
-		.into()])
+		.create(GrammaticalForm::Indeterminate, user::id::equals(user.id.clone()), vec![
+			pii_data::email::Set(Some(hex::encode(random_data_for_email))).into(),
+		])
 		.exec()
 		.await
 		.expect("Db error pii_data");

@@ -15,7 +15,7 @@ services:
       - db
       - redis
   db:
-    image: postgres
+    image: citusdata/citus:11.1
     restart: unless-stopped
     ports:
       - "5432:5432"
