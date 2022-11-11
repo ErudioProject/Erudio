@@ -66,10 +66,9 @@ model Session {
 }
 
 model User {
-  Id              String          @id @default(uuid()) @db.Uuid
-  PasswordHash    Bytes
-  TwoFactorAuth   Boolean
-  GrammaticalForm GrammaticalForm
+  Id            String  @id @default(uuid()) @db.Uuid
+  PasswordHash  Bytes
+  TwoFactorAuth Boolean
 
   PiiData               PiiData?
   Session               Session[]
@@ -85,16 +84,16 @@ model User {
 }
 
 model PiiData {
-  Id          String    @id @default(uuid()) @db.Uuid
-  UserId      String    @unique @db.Uuid
-  //GrammaticalForm GrammaticalForm //TODO idiot check if not follup on enum handling in select
-  Email       String?   @unique
-  Pesel       String?
-  BirthDate   DateTime?
-  LegalName   String?
-  DisplayName String?
-  PhonePrefix String?
-  PhoneNumber String?   @unique
+  Id              String          @id @default(uuid()) @db.Uuid
+  UserId          String          @unique @db.Uuid
+  GrammaticalForm GrammaticalForm
+  Email           String?         @unique
+  Pesel           String?
+  BirthDate       DateTime?
+  LegalName       String?
+  DisplayName     String?
+  PhonePrefix     String?
+  PhoneNumber     String?         @unique
 
   User User @relation(fields: [UserId], references: [Id], onDelete: Cascade)
 }
@@ -154,12 +153,11 @@ model Subject {
   Name     String
   SchoolId String @db.Uuid
 
-  School      School        @relation(fields: [SchoolId], references: [Id])
-  Classes     Class[]       @relation("SubjectClass")
-  Lesson      Lesson[]
-  LessonEvent LessonEvent[]
-  Mark        Mark[]
-
+  School                School                  @relation(fields: [SchoolId], references: [Id])
+  Classes               Class[]                 @relation("SubjectClass")
+  Lesson                Lesson[]
+  LessonEvent           LessonEvent[]
+  Mark                  Mark[]
   TeacherSubjectManager TeacherSubjectManager[]
 }
 
