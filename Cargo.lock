@@ -79,7 +79,6 @@ dependencies = [
  "rspc",
  "rust-argon2",
  "serde",
- "serde_json",
  "tokio",
  "tower-cookies",
  "tower-http",
@@ -2157,7 +2156,7 @@ checksum = "eb9f9e6e233e5c4a35559a617bf40a4ec447db2e84c20b55a6f83167b7e57872"
 [[package]]
 name = "prisma-client-rust"
 version = "0.6.3"
-source = "git+https://github.com/Brendonovich/prisma-client-rust?rev=409498477bf4677c4d8caeba16e61c93f28769aa#409498477bf4677c4d8caeba16e61c93f28769aa"
+source = "git+https://github.com/Brendonovich/prisma-client-rust?rev=f210ca250c297b39b9bb23cb43bb3ab3712d4a4c#f210ca250c297b39b9bb23cb43bb3ab3712d4a4c"
 dependencies = [
  "base64 0.13.1",
  "bigdecimal",
@@ -2182,7 +2181,7 @@ dependencies = [
 [[package]]
 name = "prisma-client-rust-cli"
 version = "0.6.3"
-source = "git+https://github.com/Brendonovich/prisma-client-rust?rev=409498477bf4677c4d8caeba16e61c93f28769aa#409498477bf4677c4d8caeba16e61c93f28769aa"
+source = "git+https://github.com/Brendonovich/prisma-client-rust?rev=f210ca250c297b39b9bb23cb43bb3ab3712d4a4c#f210ca250c297b39b9bb23cb43bb3ab3712d4a4c"
 dependencies = [
  "datamodel",
  "directories",
@@ -2203,7 +2202,7 @@ dependencies = [
 [[package]]
 name = "prisma-client-rust-sdk"
 version = "0.6.3"
-source = "git+https://github.com/Brendonovich/prisma-client-rust?rev=409498477bf4677c4d8caeba16e61c93f28769aa#409498477bf4677c4d8caeba16e61c93f28769aa"
+source = "git+https://github.com/Brendonovich/prisma-client-rust?rev=f210ca250c297b39b9bb23cb43bb3ab3712d4a4c#f210ca250c297b39b9bb23cb43bb3ab3712d4a4c"
 dependencies = [
  "convert_case 0.5.0",
  "datamodel",
