@@ -42,6 +42,19 @@ model UserSchoolRelation {
   @@index([UserId])
 }
 
+model SubjectClassTeacherRelation {
+  SubjectId String @db.Uuid
+  ClassId   String @db.Uuid
+  TeacherId String @db.Uuid
+
+  Subject Subject @relation(fields: [SubjectId], references: [Id])
+  Class   Class   @relation(fields: [ClassId], references: [Id])
+  Teacher User    @relation(fields: [TeacherId], references: [Id])
+
+  @@id([SubjectId, ClassId, TeacherId])
+  @@index([ClassId])
+}
+
 model TeacherSubjectManager {
   UserId    String @db.Uuid
   SubjectId String @db.Uuid
@@ -70,17 +83,17 @@ model User {
   PasswordHash  Bytes
   TwoFactorAuth Boolean
 
-  PiiData               PiiData?
-  Session               Session[]
-  UserSchoolRelation    UserSchoolRelation[]
-  UserClasses           Class[]                 @relation("UserClass")
-  UserPrimaryClasses    Class[]                 @relation("UserClassPrimary")
-  MarkGotten            Mark[]                  @relation("StudentMark")
-  MarkGiven             Mark[]                  @relation("TeacherMark")
-  TeachedLesson         Lesson[]                @relation("LessonTeacher")
-  Teached               Class[]                 @relation("ClassTeacher")
-  HomeroomTeached       Class[]
-  TeacherSubjectManager TeacherSubjectManager[]
+  PiiData                     PiiData?
+  Session                     Session[]
+  UserSchoolRelation          UserSchoolRelation[]
+  UserClasses                 Class[]                       @relation("UserClass")
+  UserPrimaryClasses          Class[]                       @relation("UserClassPrimary")
+  MarkGotten                  Mark[]                        @relation("StudentMark")
+  MarkGiven                   Mark[]                        @relation("TeacherMark")
+  TeachedLesson               Lesson[]                      @relation("LessonTeacher")
+  HomeroomTeached             Class[]                       @relation("ClassHomeroormTeacher")
+  TeacherSubjectManager       TeacherSubjectManager[]
+  SubjectClassTeacherRelation SubjectClassTeacherRelation[]
 }
 
 model PiiData {
@@ -122,13 +135,12 @@ model Class {
   SchoolId          String @db.Uuid
   HomeRoomTeacherId String @db.Uuid
 
-  school          School    @relation(fields: [SchoolId], references: [Id])
-  HomeroomTeacher User      @relation(fields: [HomeRoomTeacherId], references: [Id])
-  Users           User[]    @relation("UserClass")
-  PrimaryUsers    User[]    @relation("UserClassPrimary")
-  Lesson          Lesson[]  @relation("LessonClass")
-  Subject         Subject[] @relation("SubjectClass")
-  Teachers        User[]    @relation("ClassTeacher")
+  school                      School                        @relation(fields: [SchoolId], references: [Id])
+  Users                       User[]                        @relation("UserClass")
+  PrimaryUsers                User[]                        @relation("UserClassPrimary")
+  Lesson                      Lesson[]                      @relation("LessonClass")
+  HomeroomTeachers            User[]                        @relation("ClassHomeroormTeacher")
+  SubjectClassTeacherRelation SubjectClassTeacherRelation[]
 }
 
 model Lesson {
@@ -153,12 +165,12 @@ model Subject {
   Name     String
   SchoolId String @db.Uuid
 
-  School                School                  @relation(fields: [SchoolId], references: [Id])
-  Classes               Class[]                 @relation("SubjectClass")
-  Lesson                Lesson[]
-  LessonEvent           LessonEvent[]
-  Mark                  Mark[]
-  TeacherSubjectManager TeacherSubjectManager[]
+  School                      School                        @relation(fields: [SchoolId], references: [Id])
+  Lesson                      Lesson[]
+  LessonEvent                 LessonEvent[]
+  Mark                        Mark[]
+  TeacherSubjectManager       TeacherSubjectManager[]
+  SubjectClassTeacherRelation SubjectClassTeacherRelation[]
 }
 
 model LessonEvent {
