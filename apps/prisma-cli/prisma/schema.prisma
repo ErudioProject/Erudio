@@ -11,225 +11,322 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum GrammaticalForm {
-  Masculinine
-  Feminine
-  Indeterminate
+enum grammatical_form {
+  masculinine
+  feminine
+  indeterminate
 }
 
-enum SchoolRelationType {
-  Student
-  Teacher
-  Admin
-  Director
+enum school_relation_type {
+  student
+  teacher
+  admin
+  director
 }
 
-enum MarkType {
-  NoMark
-  Mark
-  Points
-  Custom
+enum mark_type {
+  no_mark
+  mark
+  points
+  custom
 }
 
-model Session {
-  UserId     String   @db.Uuid
-  SessionId  Bytes    @unique
-  ValidUntil DateTime
+model session {
+  user_id     String   @db.Uuid
+  session_id  Bytes    @unique
+  valid_until DateTime
 
-  User User @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+  user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  @@index([UserId])
-  @@index([ValidUntil])
+  @@index([user_id])
+  @@index([valid_until])
 }
 
-model PiiData {
-  Id              String          @id @default(uuid()) @db.Uuid
-  UserId          String          @unique @db.Uuid
-  GrammaticalForm GrammaticalForm
-  Email           String?         @unique
-  Pesel           String?
-  BirthDate       DateTime?
-  LegalName       String?
-  DisplayName     String?
-  PhonePrefix     String?
-  PhoneNumber     String?         @unique
+model pii_data {
+  id               String           @id @default(uuid()) @db.Uuid
+  user_id          String           @unique @db.Uuid
+  grammatical_form grammatical_form
+  email            String?          @unique
+  pesel            String?
+  birth_date       DateTime?
+  legal_name       String?
+  display_name     String?
+  phone_prefix     String?
+  phone_number     String?          @unique
 
-  User User @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+  user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
-model User {
-  Id            String  @id @default(uuid()) @db.Uuid
-  PasswordHash  Bytes
-  TwoFactorAuth Boolean
+model user {
+  id              String  @id @default(uuid()) @db.Uuid
+  password_hash   Bytes
+  two_factor_auth Boolean
 
-  PiiData                     PiiData?
-  Session                     Session[]
-  UserSchoolRelation          UserSchoolRelation[]
-  UserClasses                 Class[]                       @relation("UserClass")
-  MarkGotten                  Mark[]                        @relation("StudentMark")
-  MarkGiven                   Mark[]                        @relation("TeacherMark")
-  TeachedLesson               Lesson[]                      @relation("LessonTeacher")
-  SubbstituteTeachedLesson    Lesson[]                      @relation("SubstituteLessonTeacher")
-  AttendedExternalLessons     Lesson[]                      @relation("LessonExternalStudent")
-  ClassAdmin                  Class[]                       @relation("ClassAdmin")
-  SubjectAdmin                SubjectAdmin[]
-  SubjectClassTeacherRelation SubjectClassTeacherRelation[]
+  pii_data                       pii_data?
+  session                        session[]
+  user_school_relation           user_school_relation[]
+  user_classes                   user_classes_at_school_relation[]
+  mark_gotten                    mark[]                                              @relation("student_mark")
+  mark_given                     mark[]                                              @relation("teacher_mark")
+  teached_lesson                 user_lesson_teached_at_school_relation[]
+  subbstitute_teached_lesson     user_lesson_teached_substitute_at_school_relation[]
+  attended_external_lessons      user_lesson_external_student_at_school_relation[]
+  class_admin                    user_class_admin_at_school_relation[]
+  subject_admin                  subject_admin[]
+  subject_class_teacher_relation subject_class_teacher_relation[]
 }
 
-model UserSchoolRelation {
-  UserId             String             @db.Uuid
-  SchoolId           String             @db.Uuid
-  SchoolRelationType SchoolRelationType
+model user_school_relation {
+  user_id              String               @db.Uuid
+  school_id            String               @db.Uuid
+  school_relation_type school_relation_type
 
-  User   User   @relation(fields: [UserId], references: [Id])
-  School School @relation(fields: [SchoolId], references: [Id])
+  user   user   @relation(fields: [user_id], references: [id])
+  school school @relation(fields: [school_id], references: [id], onUpdate: Restrict)
 
-  @@id([UserId, SchoolId])
-  @@index([UserId])
+  @@id([user_id, school_id])
+  @@index([user_id])
 }
 
-model School {
-  Id   String @id @default(uuid()) @db.Uuid
-  Name String
+model user_classes_at_school_relation {
+  user_id   String @db.Uuid
+  school_id String @db.Uuid
+  class_id  String @db.Uuid
 
-  SchoolSettings      SchoolSettings?
-  Classes             Class[]
-  UserSchoolRelation  UserSchoolRelation[]
-  Subject             Subject[]
-  MarkEventCategories MarkEventCategory[]
+  user   user         @relation(fields: [user_id], references: [id])
+  school school       @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  class  school_class @relation(fields: [class_id, school_id], references: [id, school_id], onUpdate: Restrict)
+
+  @@id([user_id, school_id, class_id])
 }
 
-model SchoolSettings {
-  Id       String @id @default(uuid()) @db.Uuid
-  SchoolId String @unique @db.Uuid
+model user_class_admin_at_school_relation {
+  user_id   String @db.Uuid
+  school_id String @db.Uuid
+  class_id  String @db.Uuid
 
-  School School @relation(fields: [SchoolId], references: [Id], onDelete: Cascade)
+  user   user         @relation(fields: [user_id], references: [id])
+  school school       @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  class  school_class @relation(fields: [class_id, school_id], references: [id, school_id], onUpdate: Restrict)
+
+  @@id([user_id, school_id, class_id])
 }
 
-model SubjectClassTeacherRelation {
-  SubjectId String @db.Uuid
-  ClassId   String @db.Uuid
-  TeacherId String @db.Uuid
+model user_lesson_teached_at_school_relation {
+  user_id   String @db.Uuid
+  school_id String @db.Uuid
+  lesson_id String @db.Uuid
 
-  Subject Subject @relation(fields: [SubjectId], references: [Id])
-  Class   Class   @relation(fields: [ClassId], references: [Id])
-  Teacher User    @relation(fields: [TeacherId], references: [Id])
+  user   user   @relation(fields: [user_id], references: [id])
+  school school @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  lesson lesson @relation(fields: [lesson_id, school_id], references: [id, school_id], onUpdate: Restrict)
 
-  @@id([SubjectId, ClassId, TeacherId])
-  @@index([ClassId])
+  @@id([user_id, school_id, lesson_id])
 }
 
-model SubjectAdmin {
-  UserId    String @db.Uuid
-  SubjectId String @db.Uuid
-  Permisson String @db.VarBit
+model user_lesson_teached_substitute_at_school_relation {
+  user_id   String @db.Uuid
+  school_id String @db.Uuid
+  lesson_id String @db.Uuid
 
-  User    User    @relation(fields: [UserId], references: [Id])
-  Subject Subject @relation(fields: [SubjectId], references: [Id])
-  Class   Class?  @relation(fields: [classId], references: [Id])
-  classId String? @db.Uuid
+  user   user   @relation(fields: [user_id], references: [id])
+  school school @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  lesson lesson @relation(fields: [lesson_id, school_id], references: [id, school_id], onUpdate: Restrict)
 
-  @@id([UserId, SubjectId])
-  @@index([UserId])
+  @@id([user_id, school_id, lesson_id])
 }
 
-model Class {
-  Id                  String  @id @default(uuid()) @db.Uuid
-  Name                String
-  SchoolId            String  @db.Uuid
-  ClassAdminId        String  @db.Uuid
-  ParentClassId       String  @db.Uuid
-  AnyExternalStudents Boolean
+model user_lesson_external_student_at_school_relation {
+  user_id   String @db.Uuid
+  school_id String @db.Uuid
+  lesson_id String @db.Uuid
 
-  ParentClass                 Class?                        @relation("ParentClass", fields: [ParentClassId], references: [Id])
-  ChildClass                  Class[]                       @relation("ParentClass")
-  school                      School                        @relation(fields: [SchoolId], references: [Id])
-  Users                       User[]                        @relation("UserClass")
-  Lesson                      Lesson[]                      @relation("LessonClass")
-  ClassAdmin                  User[]                        @relation("ClassAdmin")
-  SubjectAdmin                SubjectAdmin[]
-  MarkEvent                   MarkEvent[]
-  SubjectClassTeacherRelation SubjectClassTeacherRelation[]
+  user   user   @relation(fields: [user_id], references: [id])
+  school school @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  lesson lesson @relation(fields: [lesson_id, school_id], references: [id, school_id], onUpdate: Restrict)
+
+  @@id([user_id, school_id, lesson_id])
 }
 
-model Lesson {
-  Id                  String    @id @default(uuid()) @db.Uuid
-  Topic               String
-  Attendance          Json
-  Starts              DateTime
-  Ends                DateTime
-  Canceled            Boolean
-  SubjectId           String    @db.Uuid
-  SubstituteSubjectId String?   @db.Uuid
-  SubstituteStarts    DateTime?
-  SubstituteEnds      DateTime?
+model school {
+  id   String @id @default(uuid()) @db.Uuid
+  name String
 
-  Class              Class[]     @relation("LessonClass")
-  Subject            Subject     @relation("LessonSubject", fields: [SubjectId], references: [Id])
-  SubstituteSubject  Subject?    @relation("LessonSubstituteSubject", fields: [SubstituteSubjectId], references: [Id])
-  MarkEvent          MarkEvent[]
-  Teachers           User[]      @relation("LessonTeacher")
-  SubstituteTeachers User[]      @relation("SubstituteLessonTeacher")
-  ExternalStudents   User[]      @relation("LessonExternalStudent")
-
-  @@index([Starts, Ends])
+  school_settings                                   school_settings?
+  classes                                           school_class[]
+  user_school_relation                              user_school_relation[]
+  subject                                           subject[]
+  mark_event_categories                             mark_event_category[]
+  subject_class_teacher_relation                    subject_class_teacher_relation[]
+  subject_admin                                     subject_admin[]
+  user_classes_at_school_relation                   user_classes_at_school_relation[]
+  user_class_admin_at_school_relation               user_class_admin_at_school_relation[]
+  user_lesson_teached_at_school_relation            user_lesson_teached_at_school_relation[]
+  user_lesson_teached_substitute_at_school_relation user_lesson_teached_substitute_at_school_relation[]
+  user_lesson_external_student_at_school_relation   user_lesson_external_student_at_school_relation[]
+  class_lesson_at_school_relation                   class_lesson_at_school_relation[]
 }
 
-model Subject {
-  Id       String @id @default(uuid()) @db.Uuid
-  Name     String
-  SchoolId String @db.Uuid
+model school_settings {
+  id        String @default(uuid()) @db.Uuid
+  school_id String @unique @db.Uuid
 
-  School                      School                        @relation(fields: [SchoolId], references: [Id])
-  Lesson                      Lesson[]                      @relation("LessonSubject")
-  SubstitudeLesson            Lesson[]                      @relation("LessonSubstituteSubject")
-  MarkEvent                   MarkEvent[]
-  Mark                        Mark[]
-  SubjectAdmin                SubjectAdmin[]
-  SubjectClassTeacherRelation SubjectClassTeacherRelation[]
+  school school @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+
+  @@id([id, school_id])
 }
 
-model MarkEvent {
-  Id                    String   @id @default(uuid()) @db.Uuid
-  LessonId              String?  @db.Uuid
-  ClassId               String   @db.Uuid
-  SubjectId             String   @db.Uuid // easly and efficently load all mark for a given subject
-  LessonEventCategoryId String   @db.Uuid
-  AssociatedMarks       Boolean // Weather to show column
-  Name                  String
-  MarkType              MarkType
-  ValueTypeValue        Int // Just int
-  Canceled              Boolean
+model subject_class_teacher_relation {
+  school_id  String @db.Uuid
+  subject_id String @db.Uuid
+  class_id   String @db.Uuid
+  teacher_id String @db.Uuid
 
-  Lesson            Lesson?           @relation(fields: [LessonId], references: [Id])
-  Class             Class?            @relation(fields: [ClassId], references: [Id])
-  Subject           Subject           @relation(fields: [SubjectId], references: [Id])
-  MarkEventCategory MarkEventCategory @relation(fields: [LessonEventCategoryId], references: [Id])
-  Mark              Mark[]
+  school  school       @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  subject subject      @relation(fields: [subject_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  class   school_class @relation(fields: [class_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  teacher user         @relation(fields: [teacher_id], references: [id])
+
+  @@id([school_id, subject_id, class_id, teacher_id])
+  @@index([class_id])
 }
 
-model Mark {
-  Id            String @id @default(uuid()) @db.Uuid
-  StudentId     String @db.Uuid
-  LessonEventId String @db.Uuid
-  SubjectId     String @db.Uuid
-  TeacherId     String @db.Uuid
-  Description   String
-  Value         Int
+model subject_admin {
+  school_id  String @db.Uuid
+  user_id    String @db.Uuid
+  subject_id String @db.Uuid
+  permisson  String @db.VarBit
 
-  Student   User       @relation("StudentMark", fields: [StudentId], references: [Id])
-  MarkEvent MarkEvent? @relation(fields: [LessonEventId], references: [Id])
-  Subject   Subject?   @relation(fields: [SubjectId], references: [Id])
-  Teacher   User       @relation("TeacherMark", fields: [TeacherId], references: [Id])
+  school  school  @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  user    user    @relation(fields: [user_id], references: [id])
+  subject subject @relation(fields: [subject_id, school_id], references: [id, school_id], onUpdate: Restrict)
+
+  @@id([school_id, user_id, subject_id])
+  @@index([user_id])
 }
 
-model MarkEventCategory {
-  Id                                    String  @id @default(uuid()) @db.Uuid
-  SchoolId                              String  @db.Uuid
-  AllowedMarkTypesAndTheirDefaultValues Json // {type1:0, type2:0} - allways numeric or not? maybe?
-  Name                                  String
-  ForceWeigtBase                        Boolean
+model school_class {
+  id                    String  @default(uuid()) @db.Uuid
+  school_id             String  @db.Uuid
+  name                  String
+  class_admin_id        String  @db.Uuid
+  parent_class_id       String  @db.Uuid
+  any_external_students Boolean
 
-  School    School      @relation(fields: [SchoolId], references: [Id])
-  MarkEvent MarkEvent[]
+  parent_class                   school_class?                         @relation("parent_class", fields: [parent_class_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  child_class                    school_class[]                        @relation("parent_class")
+  school                         school                                @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  students                       user_classes_at_school_relation[]
+  lesson                         class_lesson_at_school_relation[]
+  class_admin                    user_class_admin_at_school_relation[]
+  mark_event                     mark_event[]
+  subject_class_teacher_relation subject_class_teacher_relation[]
+
+  @@id([id, school_id])
+}
+
+model class_lesson_at_school_relation {
+  lesson_id String @db.Uuid
+  school_id String @db.Uuid
+  class_id  String @db.Uuid
+
+  lesson lesson       @relation(fields: [lesson_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  school school       @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  class  school_class @relation(fields: [class_id, school_id], references: [id, school_id], onUpdate: Restrict)
+
+  @@id([lesson_id, school_id, class_id])
+}
+
+model lesson {
+  id                    String    @default(uuid()) @db.Uuid
+  school_id             String    @db.Uuid
+  topic                 String
+  attendance            Json
+  starts                DateTime
+  ends                  DateTime
+  canceled              Boolean
+  subject_id            String    @db.Uuid
+  substitute_subject_id String?   @db.Uuid
+  substitute_starts     DateTime?
+  substitute_ends       DateTime?
+
+  class               class_lesson_at_school_relation[]
+  subject             subject                                             @relation("lesson_subject", fields: [subject_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  substitute_subject  subject?                                            @relation("lesson_substitute_subject", fields: [substitute_subject_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  mark_event          mark_event[]
+  teachers            user_lesson_teached_at_school_relation[]
+  substitute_teachers user_lesson_teached_substitute_at_school_relation[]
+  external_students   user_lesson_external_student_at_school_relation[]
+
+  @@id([id, school_id])
+  @@index([starts, ends])
+}
+
+model subject {
+  id        String @default(uuid()) @db.Uuid
+  school_id String @db.Uuid
+  name      String
+
+  school                         school                           @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  lesson                         lesson[]                         @relation("lesson_subject")
+  substitude_lesson              lesson[]                         @relation("lesson_substitute_subject")
+  mark_event                     mark_event[]
+  mark                           mark[]
+  subject_admin                  subject_admin[]
+  subject_class_teacher_relation subject_class_teacher_relation[]
+
+  @@id([id, school_id])
+}
+
+model mark_event {
+  id                       String    @default(uuid()) @db.Uuid
+  school_id                String    @db.Uuid
+  lesson_id                String?   @db.Uuid
+  class_id                 String    @db.Uuid
+  subject_id               String    @db.Uuid // easly and efficently load all mark for a given subject
+  lesson_event_category_id String    @db.Uuid
+  associated_marks         Boolean // Weather to show column
+  name                     String
+  mark_type                mark_type
+  value_type_value         Int // Just int
+  canceled                 Boolean
+
+  lesson              lesson?             @relation(fields: [lesson_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  class               school_class?       @relation(fields: [class_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  subject             subject             @relation(fields: [subject_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  mark_event_category mark_event_category @relation(fields: [lesson_event_category_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  mark                mark[]
+
+  @@id([id, school_id])
+}
+
+model mark {
+  id              String @default(uuid()) @db.Uuid
+  school_id       String @db.Uuid
+  student_id      String @db.Uuid
+  lesson_event_id String @db.Uuid
+  subject_id      String @db.Uuid
+  teacher_id      String @db.Uuid
+  description     String
+  value           Int
+
+  student    user        @relation("student_mark", fields: [student_id], references: [id])
+  mark_event mark_event? @relation(fields: [lesson_event_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  subject    subject?    @relation(fields: [subject_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  teacher    user        @relation("teacher_mark", fields: [teacher_id], references: [id])
+
+  @@id([id, school_id])
+}
+
+model mark_event_category {
+  id                                          String  @default(uuid()) @db.Uuid
+  school_id                                   String  @db.Uuid
+  allowed_mark_types_and_their_default_values Json // {type1:0, type2:0} - allways numeric or not? maybe?
+  name                                        String
+  force_weigt_base                            Boolean
+
+  school     school       @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  mark_event mark_event[]
+
+  @@id([id, school_id])
 }
