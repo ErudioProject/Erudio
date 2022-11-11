@@ -36,7 +36,6 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 		.create(
 			argon2::hash_raw(req.password.as_bytes(), &salt, &ARGON_CONFIG).map_err(Into::<ApiError>::into)?,
 			false,
-			GrammaticalForm::Indeterminate,
 			vec![],
 		)
 		.exec()
@@ -45,10 +44,9 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 	let pii_data = ctx
 		.db
 		.pii_data()
-		.create(user::id::equals(user.id.clone()), vec![pii_data::email::Set(Some(
-			req.email,
-		))
-		.into()])
+		.create(GrammaticalForm::Indeterminate, user::id::equals(user.id.clone()), vec![
+			pii_data::email::Set(Some(req.email)).into(),
+		])
 		.exec()
 		.await?;
 

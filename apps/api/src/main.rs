@@ -9,7 +9,7 @@ use crate::{
 	routes::{router, Ctx},
 };
 use axum::routing::get;
-use backend_prisma_client::prisma;
+use backend_prisma_client::{prisma, prisma::PrismaClient};
 use color_eyre::eyre;
 use log::{error, info};
 use std::{
@@ -37,11 +37,13 @@ async fn start() -> eyre::Result<()> {
 	#[cfg(target_family = "windows")]
 	let url = env::var("DATABASE_URL_WIN").context("No DATABASE_URL_WIN environmental variable")?;
 
-	let db: Arc<prisma::PrismaClient> = Arc::new(
-		prisma::new_client_with_url(&url)
+	let db: Arc<PrismaClient> = Arc::new(
+		PrismaClient::_builder()
+			.with_url(url)
+			.build()
 			.await
 			.map_err(|err| eyre!("Database client error: {:?}", err))?,
-	); // Update on new release
+	);
 
 	let redis = redis::Client::open("redis://127.0.0.1/")?;
 	let conn = redis.get_multiplexed_async_connection().await?;

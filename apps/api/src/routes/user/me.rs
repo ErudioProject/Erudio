@@ -1,12 +1,12 @@
 use crate::routes::{AuthCtx, RspcResult};
 use backend_error_handler::ApiError;
-use backend_prisma_client::prisma::{user, GrammaticalForm};
+use backend_prisma_client::prisma::user;
 use rspc::ErrorCode;
 
 user::select!(user_data {
 	two_factor_auth
-	grammatical_form
 	pii_data: select {
+		grammatical_form
 		email
 		pesel
 		birth_date
