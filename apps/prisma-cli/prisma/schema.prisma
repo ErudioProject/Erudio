@@ -30,6 +30,51 @@ enum MarkType {
   Custom
 }
 
+model Session {
+  UserId     String   @db.Uuid
+  SessionId  Bytes    @unique
+  ValidUntil DateTime
+
+  User User @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+
+  @@index([UserId])
+  @@index([ValidUntil])
+}
+
+model PiiData {
+  Id              String          @id @default(uuid()) @db.Uuid
+  UserId          String          @unique @db.Uuid
+  GrammaticalForm GrammaticalForm
+  Email           String?         @unique
+  Pesel           String?
+  BirthDate       DateTime?
+  LegalName       String?
+  DisplayName     String?
+  PhonePrefix     String?
+  PhoneNumber     String?         @unique
+
+  User User @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+}
+
+model User {
+  Id            String  @id @default(uuid()) @db.Uuid
+  PasswordHash  Bytes
+  TwoFactorAuth Boolean
+
+  PiiData                     PiiData?
+  Session                     Session[]
+  UserSchoolRelation          UserSchoolRelation[]
+  UserClasses                 Class[]                       @relation("UserClass")
+  UserPrimaryClasses          Class[]                       @relation("UserClassPrimary")
+  MarkGotten                  Mark[]                        @relation("StudentMark")
+  MarkGiven                   Mark[]                        @relation("TeacherMark")
+  TeachedLesson               Lesson[]                      @relation("LessonTeacher")
+  HomeroomTeached             Class[]                       @relation("ClassHomeroormTeacher")
+  TeacherSubjectManager       TeacherSubjectManager[]
+  SubjectClassTeacherRelation SubjectClassTeacherRelation[]
+}
+
+
 model UserSchoolRelation {
   UserId             String             @db.Uuid
   SchoolId           String             @db.Uuid
@@ -41,6 +86,25 @@ model UserSchoolRelation {
   @@id([UserId, SchoolId])
   @@index([UserId])
 }
+
+model School {
+  Id   String @id @default(uuid()) @db.Uuid
+  Name String
+
+  SchoolSettings     SchoolSettings?
+  Classes            Class[]
+  UserSchoolRelation UserSchoolRelation[]
+  Subject            Subject[]
+  MarkCategories     LessonEventCategory[]
+}
+
+model SchoolSettings {
+  Id       String @id @default(uuid()) @db.Uuid
+  SchoolId String @unique @db.Uuid
+
+  School School @relation(fields: [SchoolId], references: [Id], onDelete: Cascade)
+}
+
 
 model SubjectClassTeacherRelation {
   SubjectId String @db.Uuid
@@ -65,68 +129,6 @@ model TeacherSubjectManager {
 
   @@id([UserId, SubjectId])
   @@index([UserId])
-}
-
-model Session {
-  UserId     String   @db.Uuid
-  SessionId  Bytes    @unique
-  ValidUntil DateTime
-
-  User User @relation(fields: [UserId], references: [Id], onDelete: Cascade)
-
-  @@index([UserId])
-  @@index([ValidUntil])
-}
-
-model User {
-  Id            String  @id @default(uuid()) @db.Uuid
-  PasswordHash  Bytes
-  TwoFactorAuth Boolean
-
-  PiiData                     PiiData?
-  Session                     Session[]
-  UserSchoolRelation          UserSchoolRelation[]
-  UserClasses                 Class[]                       @relation("UserClass")
-  UserPrimaryClasses          Class[]                       @relation("UserClassPrimary")
-  MarkGotten                  Mark[]                        @relation("StudentMark")
-  MarkGiven                   Mark[]                        @relation("TeacherMark")
-  TeachedLesson               Lesson[]                      @relation("LessonTeacher")
-  HomeroomTeached             Class[]                       @relation("ClassHomeroormTeacher")
-  TeacherSubjectManager       TeacherSubjectManager[]
-  SubjectClassTeacherRelation SubjectClassTeacherRelation[]
-}
-
-model PiiData {
-  Id              String          @id @default(uuid()) @db.Uuid
-  UserId          String          @unique @db.Uuid
-  GrammaticalForm GrammaticalForm
-  Email           String?         @unique
-  Pesel           String?
-  BirthDate       DateTime?
-  LegalName       String?
-  DisplayName     String?
-  PhonePrefix     String?
-  PhoneNumber     String?         @unique
-
-  User User @relation(fields: [UserId], references: [Id], onDelete: Cascade)
-}
-
-model School {
-  Id   String @id @default(uuid()) @db.Uuid
-  Name String
-
-  SchoolSettings     SchoolSettings?
-  Classes            Class[]
-  UserSchoolRelation UserSchoolRelation[]
-  Subject            Subject[]
-  MarkCategories     LessonEventCategory[]
-}
-
-model SchoolSettings {
-  Id       String @id @default(uuid()) @db.Uuid
-  SchoolId String @unique @db.Uuid
-
-  School School @relation(fields: [SchoolId], references: [Id], onDelete: Cascade)
 }
 
 model Class {
