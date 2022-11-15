@@ -1,5 +1,5 @@
 {
-  "name": "@erudio/frontend/data-access/i18n",
+  "name": "@erudio/i18n",
   "version": "0.0.1",
   "type": "commonjs",
   "exports": {

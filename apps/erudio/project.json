@@ -22,6 +22,14 @@
     "serve": {
       "executor": "nx:run-script",
       "options": {
+        "script": "start",
+        "outputPath": "dist/apps/erudio",
+        "frameworkConfigFile": "@nxext/solid/plugins/vite"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-script",
+      "options": {
         "script": "dev",
         "outputPath": "dist/apps/erudio",
         "frameworkConfigFile": "@nxext/solid/plugins/vite"

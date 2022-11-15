@@ -1,8 +1,8 @@
 import { createRouteAction, createRouteData, Navigate, redirect, useRouteData } from "solid-start";
 import { Show } from "solid-js";
-import { useClient } from "@erudio/frontend/data-access/api";
-import { LoginPage } from "@erudio/frontend/ui/login-page";
-import { useI18nContext } from "@erudio/frontend/data-access/i18n";
+import { useClient } from "@erudio/api";
+import { LoginPage } from "@erudio/login-page";
+import { useI18nContext } from "@erudio/i18n";
 import Alert from "@suid/material/Alert";
 
 export function getMe() {
@@ -22,10 +22,14 @@ function SessionFlow() {
         async (formData: FormData) => {
             const email = formData.get("email") as string;
             const password = formData.get("password") as string;
-            const res = await client.getFetchClient().query(["public.login", { email: email, password: password }]);
-            if (res.t === "Success")
-                return redirect("/dashboard")
-            throw new Error("Invalid login details")
+            client.getFetchClient().query(["public.login", { email: email, password: password }])
+                .then(res => {
+                    if (res.t === "Success")
+                        return redirect("/dashboard")
+                })
+                .catch(e => {
+                    throw e
+                })
         }
     );
     return (

@@ -12,9 +12,9 @@ import {
     Title,
 } from "solid-start";
 import "./root.css";
-import { loadLocaleAsync, TypesafeI18n, usePrefferedLocale } from "@erudio/frontend/data-access/i18n";
+import { loadLocaleAsync, TypesafeI18n, usePrefferedLocale } from "@erudio/i18n";
 import Container from "@suid/material/Container";
-import { ClientProvider } from "@erudio/frontend/data-access/api";
+import { ClientProvider } from "@erudio/api";
 
 export default function Root() {
     //TODO: fix/file vite issue:

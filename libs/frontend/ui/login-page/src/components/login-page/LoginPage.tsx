@@ -1,6 +1,6 @@
 import Box from "@suid/material/Box";
 import TextField from "@suid/material/TextField";
-import { useI18nContext } from "@erudio/frontend/data-access/i18n";
+import { useI18nContext } from "@erudio/i18n";
 import { ElementType } from "@suid/types/solid";
 import Button from "@suid/material/Button";
 
