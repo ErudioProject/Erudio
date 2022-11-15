@@ -20,6 +20,22 @@ type RootTranslation = {
 	 * @param {unknown} name
 	 */
 	HI: RequiredParams<'name'>
+	/**
+	 * E​m​a​i​l
+	 */
+	EMAIL: string
+	/**
+	 * H​a​s​ł​o
+	 */
+	PASSWORD: string
+	/**
+	 * Z​a​l​o​g​u​j​ ​s​i​ę
+	 */
+	LOGINBUTTON: string
+	/**
+	 * N​i​e​p​r​a​w​i​d​ł​o​w​e​ ​d​a​n​e​ ​l​o​g​o​w​a​n​i​a
+	 */
+	INVALIDLOGIN: string
 }
 
 export type TranslationFunctions = {
@@ -27,6 +43,22 @@ export type TranslationFunctions = {
 	 * Cześć {name}!
 	 */
 	HI: (arg: { name: unknown }) => LocalizedString
+	/**
+	 * Email
+	 */
+	EMAIL: () => LocalizedString
+	/**
+	 * Hasło
+	 */
+	PASSWORD: () => LocalizedString
+	/**
+	 * Zaloguj się
+	 */
+	LOGINBUTTON: () => LocalizedString
+	/**
+	 * Nieprawidłowe dane logowania
+	 */
+	INVALIDLOGIN: () => LocalizedString
 }
 
 export type Formatters = {}
