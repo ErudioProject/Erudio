@@ -1,5 +1,4 @@
 use crate::routes::{AuthCtx, RspcResult};
-use backend_error_handler::ApiError;
 use backend_prisma_client::prisma::user;
 use rspc::ErrorCode;
 
@@ -17,6 +16,15 @@ user::select!(user_data {
 		phone_prefix
 		phone_number
 	}
+	user_school_relation: select {
+		school: select {
+			name
+			previus_data
+			school_settings: select {
+				previus_data
+			}
+		}
+	}
 });
 
 pub(crate) async fn me(ctx: AuthCtx, _: ()) -> RspcResult<user_data::Data> {
@@ -27,6 +35,6 @@ pub(crate) async fn me(ctx: AuthCtx, _: ()) -> RspcResult<user_data::Data> {
 		.select(user_data::select())
 		.exec()
 		.await?
-		.ok_or_else(|| ApiError::Rspc(rspc::Error::new(ErrorCode::NotFound, "User not found".into())))?;
+		.ok_or_else(|| rspc::Error::new(ErrorCode::NotFound, "User not found".into()))?;
 	Ok(user)
 }
