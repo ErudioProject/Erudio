@@ -13,6 +13,8 @@ import {
 } from "solid-start";
 import "./root.css";
 import { loadLocaleAsync, TypesafeI18n, usePrefferedLocale } from "@erudio/frontend/data-access/i18n";
+import Container from "@suid/material/Container";
+import { ClientProvider } from "@erudio/frontend/data-access/api";
 
 export default function Root() {
     //TODO: fix/file vite issue:
@@ -32,9 +34,13 @@ export default function Root() {
                     <ErrorBoundary>
                         <Show when={localeLoaded()}>
                             <TypesafeI18n locale={lang}>
-                                <Routes>
-                                    <FileRoutes />
-                                </Routes>
+                                <ClientProvider url="https://localhost:3001">
+                                    <Container>
+                                        <Routes>
+                                            <FileRoutes />
+                                        </Routes>
+                                    </Container>
+                                </ClientProvider>
                             </TypesafeI18n>
                         </Show>
                     </ErrorBoundary>

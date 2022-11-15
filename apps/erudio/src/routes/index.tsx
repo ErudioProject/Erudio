@@ -1,9 +1,11 @@
-import { useI18nContext } from "@erudio/frontend/data-access/i18n";
-import Button from "@suid/material/Button";
+import { SessionFlow, getMe } from "@erudio/frontend/features/authentication";
+
+export function routeData() {
+    return getMe();
+}
 
 export default function Index() {
-    const { LL } = useI18nContext();
     return (
-        <Button variant="contained">{LL().HI({ name: "Patryk" })}</Button>
+        <SessionFlow />
     )
 }
