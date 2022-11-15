@@ -9,13 +9,13 @@ services:
       - "8000:3000"
     environment:
       DATABASE_URL: postgresql://postgres:password@db:5432/erudio?schema=public
-      RUST_LOG: info,hyper=warn
+      RUST_LOG: info,hyper=warn,tokio_postgres=info
       RUST_LOG_STYLE: always
     depends_on:
       - db
       - redis
   db:
-    image: citusdata/citus:11.1
+    image: postgres
     restart: unless-stopped
     ports:
       - "5432:5432"
