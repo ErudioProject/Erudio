@@ -35,7 +35,6 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 		.user()
 		.create(
 			argon2::hash_raw(req.password.as_bytes(), &salt, &ARGON_CONFIG).map_err(Into::<ApiError>::into)?,
-			false,
 			vec![],
 		)
 		.exec()

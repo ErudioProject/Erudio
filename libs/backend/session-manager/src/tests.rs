@@ -10,6 +10,7 @@ use std::{env, sync::Arc};
 
 #[tokio::test]
 async fn init_load_destroy() -> ApiResult<()> {
+	//TODO rewrite complete rewrite
 	dotenvy::dotenv().ok();
 	env_logger::init();
 	#[cfg(target_family = "unix")]
@@ -42,7 +43,7 @@ async fn init_load_destroy() -> ApiResult<()> {
 	// TODO replace with transaction once supported Also some auto test user creation maybe
 	let user = db
 		.user()
-		.create(vec![], false, vec![])
+		.create(vec![], vec![])
 		.exec()
 		.await
 		.expect("Db error user");

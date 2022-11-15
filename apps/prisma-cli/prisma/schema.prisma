@@ -53,6 +53,14 @@ model pii_data {
   display_name     String?
   phone_prefix     String?
   phone_number     String?          @unique
+  previus_data     Json[]
+
+  user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model two_factor_auth_settings {
+  id      String @id @default(uuid()) @db.Uuid
+  user_id String @unique @db.Uuid
 
   user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
@@ -60,135 +68,49 @@ model pii_data {
 model user {
   id              String  @id @default(uuid()) @db.Uuid
   password_hash   Bytes
-  two_factor_auth Boolean
+  two_factor_auth String? @db.Uuid
 
   pii_data                       pii_data?
+  two_factor_auth_settings       two_factor_auth_settings?
   session                        session[]
   user_school_relation           user_school_relation[]
   user_classes                   user_classes_at_school_relation[]
-  mark_gotten                    mark[]                                              @relation("student_mark")
-  mark_given                     mark[]                                              @relation("teacher_mark")
+  mark_gotten                    mark[]                                            @relation("student_mark")
+  mark_given                     mark[]                                            @relation("teacher_mark")
   teached_lesson                 user_lesson_teached_at_school_relation[]
-  subbstitute_teached_lesson     user_lesson_teached_substitute_at_school_relation[]
   attended_external_lessons      user_lesson_external_student_at_school_relation[]
   class_admin                    user_class_admin_at_school_relation[]
   subject_admin                  subject_admin[]
   subject_class_teacher_relation subject_class_teacher_relation[]
 }
 
-model user_school_relation {
-  user_id              String               @db.Uuid
-  school_id            String               @db.Uuid
-  school_relation_type school_relation_type
-
-  user   user   @relation(fields: [user_id], references: [id])
-  school school @relation(fields: [school_id], references: [id], onUpdate: Restrict)
-
-  @@id([user_id, school_id])
-  @@index([user_id])
-}
-
-model user_classes_at_school_relation {
-  user_id   String @db.Uuid
-  school_id String @db.Uuid
-  class_id  String @db.Uuid
-
-  user   user         @relation(fields: [user_id], references: [id])
-  school school       @relation(fields: [school_id], references: [id], onUpdate: Restrict)
-  class  school_class @relation(fields: [class_id, school_id], references: [id, school_id], onUpdate: Restrict)
-
-  @@id([user_id, school_id, class_id])
-}
-
-model user_class_admin_at_school_relation {
-  user_id   String @db.Uuid
-  school_id String @db.Uuid
-  class_id  String @db.Uuid
-
-  user   user         @relation(fields: [user_id], references: [id])
-  school school       @relation(fields: [school_id], references: [id], onUpdate: Restrict)
-  class  school_class @relation(fields: [class_id, school_id], references: [id, school_id], onUpdate: Restrict)
-
-  @@id([user_id, school_id, class_id])
-}
-
-model user_lesson_teached_at_school_relation {
-  user_id   String @db.Uuid
-  school_id String @db.Uuid
-  lesson_id String @db.Uuid
-
-  user   user   @relation(fields: [user_id], references: [id])
-  school school @relation(fields: [school_id], references: [id], onUpdate: Restrict)
-  lesson lesson @relation(fields: [lesson_id, school_id], references: [id, school_id], onUpdate: Restrict)
-
-  @@id([user_id, school_id, lesson_id])
-}
-
-model user_lesson_teached_substitute_at_school_relation {
-  user_id   String @db.Uuid
-  school_id String @db.Uuid
-  lesson_id String @db.Uuid
-
-  user   user   @relation(fields: [user_id], references: [id])
-  school school @relation(fields: [school_id], references: [id], onUpdate: Restrict)
-  lesson lesson @relation(fields: [lesson_id, school_id], references: [id, school_id], onUpdate: Restrict)
-
-  @@id([user_id, school_id, lesson_id])
-}
-
-model user_lesson_external_student_at_school_relation {
-  user_id   String @db.Uuid
-  school_id String @db.Uuid
-  lesson_id String @db.Uuid
-
-  user   user   @relation(fields: [user_id], references: [id])
-  school school @relation(fields: [school_id], references: [id], onUpdate: Restrict)
-  lesson lesson @relation(fields: [lesson_id, school_id], references: [id, school_id], onUpdate: Restrict)
-
-  @@id([user_id, school_id, lesson_id])
-}
-
 model school {
-  id   String @id @default(uuid()) @db.Uuid
-  name String
+  id           String @id @default(uuid()) @db.Uuid
+  name         String
+  previus_data Json[]
 
-  school_settings                                   school_settings?
-  classes                                           school_class[]
-  user_school_relation                              user_school_relation[]
-  subject                                           subject[]
-  mark_event_categories                             mark_event_category[]
-  subject_class_teacher_relation                    subject_class_teacher_relation[]
-  subject_admin                                     subject_admin[]
-  user_classes_at_school_relation                   user_classes_at_school_relation[]
-  user_class_admin_at_school_relation               user_class_admin_at_school_relation[]
-  user_lesson_teached_at_school_relation            user_lesson_teached_at_school_relation[]
-  user_lesson_teached_substitute_at_school_relation user_lesson_teached_substitute_at_school_relation[]
-  user_lesson_external_student_at_school_relation   user_lesson_external_student_at_school_relation[]
-  class_lesson_at_school_relation                   class_lesson_at_school_relation[]
+  school_settings                                 school_settings?
+  classes                                         school_class[]
+  user_school_relation                            user_school_relation[]
+  subject                                         subject[]
+  mark_event_categories                           mark_event_category[]
+  subject_class_teacher_relation                  subject_class_teacher_relation[]
+  subject_admin                                   subject_admin[]
+  user_classes_at_school_relation                 user_classes_at_school_relation[]
+  user_class_admin_at_school_relation             user_class_admin_at_school_relation[]
+  user_lesson_teached_at_school_relation          user_lesson_teached_at_school_relation[]
+  user_lesson_external_student_at_school_relation user_lesson_external_student_at_school_relation[]
+  class_lesson_at_school_relation                 class_lesson_at_school_relation[]
 }
 
 model school_settings {
-  id        String @default(uuid()) @db.Uuid
-  school_id String @unique @db.Uuid
+  id           String @default(uuid()) @db.Uuid
+  school_id    String @unique @db.Uuid
+  previus_data Json[]
 
-  school school @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  school school @relation(fields: [school_id], references: [id])
 
   @@id([id, school_id])
-}
-
-model subject_class_teacher_relation {
-  school_id  String @db.Uuid
-  subject_id String @db.Uuid
-  class_id   String @db.Uuid
-  teacher_id String @db.Uuid
-
-  school  school       @relation(fields: [school_id], references: [id], onUpdate: Restrict)
-  subject subject      @relation(fields: [subject_id, school_id], references: [id, school_id], onUpdate: Restrict)
-  class   school_class @relation(fields: [class_id, school_id], references: [id, school_id], onUpdate: Restrict)
-  teacher user         @relation(fields: [teacher_id], references: [id])
-
-  @@id([school_id, subject_id, class_id, teacher_id])
-  @@index([class_id])
 }
 
 model subject_admin {
@@ -197,9 +119,9 @@ model subject_admin {
   subject_id String @db.Uuid
   permisson  String @db.VarBit
 
-  school  school  @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  school  school  @relation(fields: [school_id], references: [id])
   user    user    @relation(fields: [user_id], references: [id])
-  subject subject @relation(fields: [subject_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  subject subject @relation(fields: [subject_id, school_id], references: [id, school_id])
 
   @@id([school_id, user_id, subject_id])
   @@index([user_id])
@@ -212,10 +134,11 @@ model school_class {
   class_admin_id        String  @db.Uuid
   parent_class_id       String  @db.Uuid
   any_external_students Boolean
+  previus_data          Json[]
 
-  parent_class                   school_class?                         @relation("parent_class", fields: [parent_class_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  parent_class                   school_class?                         @relation("parent_class", fields: [parent_class_id, school_id], references: [id, school_id])
   child_class                    school_class[]                        @relation("parent_class")
-  school                         school                                @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  school                         school                                @relation(fields: [school_id], references: [id])
   students                       user_classes_at_school_relation[]
   lesson                         class_lesson_at_school_relation[]
   class_admin                    user_class_admin_at_school_relation[]
@@ -225,51 +148,35 @@ model school_class {
   @@id([id, school_id])
 }
 
-model class_lesson_at_school_relation {
-  lesson_id String @db.Uuid
-  school_id String @db.Uuid
-  class_id  String @db.Uuid
-
-  lesson lesson       @relation(fields: [lesson_id, school_id], references: [id, school_id], onUpdate: Restrict)
-  school school       @relation(fields: [school_id], references: [id], onUpdate: Restrict)
-  class  school_class @relation(fields: [class_id, school_id], references: [id, school_id], onUpdate: Restrict)
-
-  @@id([lesson_id, school_id, class_id])
-}
-
 model lesson {
-  id                    String    @default(uuid()) @db.Uuid
-  school_id             String    @db.Uuid
-  topic                 String
-  attendance            Json
-  starts                DateTime
-  ends                  DateTime
-  canceled              Boolean
-  subject_id            String    @db.Uuid
-  substitute_subject_id String?   @db.Uuid
-  substitute_starts     DateTime?
-  substitute_ends       DateTime?
+  id           String   @default(uuid()) @db.Uuid
+  school_id    String   @db.Uuid
+  subject_id   String   @db.Uuid
+  topic        String
+  attendance   Json
+  starts       DateTime
+  ends         DateTime
+  canceled     Boolean
+  previus_data Json[]
 
-  class               class_lesson_at_school_relation[]
-  subject             subject                                             @relation("lesson_subject", fields: [subject_id, school_id], references: [id, school_id], onUpdate: Restrict)
-  substitute_subject  subject?                                            @relation("lesson_substitute_subject", fields: [substitute_subject_id, school_id], references: [id, school_id], onUpdate: Restrict)
-  mark_event          mark_event[]
-  teachers            user_lesson_teached_at_school_relation[]
-  substitute_teachers user_lesson_teached_substitute_at_school_relation[]
-  external_students   user_lesson_external_student_at_school_relation[]
+  class             class_lesson_at_school_relation[]
+  subject           subject                                           @relation("lesson_subject", fields: [subject_id, school_id], references: [id, school_id])
+  mark_event        mark_event[]
+  teachers          user_lesson_teached_at_school_relation[]
+  external_students user_lesson_external_student_at_school_relation[]
 
   @@id([id, school_id])
   @@index([starts, ends])
 }
 
 model subject {
-  id        String @default(uuid()) @db.Uuid
-  school_id String @db.Uuid
-  name      String
+  id           String @default(uuid()) @db.Uuid
+  school_id    String @db.Uuid
+  name         String
+  previus_data Json[]
 
-  school                         school                           @relation(fields: [school_id], references: [id], onUpdate: Restrict)
+  school                         school                           @relation(fields: [school_id], references: [id])
   lesson                         lesson[]                         @relation("lesson_subject")
-  substitude_lesson              lesson[]                         @relation("lesson_substitute_subject")
   mark_event                     mark_event[]
   mark                           mark[]
   subject_admin                  subject_admin[]
@@ -288,14 +195,29 @@ model mark_event {
   associated_marks         Boolean // Weather to show column
   name                     String
   mark_type                mark_type
-  value_type_value         Int // Just int
+  mark_type_value          Int // Just int
   canceled                 Boolean
+  previus_data             Json[]
 
-  lesson              lesson?             @relation(fields: [lesson_id, school_id], references: [id, school_id], onUpdate: Restrict)
-  class               school_class?       @relation(fields: [class_id, school_id], references: [id, school_id], onUpdate: Restrict)
-  subject             subject             @relation(fields: [subject_id, school_id], references: [id, school_id], onUpdate: Restrict)
-  mark_event_category mark_event_category @relation(fields: [lesson_event_category_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  lesson              lesson?             @relation(fields: [lesson_id, school_id], references: [id, school_id])
+  class               school_class?       @relation(fields: [class_id, school_id], references: [id, school_id])
+  subject             subject             @relation(fields: [subject_id, school_id], references: [id, school_id])
+  mark_event_category mark_event_category @relation(fields: [lesson_event_category_id, school_id], references: [id, school_id])
   mark                mark[]
+
+  @@id([id, school_id])
+}
+
+model mark_event_category {
+  id                                          String  @default(uuid()) @db.Uuid
+  school_id                                   String  @db.Uuid
+  allowed_mark_types_and_their_default_values Json // {type1:0, type2:0} - allways numeric or not? maybe?
+  name                                        String
+  force_weigt_base                            Boolean
+  previus_data                                Json[]
+
+  school     school       @relation(fields: [school_id], references: [id])
+  mark_event mark_event[]
 
   @@id([id, school_id])
 }
@@ -309,24 +231,101 @@ model mark {
   teacher_id      String @db.Uuid
   description     String
   value           Int
+  previus_data    Json[]
 
   student    user        @relation("student_mark", fields: [student_id], references: [id])
-  mark_event mark_event? @relation(fields: [lesson_event_id, school_id], references: [id, school_id], onUpdate: Restrict)
-  subject    subject?    @relation(fields: [subject_id, school_id], references: [id, school_id], onUpdate: Restrict)
+  mark_event mark_event? @relation(fields: [lesson_event_id, school_id], references: [id, school_id])
+  subject    subject?    @relation(fields: [subject_id, school_id], references: [id, school_id])
   teacher    user        @relation("teacher_mark", fields: [teacher_id], references: [id])
 
   @@id([id, school_id])
 }
 
-model mark_event_category {
-  id                                          String  @default(uuid()) @db.Uuid
-  school_id                                   String  @db.Uuid
-  allowed_mark_types_and_their_default_values Json // {type1:0, type2:0} - allways numeric or not? maybe?
-  name                                        String
-  force_weigt_base                            Boolean
+// Bellow onnly relation
 
-  school     school       @relation(fields: [school_id], references: [id], onUpdate: Restrict)
-  mark_event mark_event[]
+model user_school_relation {
+  user_id              String               @db.Uuid
+  school_id            String               @db.Uuid
+  school_relation_type school_relation_type
 
-  @@id([id, school_id])
+  user   user   @relation(fields: [user_id], references: [id])
+  school school @relation(fields: [school_id], references: [id])
+
+  @@id([user_id, school_id])
+  @@index([user_id])
+}
+
+model user_classes_at_school_relation {
+  user_id   String @db.Uuid
+  school_id String @db.Uuid
+  class_id  String @db.Uuid
+
+  user   user         @relation(fields: [user_id], references: [id])
+  school school       @relation(fields: [school_id], references: [id])
+  class  school_class @relation(fields: [class_id, school_id], references: [id, school_id])
+
+  @@id([user_id, school_id, class_id])
+}
+
+model user_class_admin_at_school_relation {
+  user_id   String @db.Uuid
+  school_id String @db.Uuid
+  class_id  String @db.Uuid
+
+  user   user         @relation(fields: [user_id], references: [id])
+  school school       @relation(fields: [school_id], references: [id])
+  class  school_class @relation(fields: [class_id, school_id], references: [id, school_id])
+
+  @@id([user_id, school_id, class_id])
+}
+
+model user_lesson_teached_at_school_relation {
+  user_id   String @db.Uuid
+  school_id String @db.Uuid
+  lesson_id String @db.Uuid
+
+  user   user   @relation(fields: [user_id], references: [id])
+  school school @relation(fields: [school_id], references: [id])
+  lesson lesson @relation(fields: [lesson_id, school_id], references: [id, school_id])
+
+  @@id([user_id, school_id, lesson_id])
+}
+
+model user_lesson_external_student_at_school_relation {
+  user_id   String @db.Uuid
+  school_id String @db.Uuid
+  lesson_id String @db.Uuid
+
+  user   user   @relation(fields: [user_id], references: [id])
+  school school @relation(fields: [school_id], references: [id])
+  lesson lesson @relation(fields: [lesson_id, school_id], references: [id, school_id])
+
+  @@id([user_id, school_id, lesson_id])
+}
+
+model subject_class_teacher_relation {
+  school_id  String @db.Uuid
+  subject_id String @db.Uuid
+  class_id   String @db.Uuid
+  teacher_id String @db.Uuid
+
+  school  school       @relation(fields: [school_id], references: [id])
+  subject subject      @relation(fields: [subject_id, school_id], references: [id, school_id])
+  class   school_class @relation(fields: [class_id, school_id], references: [id, school_id])
+  teacher user         @relation(fields: [teacher_id], references: [id])
+
+  @@id([school_id, subject_id, class_id, teacher_id])
+  @@index([class_id])
+}
+
+model class_lesson_at_school_relation {
+  lesson_id String @db.Uuid
+  school_id String @db.Uuid
+  class_id  String @db.Uuid
+
+  lesson lesson       @relation(fields: [lesson_id, school_id], references: [id, school_id])
+  school school       @relation(fields: [school_id], references: [id])
+  class  school_class @relation(fields: [class_id, school_id], references: [id, school_id])
+
+  @@id([lesson_id, school_id, class_id])
 }
