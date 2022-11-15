@@ -26,7 +26,7 @@ CREATE TABLE "pii_data" (
     "display_name" TEXT,
     "phone_prefix" TEXT,
     "phone_number" TEXT,
-    "previus_data" JSONB[],
+    "previous_data" JSONB[],
 
     CONSTRAINT "pii_data_pkey" PRIMARY KEY ("id")
 );
@@ -35,7 +35,7 @@ CREATE TABLE "pii_data" (
 CREATE TABLE "two_factor_auth_settings" (
     "id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
-    "placeholder_field" TEXT NOT NULL,
+    "previous_data" JSONB[],
 
     CONSTRAINT "two_factor_auth_settings_pkey" PRIMARY KEY ("id")
 );
@@ -53,7 +53,7 @@ CREATE TABLE "user" (
 CREATE TABLE "school" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
-    "previus_data" JSONB[],
+    "previous_data" JSONB[],
 
     CONSTRAINT "school_pkey" PRIMARY KEY ("id")
 );
@@ -62,7 +62,7 @@ CREATE TABLE "school" (
 CREATE TABLE "school_settings" (
     "id" UUID NOT NULL,
     "school_id" UUID NOT NULL,
-    "previus_data" JSONB[],
+    "previous_data" JSONB[],
 
     CONSTRAINT "school_settings_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -85,7 +85,7 @@ CREATE TABLE "school_class" (
     "class_admin_id" UUID NOT NULL,
     "parent_class_id" UUID NOT NULL,
     "any_external_students" BOOLEAN NOT NULL,
-    "previus_data" JSONB[],
+    "previous_data" JSONB[],
 
     CONSTRAINT "school_class_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -100,7 +100,7 @@ CREATE TABLE "lesson" (
     "starts" TIMESTAMP(3) NOT NULL,
     "ends" TIMESTAMP(3) NOT NULL,
     "canceled" BOOLEAN NOT NULL,
-    "previus_data" JSONB[],
+    "previous_data" JSONB[],
 
     CONSTRAINT "lesson_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -110,7 +110,7 @@ CREATE TABLE "subject" (
     "id" UUID NOT NULL,
     "school_id" UUID NOT NULL,
     "name" TEXT NOT NULL,
-    "previus_data" JSONB[],
+    "previous_data" JSONB[],
 
     CONSTRAINT "subject_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -128,7 +128,7 @@ CREATE TABLE "mark_event" (
     "mark_type" "mark_type" NOT NULL,
     "mark_type_value" INTEGER NOT NULL,
     "canceled" BOOLEAN NOT NULL,
-    "previus_data" JSONB[],
+    "previous_data" JSONB[],
 
     CONSTRAINT "mark_event_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -140,7 +140,7 @@ CREATE TABLE "mark_event_category" (
     "allowed_mark_types_and_their_default_values" JSONB NOT NULL,
     "name" TEXT NOT NULL,
     "force_weigt_base" BOOLEAN NOT NULL,
-    "previus_data" JSONB[],
+    "previous_data" JSONB[],
 
     CONSTRAINT "mark_event_category_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -155,7 +155,7 @@ CREATE TABLE "mark" (
     "teacher_id" UUID NOT NULL,
     "description" TEXT NOT NULL,
     "value" INTEGER NOT NULL,
-    "previus_data" JSONB[],
+    "previous_data" JSONB[],
 
     CONSTRAINT "mark_pkey" PRIMARY KEY ("id","school_id")
 );

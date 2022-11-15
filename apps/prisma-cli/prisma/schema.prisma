@@ -53,22 +53,22 @@ model pii_data {
   display_name     String?
   phone_prefix     String?
   phone_number     String?          @unique
-  previus_data     Json[]
+  previous_data    Json[]
 
   user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model two_factor_auth_settings {
-  id      String @id @default(uuid()) @db.Uuid
-  user_id String @unique @db.Uuid
-  placeholder_field String
+  id            String @id @default(uuid()) @db.Uuid
+  user_id       String @unique @db.Uuid
+  previous_data Json[]
 
   user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model user {
-  id              String  @id @default(uuid()) @db.Uuid
-  password_hash   Bytes
+  id                          String  @id @default(uuid()) @db.Uuid
+  password_hash               Bytes
   two_factor_auth_settings_id String? @db.Uuid
 
   pii_data                       pii_data?
@@ -86,9 +86,9 @@ model user {
 }
 
 model school {
-  id           String @id @default(uuid()) @db.Uuid
-  name         String
-  previus_data Json[]
+  id            String @id @default(uuid()) @db.Uuid
+  name          String
+  previous_data Json[]
 
   school_settings                                 school_settings?
   classes                                         school_class[]
@@ -105,9 +105,9 @@ model school {
 }
 
 model school_settings {
-  id           String @default(uuid()) @db.Uuid
-  school_id    String @unique @db.Uuid
-  previus_data Json[]
+  id            String @default(uuid()) @db.Uuid
+  school_id     String @unique @db.Uuid
+  previous_data Json[]
 
   school school @relation(fields: [school_id], references: [id])
 
@@ -135,7 +135,7 @@ model school_class {
   class_admin_id        String  @db.Uuid
   parent_class_id       String  @db.Uuid
   any_external_students Boolean
-  previus_data          Json[]
+  previous_data         Json[]
 
   parent_class                   school_class?                         @relation("parent_class", fields: [parent_class_id, school_id], references: [id, school_id])
   child_class                    school_class[]                        @relation("parent_class")
@@ -150,15 +150,15 @@ model school_class {
 }
 
 model lesson {
-  id           String   @default(uuid()) @db.Uuid
-  school_id    String   @db.Uuid
-  subject_id   String   @db.Uuid
-  topic        String
-  attendance   Json
-  starts       DateTime
-  ends         DateTime
-  canceled     Boolean
-  previus_data Json[]
+  id            String   @default(uuid()) @db.Uuid
+  school_id     String   @db.Uuid
+  subject_id    String   @db.Uuid
+  topic         String
+  attendance    Json
+  starts        DateTime
+  ends          DateTime
+  canceled      Boolean
+  previous_data Json[]
 
   class             class_lesson_at_school_relation[]
   subject           subject                                           @relation("lesson_subject", fields: [subject_id, school_id], references: [id, school_id])
@@ -171,10 +171,10 @@ model lesson {
 }
 
 model subject {
-  id           String @default(uuid()) @db.Uuid
-  school_id    String @db.Uuid
-  name         String
-  previus_data Json[]
+  id            String @default(uuid()) @db.Uuid
+  school_id     String @db.Uuid
+  name          String
+  previous_data Json[]
 
   school                         school                           @relation(fields: [school_id], references: [id])
   lesson                         lesson[]                         @relation("lesson_subject")
@@ -198,7 +198,7 @@ model mark_event {
   mark_type                mark_type
   mark_type_value          Int // Just int
   canceled                 Boolean
-  previus_data             Json[]
+  previous_data            Json[]
 
   lesson              lesson?             @relation(fields: [lesson_id, school_id], references: [id, school_id])
   class               school_class?       @relation(fields: [class_id, school_id], references: [id, school_id])
@@ -215,7 +215,7 @@ model mark_event_category {
   allowed_mark_types_and_their_default_values Json // {type1:0, type2:0} - allways numeric or not? maybe?
   name                                        String
   force_weigt_base                            Boolean
-  previus_data                                Json[]
+  previous_data                               Json[]
 
   school     school       @relation(fields: [school_id], references: [id])
   mark_event mark_event[]
@@ -232,7 +232,7 @@ model mark {
   teacher_id      String @db.Uuid
   description     String
   value           Int
-  previus_data    Json[]
+  previous_data   Json[]
 
   student    user        @relation("student_mark", fields: [student_id], references: [id])
   mark_event mark_event? @relation(fields: [lesson_event_id, school_id], references: [id, school_id])

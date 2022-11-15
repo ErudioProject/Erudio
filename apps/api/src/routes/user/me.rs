@@ -4,7 +4,7 @@ use rspc::ErrorCode;
 
 user::select!(user_data {
 	two_factor_auth_settings : select {
-		placeholder_field
+		previous_data
 	}
 	pii_data: select {
 		grammatical_form
@@ -15,13 +15,14 @@ user::select!(user_data {
 		display_name
 		phone_prefix
 		phone_number
+		previous_data
 	}
 	user_school_relation: select {
 		school: select {
 			name
-			previus_data
+			previous_data
 			school_settings: select {
-				previus_data
+				previous_data
 			}
 		}
 	}
