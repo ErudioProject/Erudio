@@ -4,7 +4,9 @@ use backend_prisma_client::prisma::user;
 use rspc::ErrorCode;
 
 user::select!(user_data {
-	two_factor_auth
+	two_factor_auth_settings : select {
+		placeholder_field
+	}
 	pii_data: select {
 		grammatical_form
 		email

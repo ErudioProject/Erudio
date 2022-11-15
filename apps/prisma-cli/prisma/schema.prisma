@@ -61,6 +61,7 @@ model pii_data {
 model two_factor_auth_settings {
   id      String @id @default(uuid()) @db.Uuid
   user_id String @unique @db.Uuid
+  placeholder_field String
 
   user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
@@ -68,7 +69,7 @@ model two_factor_auth_settings {
 model user {
   id              String  @id @default(uuid()) @db.Uuid
   password_hash   Bytes
-  two_factor_auth String? @db.Uuid
+  two_factor_auth_settings_id String? @db.Uuid
 
   pii_data                       pii_data?
   two_factor_auth_settings       two_factor_auth_settings?

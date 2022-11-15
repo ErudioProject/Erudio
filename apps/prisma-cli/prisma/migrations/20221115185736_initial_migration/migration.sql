@@ -35,6 +35,7 @@ CREATE TABLE "pii_data" (
 CREATE TABLE "two_factor_auth_settings" (
     "id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
+    "placeholder_field" TEXT NOT NULL,
 
     CONSTRAINT "two_factor_auth_settings_pkey" PRIMARY KEY ("id")
 );
@@ -43,7 +44,7 @@ CREATE TABLE "two_factor_auth_settings" (
 CREATE TABLE "user" (
     "id" UUID NOT NULL,
     "password_hash" BYTEA NOT NULL,
-    "two_factor_auth" UUID,
+    "two_factor_auth_settings_id" UUID,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
 );
