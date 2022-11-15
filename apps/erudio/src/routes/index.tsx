@@ -1,4 +1,4 @@
-import { SessionFlow, getMe } from "@erudio/frontend/features/authentication";
+import { SessionFlow, getMe } from "@erudio/authentication";
 
 export function routeData() {
     return getMe();

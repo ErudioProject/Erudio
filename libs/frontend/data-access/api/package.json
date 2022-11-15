@@ -1,0 +1,7 @@
+{
+    "name": "@erudio/api",
+    "type": "commonjs",
+    "exports": {
+        ".": "./src/index.ts"
+    }
+}
