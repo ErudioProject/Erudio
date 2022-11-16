@@ -4,12 +4,17 @@ export default {
   preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
+      tsconfig: '<rootDir>/tsconfig.spec.json'
     },
   },
   transform: {
-    '^.+\\.[tj]s$': 'ts-jest',
+    '^.+\\.t(sx|s)?$': [
+      'ts-jest',
+      {
+        babelConfig: true
+      }
+    ]
   },
-  moduleFileExtensions: ['ts', 'js', 'html'],
+  moduleFileExtensions: ['ts', 'js', 'html', 'tsx'],
   coverageDirectory: '../../../../coverage/libs/frontend/data-access/api',
 };
