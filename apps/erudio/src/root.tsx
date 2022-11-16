@@ -34,7 +34,7 @@ export default function Root() {
                     <ErrorBoundary>
                         <Show when={localeLoaded()}>
                             <TypesafeI18n locale={lang}>
-                                <ClientProvider url="https://localhost:3001">
+                                <ClientProvider url={import.meta.env.VITE_API_URL}>
                                     <Container>
                                         <Routes>
                                             <FileRoutes />
