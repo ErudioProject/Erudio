@@ -3,8 +3,8 @@ import { render } from 'solid-testing-library'
 import { Component } from 'solid-js';
 import * as Data from '../../lib/frontend-data-access-api';
 
-const createFetch = jest.spyOn(Data, 'createFetchApiClient');
-const createWS = jest.spyOn(Data, 'createWSApiClient');
+const createFetch = jest.spyOn(Data, 'createFetchApiClient').mockImplementation((_: string) => Data.createMockApiClient());
+const createWS = jest.spyOn(Data, 'createWSApiClient').mockImplementation((_: string) => Data.createMockApiClient());
 const createMock = jest.spyOn(Data, 'createMockApiClient');
 
 const Child: Component = () => {
@@ -18,13 +18,13 @@ const Child: Component = () => {
 
     return (
         <>
-            Client: {client}
-            Fetch: {fetch}
-            WS: {ws}
-            Mock: {mock}
-            Fetch2: {fetch2}
-            WS2: {ws2}
-            Mock2: {mock2}
+            Client: {client.toString()}
+            Fetch: {fetch.toString()}
+            WS: {ws.toString()}
+            Mock: {mock.toString()}
+            Fetch2: {fetch2.toString()}
+            WS2: {ws2.toString()}
+            Mock2: {mock2.toString()}
         </>
     );
 }
@@ -37,8 +37,8 @@ const App: Component = () => {
     );
 }
 describe("ClientProvider", () => {
-    render(<App />);
-    it("calls create functions only once", () => {
+    render(() => <App />);
+    it("calls create clients only once", () => {
         expect(createFetch).toHaveBeenCalledTimes(1);
         expect(createWS).toHaveBeenCalledTimes(1);
         expect(createMock).toHaveBeenCalledTimes(1);
