@@ -11,11 +11,12 @@ services:
       DATABASE_URL: postgresql://postgres:password@db:5432/erudio?schema=public
       RUST_LOG: info,hyper=warn,tokio_postgres=info
       RUST_LOG_STYLE: always
+      REDIS_URL: redis://127.0.0.1/
     depends_on:
       - db
-      - redis
+      - red
   db:
-    image: postgres
+    image: postgres:15.1
     restart: unless-stopped
     ports:
       - "5432:5432"

@@ -1,17 +1,14 @@
 FROM clux/muslrust:nightly AS chef
 USER root
-RUN cargo install cargo-chef
+RUN cargo +nightly install cargo-chef
 WORKDIR /app
 
 FROM chef AS planner
 COPY . .
-RUN cargo chef prepare --recipe-path recipe.json
+RUN cargo +nightly chef prepare --recipe-path recipe.json
 
 FROM chef AS builder
 COPY --from=planner /app/recipe.json recipe.json
-# Notice that we are specifying the --target flag!
-RUN cargo chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
-COPY . .
 
 # I hate this
 RUN apt update
@@ -22,10 +19,14 @@ RUN dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 # Correcting misspeling is not allowed
 
 RUN rustup target add x86_64-unknown-linux-musl
+
+RUN cargo +nightly chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
+COPY . .
+
 WORKDIR apps/prisma-cli/
-RUN cargo run --bin prisma_cli -- generate
+RUN cargo +nightly run --release --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
 WORKDIR ../../
-RUN cargo build --release --target x86_64-unknown-linux-musl --bin api
+RUN cargo +nightly build --release --target x86_64-unknown-linux-musl --bin api
 
 
 FROM alpine AS runtime
