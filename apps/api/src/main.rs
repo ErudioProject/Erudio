@@ -51,7 +51,7 @@ async fn start() -> eyre::Result<()> {
 	#[cfg(not(debug_assertions))]
 	db._migrate_deploy().await?;
 
-	let redis_url = env::var("REDIS_URL").context("No DATABASE_URL environmental variable")?;
+	let redis_url = env::var("REDIS_URL").context("No REDIS_URL environmental variable")?;
 	let redis = redis::Client::open(redis_url)?;
 	let conn = redis.get_multiplexed_async_connection().await?;
 
@@ -77,7 +77,11 @@ async fn start() -> eyre::Result<()> {
 		)
 		.layer(CookieManagerLayer::new());
 
-	let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, 3000));
+	let port = env::var("API_PORT")
+		.context("No API_PORT environmental variable")?
+		.parse::<u16>()
+		.expect("API_PORT is invalid example value '3000'");
+	let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, port));
 
 	info!("listening on {}", addr);
 	axum::Server::try_bind(&addr)?

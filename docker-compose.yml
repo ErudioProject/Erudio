@@ -6,13 +6,12 @@ services:
       context: ./
       dockerfile: apps/api/Dockerfile
     network_mode: "host"
-    ports:
-      - "8000:3000"
     environment:
       DATABASE_URL: postgresql://postgres:password@localhost:5432/erudio?schema=public
       RUST_LOG: info,hyper=warn,tokio_postgres=info
       RUST_LOG_STYLE: always
       REDIS_URL: redis://127.0.0.1/
+      API_PORT: 3001
     depends_on:
       - db
       - redis
