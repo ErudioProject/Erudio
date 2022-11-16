@@ -1,3 +1,4 @@
+#![feature(future_join)]
 #![forbid(unsafe_code)]
 #![recursion_limit = "256"]
 extern crate argon2;
@@ -15,7 +16,8 @@ use color_eyre::eyre;
 use log::{error, info};
 use std::{
 	env,
-	net::{Ipv4Addr, SocketAddr},
+	future::join,
+	net::{Ipv4Addr, Ipv6Addr, SocketAddr},
 	sync::Arc,
 };
 use tower_cookies::{CookieManagerLayer, Cookies};
