@@ -6,6 +6,8 @@ services:
       context: ./
       dockerfile: apps/api/Dockerfile
     network_mode: "host"
+    ports:
+      - "8000:3001"
     environment:
       DATABASE_URL: postgresql://postgres:password@localhost:5432/erudio?schema=public
       RUST_LOG: info,hyper=warn,tokio_postgres=info
