@@ -1,6 +1,10 @@
 FROM clux/muslrust:nightly AS chef
 USER root
-RUN cargo +nightly install cargo-chef
+RUN apt update
+RUN apt install wget
+RUN wget https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz
+RUN tar zxvf cargo-binstall-x86_64-unknown-linux-musl.tgz -C $HOME/.cargo/bin
+RUN cargo +nightly binstall --no-confirm cargo-chef
 WORKDIR /app
 
 FROM chef AS planner
@@ -11,8 +15,6 @@ FROM chef AS builder
 COPY --from=planner /app/recipe.json recipe.json
 
 # I hate this
-RUN apt update
-RUN apt install wget
 RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 RUN dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 # And i heate it eaven more that this works
