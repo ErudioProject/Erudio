@@ -29,13 +29,11 @@ user::select!(user_data {
 });
 
 pub(crate) async fn me(ctx: AuthCtx, _: ()) -> RspcResult<user_data::Data> {
-	let user = ctx
-		.db
+	ctx.db
 		.user()
 		.find_unique(user::UniqueWhereParam::IdEquals(ctx.user.id))
 		.select(user_data::select())
 		.exec()
 		.await?
-		.ok_or_else(|| rspc::Error::new(ErrorCode::NotFound, "User not found".into()))?;
-	Ok(user)
+		.ok_or_else(|| rspc::Error::new(ErrorCode::NotFound, "User not found".into()))
 }

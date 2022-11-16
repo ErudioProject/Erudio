@@ -1,4 +1,5 @@
 #![forbid(unsafe_code)]
+#![recursion_limit = "256"]
 extern crate argon2;
 
 mod routes;
@@ -45,7 +46,13 @@ async fn start() -> eyre::Result<()> {
 			.map_err(|err| eyre!("Database client error: {:?}", err))?,
 	);
 
-	let redis = redis::Client::open("redis://127.0.0.1/")?;
+	#[cfg(debug_assertions)]
+	db._db_push().await?;
+	#[cfg(not(debug_assertions))]
+	db._migrate_deploy().await?;
+
+	let redis_url = env::var("REDIS_URL").context("No DATABASE_URL environmental variable")?;
+	let redis = redis::Client::open(redis_url)?;
 	let conn = redis.get_multiplexed_async_connection().await?;
 
 	let router = router().arced();

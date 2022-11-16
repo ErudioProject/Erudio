@@ -5,4 +5,4 @@ node_modules/
 .run/
 .idea/
 .vscode/
-/apps/api/src/prisma.rs
+/libs/backend/prisma-client/src/prisma.rs
