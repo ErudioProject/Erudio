@@ -44,7 +44,7 @@
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
     "node-fetch": "^3.3.0",
-    "nx": "15.1.1",
+    "nx": "15.0.2",
     "prettier": "^2.6.2",
     "solid-jest": "^0.2.0",
     "solid-js": "^1.6.0",
@@ -63,3 +63,4 @@
   },
   "dependencies": {}
 }
+

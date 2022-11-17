@@ -8,8 +8,8 @@ export default {
     },
   },
   transform: {
-    '^.+\\.[tj]s$': 'ts-jest',
+    '^.+\\.[tj]sx?$': 'ts-jest',
   },
-  moduleFileExtensions: ['ts', 'js', 'html'],
+  moduleFileExtensions: ['ts', 'js', 'html', 'tsx', 'jsx'],
   coverageDirectory: '../../../../coverage/libs/frontend/data-access/i18n',
 };
