@@ -1,4 +1,3 @@
-#![feature(future_join)]
 #![forbid(unsafe_code)]
 #![recursion_limit = "256"]
 extern crate argon2;
