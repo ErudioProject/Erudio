@@ -7,18 +7,16 @@ on:
 
 jobs:
   main:
-    name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.8
-    with:
-      number-of-agents: 3
-      parallel-commands: |
-        pnpx nx-cloud record -- pnpx nx workspace-lint
-        pnpx nx-cloud record -- pnpx nx format:check
-      parallel-commands-on-agents: |
-        pnpx nx affected --target=lint --parallel=3 & pnpx nx affected --target=test --parallel=3 --ci --code-coverage & pnpx nx affected --target=build --parallel=3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: nrwl/nx-set-shas@v3
+      - run: pnpm ci
 
-  agents:
-    name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.8
-    with:
-      number-of-agents: 3
+      - run: pnpx nx workspace-lint
+      - run: pnpx nx format:check
+      - run: pnpx nx affected --target=lint --parallel=3
+      - run: pnpx nx affected --target=test --parallel=3 --ci --code-coverage
+      - run: pnpx nx affected --target=build --parallel=3
