@@ -1,6 +1,7 @@
 {
   "name": "erudio",
   "version": "0.0.0",
+  "packageManager": "^pnpm@7.0.0",
   "license": "MIT",
   "scripts": {
     "tsc": "tsc",
