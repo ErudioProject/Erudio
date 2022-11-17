@@ -9,7 +9,9 @@ export function getMe() {
     return createRouteData(
         async () => {
             const client = useClient()!;
-            return (await client.getFetchClient().query(["user.me"]));
+            return client.getFetchClient().query(["user.me"]).catch(e => {
+                throw e;
+            });
         }
     );
 }
@@ -34,7 +36,7 @@ function SessionFlow() {
     );
     return (
         <>
-            <Show when={me()}>
+            <Show when={!me.error}>
                 <Navigate href="/dashboard" />
             </Show>
             <LoginPage formElement={Form} />
