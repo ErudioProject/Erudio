@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "prisma-cli",
+  "name": "prisma_cli",
   "projectType": "application",
   "sourceRoot": "apps/prisma-cli/src",
   "targets": {
