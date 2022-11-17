@@ -1,11 +1,9 @@
-import { SessionFlow, getMe } from "@erudio/authentication";
+import { SessionFlow, getMe } from '@erudio/authentication';
 
 export function routeData() {
-    return getMe();
+  return getMe();
 }
 
 export default function Index() {
-    return (
-        <SessionFlow />
-    )
+  return <SessionFlow />;
 }

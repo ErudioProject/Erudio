@@ -6,12 +6,7 @@
     "default": {
       "runner": "@nrwl/nx-cloud",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ],
+        "cacheableOperations": ["build", "lint", "test", "e2e"],
         "accessToken": "MDkxNDY2MTItOWQxNi00NWI0LTg5OGEtYjAyMDBiODE0YWQwfHJlYWQtd3JpdGU="
       }
     }
@@ -25,27 +20,16 @@
     "appsDir": "apps",
     "libsDir": "libs"
   },
-  "plugins": [
-    "@nxrs/cargo"
-  ],
+  "plugins": ["@nxrs/cargo"],
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^lint"
-      ]
+      "dependsOn": ["^lint"]
     },
     "lint": {
-      "inputs": [
-        "default",
-        "{workspaceRoot}/.eslintrc.json"
-      ]
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
     },
     "test": {
-      "inputs": [
-        "default",
-        "^default",
-        "{workspaceRoot}/jest.preset.js"
-      ]
+      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"]
     }
   },
   "defaultProject": "erudio",

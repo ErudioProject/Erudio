@@ -1,3 +1,6 @@
 export {};
 
-export { default as SessionFlow, getMe } from './components/sesssion-flow/SesssionFlow';
+export {
+  default as SessionFlow,
+  getMe,
+} from './components/sesssion-flow/SesssionFlow';
