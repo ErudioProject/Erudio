@@ -6,7 +6,7 @@ const pl: BaseTranslation = {
   EMAIL: 'Email',
   PASSWORD: 'Hasło',
   LOGINBUTTON: 'Zaloguj się',
-  INVALIDLOGIN: 'Nieprawidłowe dane logowania'
+  INVALIDLOGIN: 'Nieprawidłowe dane logowania',
 };
 
 export default pl;
