@@ -16,8 +16,7 @@ use color_eyre::eyre;
 use log::{error, info};
 use std::{
 	env,
-	future::join,
-	net::{Ipv4Addr, Ipv6Addr, SocketAddr},
+	net::{Ipv4Addr, SocketAddr},
 	sync::Arc,
 };
 use tower_cookies::{CookieManagerLayer, Cookies};
