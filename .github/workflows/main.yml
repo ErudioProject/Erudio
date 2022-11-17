@@ -10,8 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: nrwl/nx-set-shas@v3
       - uses: pnpm/action-setup@v2.2.4
+      - name: NX derive hash
+        id: setSHAs
+        uses: nrwl/nx-set-shas@v3
         with:
           version: 7
           fetch-depth: 0
