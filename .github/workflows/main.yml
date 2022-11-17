@@ -17,7 +17,7 @@ jobs:
         with:
           version: 7
 
-      - run: pnpm ci
+      - run: pnpm i
 
       - run: pnpx nx workspace-lint
       - run: pnpx nx format:check
