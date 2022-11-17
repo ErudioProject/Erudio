@@ -4,17 +4,21 @@ export default {
   preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json'
+      tsconfig: '<rootDir>/tsconfig.spec.json',
+      babelConfig: {
+        presets: [
+          "babel-preset-solid",
+          "@babel/preset-env"
+        ]
+      }
     },
   },
   transform: {
-    '^.+\\.t(sx|s)?$': [
-      'ts-jest',
-      {
-        babelConfig: true
-      }
-    ]
+    '^.+\\.t(sx|s)?$': 'ts-jest'
   },
+  transformIgnorePatterns: ["node_modules\/(?!solid-js.*|.*(?<=\.[tj]sx))$"],
+  testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ["./src/setupTests.ts"],
   moduleFileExtensions: ['ts', 'js', 'html', 'tsx'],
   coverageDirectory: '../../../../coverage/libs/frontend/data-access/api',
 };

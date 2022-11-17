@@ -3,6 +3,7 @@ import TextField from "@suid/material/TextField";
 import { useI18nContext } from "@erudio/i18n";
 import { ElementType } from "@suid/types/solid";
 import Button from "@suid/material/Button";
+import Stack from "@suid/material/Stack";
 
 interface LoginPageProps {
     formElement: ElementType
@@ -11,9 +12,10 @@ interface LoginPageProps {
 function LoginPage(props: LoginPageProps) {
     const { LL } = useI18nContext()
     return (
-        <Box
+        <Stack
             component={props.formElement}
-            textAlign="center">
+            textAlign="center"
+            spacing={2}>
             <TextField
                 type="email"
                 required
@@ -28,7 +30,7 @@ function LoginPage(props: LoginPageProps) {
             <Button variant="contained" component="input" type="submit">
                 {LL().LOGINBUTTON()}
             </Button>
-        </Box>
+        </Stack>
     )
 }
 

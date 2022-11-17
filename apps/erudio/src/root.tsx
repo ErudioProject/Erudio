@@ -34,7 +34,7 @@ export default function Root() {
                     <ErrorBoundary>
                         <Show when={localeLoaded()}>
                             <TypesafeI18n locale={lang}>
-                                <ClientProvider url={import.meta.env.VITE_API_URL}>
+                                <ClientProvider url={import.meta.env.NX_API_URL}>
                                     <Container>
                                         <Routes>
                                             <FileRoutes />
