@@ -42,3 +42,6 @@ Thumbs.db
 **/Root.toml
 /libs/backend/prisma-client/src/prisma.rs
 shell.nix
+
+.env*
+!.env*.template

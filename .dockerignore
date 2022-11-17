@@ -2,7 +2,6 @@ target/
 node_modules/
 .git/
 .cargo/
-.run/
 .idea/
 .vscode/
 /libs/backend/prisma-client/src/prisma.rs

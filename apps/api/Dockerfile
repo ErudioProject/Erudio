@@ -21,6 +21,7 @@ RUN dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 # Correcting misspeling is not allowed
 
 RUN rustup target add x86_64-unknown-linux-musl
+RUN rustup component add clippy
 
 RUN cargo +nightly chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
 COPY . .
@@ -28,6 +29,8 @@ COPY . .
 WORKDIR apps/prisma-cli/
 RUN cargo +nightly run --release --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
 WORKDIR ../../
+RUN cargo +nightly clippy --release --all-targets --all-features -- -D warnings
+RUN cargo +nightly test --release
 RUN cargo +nightly build --release --target x86_64-unknown-linux-musl --bin api
 
 
