@@ -1,10 +1,10 @@
 {
-    "name": "@erudio/login-page",
-    "type": "commonjs",
-    "exports": {
-        ".": "./src/index.ts"
-    },
-    "dependencies": {
-        "@erudio/i18n": "workspace:*"
-    }
+  "name": "@erudio/login-page",
+  "type": "commonjs",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@erudio/i18n": "workspace:*"
+  }
 }

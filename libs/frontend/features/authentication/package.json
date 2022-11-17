@@ -1,13 +1,13 @@
 {
-    "name": "@erudio/authentication",
-    "version": "0.0.1",
-    "type": "commonjs",
-    "dependencies": {
-        "@erudio/api": "workspace:*",
-        "@erudio/login-page": "workspace:*",
-        "@erudio/i18n": "workspace:*"
-    },
-    "exports": {
-        ".": "./src/index.ts"
-    }
+  "name": "@erudio/authentication",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "dependencies": {
+    "@erudio/api": "workspace:*",
+    "@erudio/login-page": "workspace:*",
+    "@erudio/i18n": "workspace:*"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
 }
