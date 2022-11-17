@@ -17,7 +17,7 @@ pub async fn destroy_all_sessions_for_user(
 		.exec()
 		.await?;
 
-	let result = join!(destroy_redis(redis, sessions), destroy_db(&db, user)).await;
+	let result = join!(destroy_redis(redis, sessions), destroy_db(db, user)).await;
 	result.0?;
 	result.1?;
 	Ok(())
