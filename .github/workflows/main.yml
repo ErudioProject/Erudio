@@ -64,7 +64,6 @@ jobs:
       - run: cp -a ./envs/${{ matrix.environment }}/. .
       - run: docker-compose pull
         working-directory: ./apps/erudio
-      - uses: satackey/action-docker-layer-caching@v0.0.11
       - uses: isbang/compose-action@v1.4.1
         with:
           compose-file: "./apps/erudio/docker-compose.yml"
