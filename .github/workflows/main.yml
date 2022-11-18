@@ -32,10 +32,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
+      - run: cp ./envs/${{ matrix.dev }} .
+      - run: ls -la
       - uses: isbang/compose-action@v1.4.1
         with:
-          compose-file: "./apps/erudio/docker-compose.ci.yml"
+          compose-file: "./apps/erudio/docker-compose.yml"
           services: |
             postgres
             redis
