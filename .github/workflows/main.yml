@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: [dev] # test, staging, production
+        environment: [] # dev, test, staging, production
     needs:
       - frontend
       - backend
