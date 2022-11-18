@@ -32,7 +32,7 @@ RUN ls ~/.cargo
 WORKDIR apps/erudio/backend-prisma-cli/
 RUN cargo +nightly run --release --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
 WORKDIR ../../../
-RUN cargo +nightly build --release --target x86_64-unknown-linux-musl --bin api && cargo strip
+RUN cargo +nightly build --release --target x86_64-unknown-linux-musl --bin api
 
 
 FROM alpine AS runtime
