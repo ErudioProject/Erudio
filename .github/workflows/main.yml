@@ -42,11 +42,11 @@ jobs:
       - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }} && rustup component add clippy
       - uses: Swatinem/rust-cache@v2
       - name: Generate prisma client
-        run: cargo run --bin prisma_cli -- generate
+        run: cargo run --bin prisma_cli --release -- generate
         working-directory: ./apps/erudio/backend-prisma-cli
-      - run: cargo build
-      - run: cargo clippy -- -D warnings
-      - run: cargo test
+      - run: cargo build --release
+      - run: cargo clippy --release -- -D warnings
+      - run: cargo test --release
 
 
   integration:
