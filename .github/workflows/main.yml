@@ -33,7 +33,7 @@ jobs:
 
       - uses: isbang/compose-action@v1.4.1
         with:
-          compose-file: "./apps/erudio/docker-compose.yml"
+          compose-file: "./apps/erudio/docker-compose.ci.yml"
           services: |
             postgres
             db
