@@ -33,7 +33,6 @@ jobs:
         with:
           fetch-depth: 0
       - run: cp -a ./envs/${{ matrix.environment }}/. .
-      - run: ls -la
       - uses: isbang/compose-action@v1.4.1
         with:
           compose-file: "./apps/erudio/docker-compose.yml"
@@ -51,6 +50,9 @@ jobs:
 
   integration:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [dev] # test, staging, production
     needs:
       - frontend
       - backend
@@ -58,10 +60,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
+      - run: cp -a ./envs/${{ matrix.environment }}/. .
       - uses: isbang/compose-action@v1.4.1
         with:
-          compose-file: "./apps/erudio/docker-compose.ci.yml"
+          compose-file: "./apps/erudio/docker-compose.yml"
           up-flags: "--build"
           services: |
             postgres
