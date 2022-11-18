@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "cargo +nightly run --bin prisma_cli --"
+  provider = "cargo run --bin prisma_cli --"
   output   = "../../../../shared-libs/rust/prisma-client/src/prisma.rs"
 }
 
