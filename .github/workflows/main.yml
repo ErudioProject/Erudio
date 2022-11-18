@@ -54,9 +54,6 @@ jobs:
     strategy:
       matrix:
         environment: [dev] # test, staging, production
-    needs:
-      - frontend
-      - backend
     steps:
       - uses: actions/checkout@v2
         with:
