@@ -1,0 +1,11 @@
+* @JK2Kgit
+/apps
+/shared-libs
+
+# erudio
+/apps/erudio @JK2K
+/apps/erudio/frontend @PatrykGor
+
+# libs
+/shared-libs/rust @JK2K
+/shared-libs/ts @PatrykGor
