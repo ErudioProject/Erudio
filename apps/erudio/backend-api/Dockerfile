@@ -25,8 +25,8 @@ RUN rustup target add x86_64-unknown-linux-musl
 RUN rustup component add clippy
 
 #RUN cargo +nightly chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
+RUN cargo search
 COPY . .
-RUN cargo update --dry-run
 #RUN cp -r .cargo-tmp/* ~/.cargo | true
 #RUN cp -r .cargo-tmp/.* ~/.cargo | true
 WORKDIR apps/erudio/backend-prisma-cli/
