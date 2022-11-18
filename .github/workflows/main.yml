@@ -38,8 +38,12 @@ jobs:
             postgres
             redis
       - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
-      - run: cargo build --verbose
-      - run: cargo test --verbose
+      - name: Generate prisma client
+        run: cargo prisma generate
+        working-directory: ./apps/erudio/backend-prisma-cli
+      - run: cargo build
+      - run: cargo clippy -- -D warnings
+      - run: cargo test
 
 
   integration:

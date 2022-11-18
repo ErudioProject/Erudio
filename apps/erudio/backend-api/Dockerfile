@@ -28,8 +28,6 @@ COPY . .
 WORKDIR apps/erudio/backend-prisma-cli/
 RUN cargo +nightly run --release --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
 WORKDIR ../../../
-RUN cargo +nightly clippy --release --all-targets --all-features -- -D warnings
-RUN cargo +nightly test --release
 RUN cargo +nightly build --release --target x86_64-unknown-linux-musl --bin api
 
 
