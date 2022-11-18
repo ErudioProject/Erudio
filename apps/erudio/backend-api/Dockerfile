@@ -23,12 +23,12 @@ RUN dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 RUN rustup target add x86_64-unknown-linux-musl
 RUN rustup component add clippy
 
-RUN cargo +nightly chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
+RUN --mount=type=cache,target=/usr/local/cargo/registry cargo +nightly chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
 COPY . .
 WORKDIR apps/erudio/backend-prisma-cli/
-RUN cargo +nightly run --release --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
+RUN --mount=type=cache,target=/usr/local/cargo/registry cargo +nightly run --release --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
 WORKDIR ../../../
-RUN cargo +nightly build --release --target x86_64-unknown-linux-musl --bin api
+RUN --mount=type=cache,target=/usr/local/cargo/registry cargo +nightly build --release --target x86_64-unknown-linux-musl --bin api && cargo strip
 
 
 FROM alpine AS runtime
