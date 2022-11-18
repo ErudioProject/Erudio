@@ -1,7 +1,7 @@
 use super::*;
 use backend_error_handler::{ApiError, ApiResult};
 use backend_prisma_client::{
-	prisma::{new_client_with_url, pii_data, user, GrammaticalForm, PrismaClient},
+	prisma::{pii_data, user, GrammaticalForm, PrismaClient},
 	User,
 };
 use rand::prelude::*;
@@ -14,16 +14,19 @@ async fn init_load_destroy() -> ApiResult<()> {
 	dotenvy::dotenv().ok();
 	env_logger::init();
 	#[cfg(target_family = "unix")]
-	let url = env::var("DATABASE_URL").expect("set DATABASE_URL env");
+	let url = env::var("DATABASE_URL").expect("Set DATABASE_URL env");
 	#[cfg(target_family = "windows")]
-	let url = env::var("DATABASE_URL_WIN").expect("set DATABASE_URL_WIN env");
+	let url = env::var("DATABASE_URL_WIN").expect("Set DATABASE_URL_WIN env");
 
-	let db: Arc<PrismaClient> = Arc::new(
-		new_client_with_url(&url)
+	let db = Arc::new(
+		PrismaClient::_builder()
+			.with_url(url)
+			.build()
 			.await
 			.expect("db connection error"),
 	);
 
+	db._db_push().await.expect("DB push failed");
 	let redis_url = env::var("REDIS_URL").expect("set REDIS_URL env");
 
 	let redis_client = redis::Client::open(redis_url).expect("Redis not found");
