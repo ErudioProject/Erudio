@@ -74,7 +74,7 @@ jobs:
           services: |
             postgres
             redis
-            ap
+            api
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
       - run: echo "INTEGRATION TESTS"
