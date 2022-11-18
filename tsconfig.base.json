@@ -5,14 +5,8 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
     "skipLibCheck": true,
-    "paths": {
-      "@erudio/api": ["./libs/frontend/data-access/api/src/index.ts"],
-      "@erudio/authentication": [
-        "./libs/frontend/features/authentication/src/index.ts"
-      ],
-      "@erudio/i18n": ["./libs/frontend/data-access/i18n/src/index.ts"],
-      "@erudio/login-page": ["./libs/frontend/ui/login-page/src/index.ts"]
-    }
   }
 }
