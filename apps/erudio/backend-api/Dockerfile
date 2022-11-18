@@ -26,9 +26,9 @@ RUN rustup component add clippy
 RUN --mount=type=cache,target=/usr/local/cargo/registry cargo +nightly chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
 COPY . .
 WORKDIR apps/erudio/backend-prisma-cli/
-RUN --mount=type=cache,target=/usr/local/cargo/registry cargo +nightly run --release --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
+RUN cargo +nightly run --release --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
 WORKDIR ../../../
-RUN --mount=type=cache,target=/usr/local/cargo/registry cargo +nightly build --release --target x86_64-unknown-linux-musl --bin api && cargo strip
+RUN cargo +nightly build --release --target x86_64-unknown-linux-musl --bin api && cargo strip
 
 
 FROM alpine AS runtime
