@@ -2,17 +2,18 @@ FROM clux/muslrust:nightly AS chef
 USER root
 RUN apt update
 RUN apt install wget
-RUN wget https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz
-RUN tar zxvf cargo-binstall-x86_64-unknown-linux-musl.tgz -C $HOME/.cargo/bin
-RUN cargo +nightly binstall --no-confirm cargo-chef
+# RUN wget https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz
+# RUN tar zxvf cargo-binstall-x86_64-unknown-linux-musl.tgz -C $HOME/.cargo/bin
+# RUN cargo +nightly binstall --no-confirm cargo-chef
 WORKDIR /app
 
-FROM chef AS planner
-COPY . .
-RUN cargo +nightly chef prepare --recipe-path recipe.json
+# FROM chef AS planner
+# COPY . .
+# RUN cp .cargo-tmp ~/.cargo | true
+# RUN cargo +nightly chef prepare --recipe-path recipe.json
 
 FROM chef AS builder
-COPY --from=planner /app/recipe.json recipe.json
+#COPY --from=planner /app/recipe.json recipe.json
 
 # I hate this
 RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
@@ -23,8 +24,11 @@ RUN dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 RUN rustup target add x86_64-unknown-linux-musl
 RUN rustup component add clippy
 
-RUN cargo +nightly chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
+#RUN cargo +nightly chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
 COPY . .
+RUN cp .cargo-tmp/* ~/.cargo | true
+RUN cp .cargo-tmp/.* ~/.cargo | true
+RUN ls ~/.cargo
 WORKDIR apps/erudio/backend-prisma-cli/
 RUN cargo +nightly run --release --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
 WORKDIR ../../../
