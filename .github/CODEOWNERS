@@ -3,9 +3,9 @@
 /shared-libs
 
 # erudio
-/apps/erudio @JK2K
+/apps/erudio @JK2Kgit
 /apps/erudio/frontend @PatrykGor
 
 # libs
-/shared-libs/rust @JK2K
+/shared-libs/rust @JK2Kgit
 /shared-libs/ts @PatrykGor
