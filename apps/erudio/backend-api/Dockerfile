@@ -37,6 +37,6 @@ RUN cargo +nightly build --target x86_64-unknown-linux-musl --bin api
 
 FROM alpine AS runtime
 RUN addgroup -S myuser && adduser -S myuser -G myuser
-COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/api /usr/local/bin/
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/debug/api /usr/local/bin/
 USER myuser
 CMD ["/usr/local/bin/api"]
