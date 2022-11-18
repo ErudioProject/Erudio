@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         toolchain:
-          - stable
+          # - stable - not suported
           - beta
           - nightly
     steps:
@@ -37,7 +37,7 @@ jobs:
           services: |
             postgres
             redis
-      - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
+      - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }} && rustup component add clippy
       - name: Generate prisma client
         run: cargo prisma generate
         working-directory: ./apps/erudio/backend-prisma-cli
