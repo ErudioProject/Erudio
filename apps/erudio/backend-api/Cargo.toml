@@ -1,0 +1,29 @@
+[package]
+name = "api"
+version = "0.1.0"
+edition = "2021"
+license = "AGPL-3.0-or-later"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+backend_prisma_client.workspace = true
+backend_session_manager.workspace = true
+backend_error_handler.workspace = true
+openssl.workspace = true
+prisma-client-rust = {workspace = true, features = ["postgresql", "rspc"]}
+redis.workspace = true
+tokio.workspace = true
+hyper = { version = "0.14", features = ["full"] }
+tower-http = { version = "^0.3", features = ["cors"] }
+axum = "^0.5"
+serde = {version = "^1", features=["derive"]}
+dotenvy = "^0"
+rspc = { version = "^0", features = ["axum"] }
+env_logger = "^0"
+log = "^0"
+color-eyre = "^0"
+tower-cookies = "^0.7"
+cookie = "^0.16"
+rust-argon2 = "^1.0"
+rand = "^0.8"

@@ -4,4 +4,4 @@ node_modules/
 .cargo/
 .idea/
 .vscode/
-/libs/backend/prisma-client/src/prisma.rs
+/shared-libs/rust/prisma-client/src/prisma.rs
