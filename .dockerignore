@@ -3,4 +3,5 @@ node_modules/
 .cargo/
 .idea/
 .vscode/
+target/
 /shared-libs/rust/prisma-client/src/prisma.rs
