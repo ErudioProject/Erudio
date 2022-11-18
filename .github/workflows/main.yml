@@ -39,14 +39,14 @@ jobs:
           services: |
             postgres
             redis
-      - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }} && rustup component add clippy
+      - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }} && rustup component add clippy && rustup target add x86_64-unknown-linux-musl
       - uses: Swatinem/rust-cache@v2
       - name: Generate prisma client
-        run: cargo prisma generate
+        run: cargo --release --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
         working-directory: ./apps/erudio/backend-prisma-cli
-      - run: cargo build
-      - run: cargo clippy -- -D warnings
-      - run: cargo test
+      - run: cargo build --release --target x86_64-unknown-linux-musl
+      - run: cargo clippy --release --target x86_64-unknown-linux-musl -- -D warnings
+      - run: cargo test --release --target x86_64-unknown-linux-musl
 
 
   integration:
@@ -62,6 +62,8 @@ jobs:
         with:
           fetch-depth: 0
       - run: cp -a ./envs/${{ matrix.environment }}/. .
+      - uses: Swatinem/rust-cache@v2
+      - run: cp -r ~/.cargo ./cargo-tmp
       - run: docker-compose pull
         working-directory: ./apps/erudio
       - uses: satackey/action-docker-layer-caching@v0.0.11
