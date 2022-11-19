@@ -21,6 +21,7 @@ export function routeData() {
 
 interface LoginPageProps {
     FormElement: ElementType
+    loading: boolean
 }
 
 function LoginPage(props: LoginPageProps) {
@@ -28,15 +29,20 @@ function LoginPage(props: LoginPageProps) {
     return (
         <>
             <props.FormElement>
-                <Stack textAlign="center" spacing={2} alignItems="center">
-                    <TextField type="email" required label={LL().EMAIL()} name="email" />
+                <Stack textAlign="center" spacing={3} alignItems="center" justifyContent="center" sx={{ height: "100vh" }}>
+                    <picture>
+                        <source srcset="logo.svg" />
+                        <img src="logo.svg" alt="Logo" style="width:200px;heigh:auto" />
+                    </picture>
+                    <TextField type="email" required label={LL().EMAIL()} name="email" disabled={props.loading} />
                     <TextField
                         required
                         type="password"
                         label={LL().PASSWORD()}
                         name="password"
+                        disabled={props.loading}
                     />
-                    <Button variant="contained" type="submit">
+                    <Button variant="contained" type="submit" disabled={props.loading}>
                         {LL().LOGINBUTTON()}
                     </Button>
                 </Stack>
@@ -67,7 +73,7 @@ export default function Index() {
             <Show when={me.state !== "pending" && me.state !== "errored"}>
                 <Navigate href="/dashboard" />
             </Show>
-            <LoginPage FormElement={Form} />
+            <LoginPage FormElement={Form} loading={logging.pending} />
             <Show when={logging.error}>
                 <Alert severity="error">{LL().INVALIDLOGIN()}</Alert>
             </Show>
