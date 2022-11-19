@@ -7,6 +7,7 @@ const pl: BaseTranslation = {
   PASSWORD: 'Hasło',
   LOGINBUTTON: 'Zaloguj się',
   INVALIDLOGIN: 'Nieprawidłowe dane logowania',
+  DARKMODE: 'Tryb ciemny'
 };
 
 export default pl;

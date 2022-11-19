@@ -21,6 +21,7 @@ export const defineDefaultConfig: UserConfigExport = {
         deps: {
             inline: [/solid-js/, /solid-testing-library/],
         },
+        css: true
     },
     resolve: {
         conditions: ['development', 'browser'],

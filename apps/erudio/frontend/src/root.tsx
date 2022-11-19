@@ -15,6 +15,9 @@ import './root.css';
 import Localization from './components/contexts/Localization';
 import Container from '@suid/material/Container';
 import ClientProvider from './components/contexts/ClientProvider';
+import LoadingPage from './components/placeholders/LoadingPage';
+import Theme, { ModeSwitch } from './components/contexts/Theme';
+import { CssBaseline } from '@suid/material';
 
 export default function Root() {
     //TODO: fix/file vite issue:
@@ -28,15 +31,19 @@ export default function Root() {
                 <Meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
             <Body>
-                <Suspense>
+                <Suspense fallback={LoadingPage}>
                     <ErrorBoundary>
                         <Localization locale={lang}>
                             <ClientProvider url={import.meta.env.FRONTEND_API_URL}>
-                                <Container>
-                                    <Routes>
-                                        <FileRoutes />
-                                    </Routes>
-                                </Container>
+                                <Theme defaultMode='dark'>
+                                    <CssBaseline />
+                                    <ModeSwitch />
+                                    <Container>
+                                        <Routes>
+                                            <FileRoutes />
+                                        </Routes>
+                                    </Container>
+                                </Theme>
                             </ClientProvider>
                         </Localization>
                     </ErrorBoundary>
