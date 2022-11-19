@@ -16,6 +16,7 @@ use tower_cookies::Cookie;
 
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct RegisterRequest {
+	pub idempotence_token: String,
 	pub email: String,
 	pub password: String,
 	pub code: (),

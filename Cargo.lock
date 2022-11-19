@@ -79,6 +79,7 @@ dependencies = [
  "rspc",
  "rust-argon2",
  "serde",
+ "serde_json",
  "tokio",
  "tower-cookies",
  "tower-http",
