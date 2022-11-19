@@ -53,7 +53,10 @@ async fn start() -> eyre::Result<()> {
 
 	let redis_url = env::var("REDIS_URL").context("No REDIS_URL environmental variable")?;
 	let redis = redis::Client::open(redis_url)?;
-	let conn = redis.get_multiplexed_async_connection().await?;
+	let conn = redis
+		.get_multiplexed_async_connection()
+		.await
+		.map_err(|err| eyre!("Redis error: {:?}", err))?;
 
 	let router = router().arced();
 
