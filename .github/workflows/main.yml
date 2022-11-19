@@ -128,12 +128,9 @@ jobs:
         with:
           fetch-depth: 0
       - run: cp -a ./envs/${{ matrix.environment }}/. .
-        if: steps.changed-any.outputs.any_changed == 'true'
       - run: docker-compose pull
-        if: steps.changed-any.outputs.any_changed == 'true'
         working-directory: ./apps/erudio
       - uses: isbang/compose-action@v1.4.1
-        if: steps.changed-any.outputs.any_changed == 'true'
         with:
           compose-file: "./apps/erudio/docker-compose.yml"
           up-flags: "--build"
@@ -142,4 +139,3 @@ jobs:
             redis
             api
       - run: echo "INTEGRATION TESTS"
-        if: steps.changed-any.outputs.any_changed == 'true'
