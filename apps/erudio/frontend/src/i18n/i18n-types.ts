@@ -36,6 +36,10 @@ type RootTranslation = {
 	 * N​i​e​p​r​a​w​i​d​ł​o​w​e​ ​d​a​n​e​ ​l​o​g​o​w​a​n​i​a
 	 */
 	INVALIDLOGIN: string
+	/**
+	 * T​r​y​b​ ​c​i​e​m​n​y
+	 */
+	DARKMODE: string
 }
 
 export type TranslationFunctions = {
@@ -59,6 +63,10 @@ export type TranslationFunctions = {
 	 * Nieprawidłowe dane logowania
 	 */
 	INVALIDLOGIN: () => LocalizedString
+	/**
+	 * Tryb ciemny
+	 */
+	DARKMODE: () => LocalizedString
 }
 
 export type Formatters = {}

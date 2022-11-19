@@ -7,7 +7,7 @@ import {
   NoOpTransport,
   WebsocketTransport,
 } from '@rspc/client';
-import type { Procedures } from './bindings';
+import type { Procedures } from '../../../bindings';
 
 export function createFetchApiClient(url: string): Client<Procedures> {
   return createClient<Procedures>({

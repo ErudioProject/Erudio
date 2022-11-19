@@ -1,5 +1,5 @@
 import { usePrefferedLocale } from './Localization';
-import { Locales } from './i18n/i18n-types';
+import { Locales } from '../../i18n/i18n-types';
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 
 let localStorageItems: Record<string, string> = {};

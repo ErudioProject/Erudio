@@ -1,6 +1,7 @@
 {
   "name": "@erudio/erudio",
   "scripts": {
+    "locale:gen": "typesafe-i18n",
     "dev": "solid-start dev",
     "build": "solid-start build",
     "start": "solid-start start",
