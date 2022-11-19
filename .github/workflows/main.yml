@@ -23,7 +23,7 @@ jobs:
         uses: tj-actions/changed-files@v34
         with:
           files: |
-            **/*.{json, js, ts, jsx, tsx, html, css}
+            **/*.{json,js,ts,jsx,tsx,html,css}
 
   frontend:
     runs-on: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
         uses: tj-actions/changed-files@v34
         with:
           files: |
-            **/*.{rs, toml}
+            **/*.{rs,toml}
     
 
   backend:
@@ -97,7 +97,7 @@ jobs:
         uses: tj-actions/changed-files@v34
         with:
           files: |
-            **/*.{rs, toml, json, yaml, js, ts, jsx, tsx, html, css}
+            **/*.{rs,toml,json,yaml,js,ts,jsx,tsx,html,css}
             ./apps/erudio/docker-compose.yml
       - run: cp -a ./envs/${{ matrix.environment }}/. .
         if: steps.changed-any.outputs.any_changed == 'true'
