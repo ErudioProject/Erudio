@@ -16,6 +16,6 @@ export interface LoginRequest { email: string, password: string }
 
 export type LoginResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
 
-export interface RegisterRequest { email: string, password: string, code: null }
+export interface RegisterRequest { idempotence_token: string, email: string, password: string, code: null }
 
 export type TwoFactorAuthType = "GoogleAuth" | "Sms" | "EMail"

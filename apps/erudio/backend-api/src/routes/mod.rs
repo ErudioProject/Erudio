@@ -16,6 +16,7 @@ pub struct Ctx {
 	pub(crate) db: Arc<PrismaClient>,
 	pub(crate) redis: MultiplexedConnection,
 	pub(crate) cookies: Cookies,
+	pub(crate) region_id: String,
 }
 
 #[derive(Clone)]
@@ -24,6 +25,7 @@ pub struct AuthCtx {
 	db: Arc<PrismaClient>,
 	redis: MultiplexedConnection,
 	user: User,
+	region_id: String,
 }
 
 pub(crate) fn router() -> rspc::Router<Ctx> {
@@ -46,6 +48,7 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 								db: old_ctx.db,
 								redis: old_ctx.redis,
 								user,
+								region_id: old_ctx.region_id
 							})),
 							None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
 						}

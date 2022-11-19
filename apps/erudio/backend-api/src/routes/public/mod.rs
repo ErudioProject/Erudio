@@ -6,10 +6,11 @@ use login::*;
 use register::*;
 use version::*;
 
-use crate::Ctx;
+use crate::{helpers::idempotent, routes::RspcResult, Ctx};
 use argon2::{Config, ThreadMode, Variant, Version};
-
-use rspc::{Router, RouterBuilder};
+use backend_error_handler::ApiError;
+use redis::{aio::MultiplexedConnection, AsyncCommands};
+use rspc::{ErrorCode, Router, RouterBuilder};
 
 const ARGON_CONFIG: Config = Config {
 	variant: Variant::Argon2i,
@@ -29,5 +30,5 @@ pub fn mount() -> RouterBuilder<Ctx> {
 	Router::<Ctx>::new()
 		.query("version", |t| t(version))
 		.query("login", |t| t(login))
-		.mutation("register", |t| t(register))
+		.mutation("register", |t| t(idempotent!(register, Ctx, RegisterRequest, ())))
 }

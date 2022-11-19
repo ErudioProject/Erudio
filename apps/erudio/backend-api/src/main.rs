@@ -1,12 +1,14 @@
 #![forbid(unsafe_code)]
 #![recursion_limit = "256"]
+#![feature(future_join)]
 extern crate argon2;
 
+mod helpers;
 mod routes;
 mod shutdown_signal;
 
 use crate::{
-	eyre::{eyre, Context},
+	eyre::Context,
 	routes::{router, Ctx},
 };
 use axum::routing::get;
@@ -46,7 +48,7 @@ async fn start() -> eyre::Result<()> {
 			.with_url(url)
 			.build()
 			.await
-			.map_err(|err| eyre!("Database client error: {:?}", err))?,
+			.context("Database ERROR")?,
 	);
 
 	#[cfg(debug_assertions)]
@@ -59,7 +61,7 @@ async fn start() -> eyre::Result<()> {
 	let conn = redis
 		.get_multiplexed_async_connection()
 		.await
-		.map_err(|err| eyre!("Redis error: {:?}", err))?;
+		.context("REDIS ERROR")?;
 
 	let router = router().arced();
 
@@ -85,6 +87,7 @@ async fn start() -> eyre::Result<()> {
 					db: db.clone(),
 					redis: conn,
 					cookies,
+					region_id: env::var("DATABASE_URL").expect("No REGION_ID environmental variable"),
 				})
 				.axum(),
 		)
