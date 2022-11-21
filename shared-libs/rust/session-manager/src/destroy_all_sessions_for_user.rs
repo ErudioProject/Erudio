@@ -4,7 +4,7 @@ use backend_prisma_client::{
 	User,
 };
 use redis::{aio::MultiplexedConnection, AsyncCommands};
-use std::future::join;
+use tokio::join;
 
 pub async fn destroy_all_sessions_for_user(
 	db: &PrismaClient,
@@ -17,7 +17,7 @@ pub async fn destroy_all_sessions_for_user(
 		.exec()
 		.await?;
 
-	let result = join!(destroy_redis(redis, sessions), destroy_db(db, user)).await;
+	let result = join!(destroy_redis(redis, sessions), destroy_db(db, user));
 	result.0?;
 	result.1?;
 	Ok(())

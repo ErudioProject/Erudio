@@ -1,4 +1,3 @@
-#![feature(future_join)]
 #![forbid(unsafe_code)]
 
 #[cfg(test)]

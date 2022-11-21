@@ -5,7 +5,7 @@ use backend_prisma_client::{
 };
 use chrono::{DateTime, Duration, Utc};
 use redis::{aio::MultiplexedConnection, AsyncCommands};
-use std::future::join;
+use tokio::join;
 
 pub async fn init_session(
 	db: &PrismaClient,
@@ -18,7 +18,7 @@ pub async fn init_session(
 	let encoded = hex::encode(client_secret);
 	let redis_async = init_redis(redis, &encoded, json, redis_expires_seconds);
 	let prisma_async = init_prisma(db, client_secret, &user.id);
-	let result = join!(redis_async, prisma_async).await;
+	let result = join!(redis_async, prisma_async);
 	result.0?;
 	result.1?;
 	Ok(encoded)
