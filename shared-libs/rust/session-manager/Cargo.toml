@@ -12,6 +12,7 @@ redis.workspace = true
 log = "^0.4"
 hex = "^0.4"
 chrono = "^0.4"
+tokio = { version = "^1.21", features = ["macros"] }
 
 [dev-dependencies]
 tokio = { version = "^1.21", features = ["full"] }
