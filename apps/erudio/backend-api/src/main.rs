@@ -1,6 +1,5 @@
 #![forbid(unsafe_code)]
 #![recursion_limit = "256"]
-#![feature(future_join)]
 extern crate argon2;
 
 mod helpers;

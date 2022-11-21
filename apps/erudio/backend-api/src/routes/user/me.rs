@@ -1,6 +1,7 @@
 use crate::routes::{AuthCtx, RspcResult};
 use backend_prisma_client::prisma::user;
-use rspc::ErrorCode;
+use rspc::{internal::specta::Type, ErrorCode};
+use serde::Serialize;
 
 user::select!(user_data {
 	two_factor_auth_settings : select {
@@ -28,7 +29,7 @@ user::select!(user_data {
 	}
 });
 
-pub(crate) async fn me(ctx: AuthCtx, _: ()) -> RspcResult<user_data::Data> {
+pub(crate) async fn me(ctx: AuthCtx, _: ()) -> RspcResult<impl Serialize + Type> {
 	ctx.db
 		.user()
 		.find_unique(user::id::equals(ctx.user.id))
