@@ -31,7 +31,7 @@ user::select!(user_data {
 pub(crate) async fn me(ctx: AuthCtx, _: ()) -> RspcResult<user_data::Data> {
 	ctx.db
 		.user()
-		.find_unique(user::UniqueWhereParam::IdEquals(ctx.user.id))
+		.find_unique(user::id::equals(ctx.user.id))
 		.select(user_data::select())
 		.exec()
 		.await?
