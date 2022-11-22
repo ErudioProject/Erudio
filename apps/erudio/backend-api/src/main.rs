@@ -42,6 +42,13 @@ async fn start() -> eyre::Result<()> {
 	#[cfg(target_family = "windows")]
 	let url = env::var("DATABASE_URL_WIN").context("No DATABASE_URL_WIN environmental variable")?;
 
+	let redis_url = env::var("REDIS_URL").context("No REDIS_URL environmental variable")?;
+	let region_id = env::var("REGION_ID").context("No REGION_ID environmental variable")?;
+	let port = env::var("API_PORT")
+		.context("No API_PORT environmental variable")?
+		.parse::<u16>()
+		.context("API_PORT is invalid example value '3000'")?;
+
 	let db: Arc<PrismaClient> = Arc::new(
 		PrismaClient::_builder()
 			.with_url(url)
@@ -55,38 +62,38 @@ async fn start() -> eyre::Result<()> {
 	#[cfg(not(debug_assertions))]
 	db._migrate_deploy().await?;
 
-	let redis_url = env::var("REDIS_URL").context("No REDIS_URL environmental variable")?;
 	let redis = redis::Client::open(redis_url)?;
 	let conn = redis
 		.get_multiplexed_async_connection()
 		.await
 		.context("REDIS ERROR")?;
 
-	let router = router().arced();
-
-	let db_health = db.clone();
-	let redis_health = conn.clone();
-
 	let app = axum::Router::new()
 		.route("/", get(|| async { "Erudio" }))
 		.route(
 			"/health",
-			get(move || async move {
-				let result = check_health(db_health, redis_health).await;
-				match result {
-					Ok(_) => (axum::http::StatusCode::OK, "OK".into()),
-					Err(err) => (axum::http::StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", err)),
+			get({
+				let db_health = db.clone();
+				let redis_health = conn.clone();
+
+				move || async move {
+					let result = check_health(db_health, redis_health).await;
+					match result {
+						Ok(_) => (axum::http::StatusCode::OK, "OK".into()),
+						Err(err) => (axum::http::StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", err)),
+					}
 				}
 			}),
 		)
 		.route(
 			"/rspc/:id",
-			router
+			router()
+				.arced()
 				.endpoint(move |cookies: Cookies| Ctx {
 					db: db.clone(),
 					redis: conn,
 					cookies,
-					region_id: env::var("DATABASE_URL").expect("No REGION_ID environmental variable"),
+					region_id,
 				})
 				.axum(),
 		)
@@ -98,12 +105,7 @@ async fn start() -> eyre::Result<()> {
 		)
 		.layer(CookieManagerLayer::new());
 
-	let port = env::var("API_PORT")
-		.context("No API_PORT environmental variable")?
-		.parse::<u16>()
-		.expect("API_PORT is invalid example value '3000'");
 	let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, port));
-
 	info!("listening on {}", addr);
 	axum::Server::try_bind(&addr)?
 		.serve(app.into_make_service())
