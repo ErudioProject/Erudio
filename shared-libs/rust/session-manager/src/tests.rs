@@ -1,5 +1,5 @@
 use super::*;
-use backend_error_handler::{ApiError, ApiResult};
+use backend_error_handler::{InternalError, InternalResult};
 use backend_prisma_client::{
 	prisma::{pii_data, user, GrammaticalForm, PrismaClient},
 	User,
@@ -9,7 +9,7 @@ use redis::{aio::MultiplexedConnection, AsyncCommands};
 use std::{env, sync::Arc};
 
 #[tokio::test]
-async fn init_load_destroy() -> ApiResult<()> {
+async fn init_load_destroy() -> InternalResult<()> {
 	//TODO rewrite complete rewrite
 	dotenvy::dotenv().ok();
 	env_logger::init();
@@ -84,25 +84,25 @@ async fn init_load_destroy_inner(
 	redis: &mut MultiplexedConnection,
 	user: &User,
 	connection_secret: &Vec<u8>,
-) -> ApiResult<()> {
+) -> InternalResult<()> {
 	let client_secret = init_session(&db, redis, user, connection_secret, Some(10)).await?;
 
 	let user = load_session(db.clone(), redis, &client_secret, Some(10)).await?;
 
-	user.ok_or_else(|| ApiError::TestError("User is none".into()))?;
+	user.ok_or_else(|| InternalError::TestError("User is none".into()))?;
 
 	redis.del(&client_secret).await?;
 
 	let user = load_session(db.clone(), redis, &client_secret, Some(10)).await?;
 
-	user.ok_or_else(|| ApiError::TestError("User wasn't successfully recovered".into()))?;
+	user.ok_or_else(|| InternalError::TestError("User wasn't successfully recovered".into()))?;
 
 	destroy_session(&db, redis, &client_secret).await?;
 
 	let user = load_session(db, redis, &client_secret, Some(10)).await?;
 
 	if user.is_some() {
-		return Err(ApiError::TestError("Session didn't got deleted".into()));
+		return Err(InternalError::TestError("Session didn't got deleted".into()));
 	}
 	Ok(())
 }

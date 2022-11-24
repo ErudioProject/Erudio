@@ -4,22 +4,22 @@ use redis::RedisError;
 use rspc::ErrorCode;
 
 #[derive(Debug)]
-pub enum ApiError {
+pub enum InternalError {
 	Rspc(rspc::Error),
 	Unreachable,       // This error should be unreachable
 	TestError(String), // This is for tests TODO check if there is a way to enforce it
 }
-pub type ApiResult<T> = Result<T, ApiError>;
+pub type InternalResult<T> = Result<T, InternalError>;
 
-impl ApiError {
+impl InternalError {
 	pub fn new_rspc(code: ErrorCode, message: String) -> Self {
-		ApiError::Rspc(rspc::Error::new(code, message))
+		InternalError::Rspc(rspc::Error::new(code, message))
 	}
 }
 
-impl From<serde_json::Error> for ApiError {
+impl From<serde_json::Error> for InternalError {
 	fn from(value: serde_json::Error) -> Self {
-		ApiError::Rspc(rspc::Error::with_cause(
+		InternalError::Rspc(rspc::Error::with_cause(
 			ErrorCode::InternalServerError,
 			"Internal json serialization failed".into(),
 			value,
@@ -27,10 +27,10 @@ impl From<serde_json::Error> for ApiError {
 	}
 }
 
-impl From<argon2::Error> for ApiError {
+impl From<argon2::Error> for InternalError {
 	fn from(value: argon2::Error) -> Self {
 		warn!("Argon2 failed with error: {:?}", value);
-		ApiError::Rspc(rspc::Error::with_cause(
+		InternalError::Rspc(rspc::Error::with_cause(
 			ErrorCode::InternalServerError,
 			"Argon2 Error".into(),
 			value,
@@ -38,20 +38,20 @@ impl From<argon2::Error> for ApiError {
 	}
 }
 
-impl From<RedisError> for ApiError {
+impl From<RedisError> for InternalError {
 	fn from(value: RedisError) -> Self {
 		warn!("Redis failed with error: {:?}", value);
-		ApiError::Rspc(rspc::Error::with_cause(
+		InternalError::Rspc(rspc::Error::with_cause(
 			ErrorCode::InternalServerError,
 			"Redis error".into(),
 			value,
 		))
 	}
 }
-impl From<FromHexError> for ApiError {
+impl From<FromHexError> for InternalError {
 	fn from(value: FromHexError) -> Self {
 		warn!("Hex failed with error: {:?}", value);
-		ApiError::Rspc(rspc::Error::with_cause(
+		InternalError::Rspc(rspc::Error::with_cause(
 			ErrorCode::InternalServerError,
 			"Error decoding hex value".into(),
 			value,
@@ -59,9 +59,9 @@ impl From<FromHexError> for ApiError {
 	}
 }
 
-impl From<backend_prisma_client::prisma_client_rust::QueryError> for ApiError {
+impl From<backend_prisma_client::prisma_client_rust::QueryError> for InternalError {
 	fn from(value: backend_prisma_client::prisma_client_rust::QueryError) -> Self {
-		ApiError::Rspc(rspc::Error::with_cause(
+		InternalError::Rspc(rspc::Error::with_cause(
 			ErrorCode::InternalServerError,
 			"Prisma query error".into(),
 			value,
@@ -69,15 +69,15 @@ impl From<backend_prisma_client::prisma_client_rust::QueryError> for ApiError {
 	}
 }
 
-impl From<ApiError> for rspc::Error {
-	fn from(value: ApiError) -> Self {
+impl From<InternalError> for rspc::Error {
+	fn from(value: InternalError) -> Self {
 		match value {
-			ApiError::Rspc(x) => x,
-			ApiError::Unreachable => rspc::Error::new(
+			InternalError::Rspc(x) => x,
+			InternalError::Unreachable => rspc::Error::new(
 				ErrorCode::InternalServerError,
 				"This should have been unreachable".to_string(),
 			),
-			ApiError::TestError(_) => rspc::Error::new(
+			InternalError::TestError(_) => rspc::Error::new(
 				ErrorCode::InternalServerError,
 				"This is an error that is allowed only in tests".to_string(),
 			),

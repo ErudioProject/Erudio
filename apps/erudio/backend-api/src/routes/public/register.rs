@@ -5,7 +5,7 @@ use crate::{
 	},
 	Ctx,
 };
-use backend_error_handler::ApiError;
+use backend_error_handler::InternalError;
 use backend_prisma_client::prisma::{pii_data, user, GrammaticalForm};
 use backend_session_manager::init_session;
 use cookie::SameSite;
@@ -31,11 +31,12 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 		rng.fill_bytes(&mut salt);
 		rng.fill_bytes(&mut connection_secret);
 	}
+	// TODO transaction + if email duplicate then correct error
 	let user = ctx
 		.db
 		.user()
 		.create(
-			argon2::hash_raw(req.password.as_bytes(), &salt, &ARGON_CONFIG).map_err(Into::<ApiError>::into)?,
+			argon2::hash_raw(req.password.as_bytes(), &salt, &ARGON_CONFIG).map_err(Into::<InternalError>::into)?,
 			vec![],
 		)
 		.exec()

@@ -29,7 +29,7 @@ user::select!(user_data {
 	}
 });
 
-pub(crate) async fn me(ctx: AuthCtx, _: ()) -> RspcResult<impl Serialize + Type> {
+pub(crate) async fn me(ctx: AuthCtx, _: ()) -> RspcResult<user_data::Data> {
 	ctx.db
 		.user()
 		.find_unique(user::id::equals(ctx.user.id))
