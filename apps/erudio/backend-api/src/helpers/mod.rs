@@ -16,7 +16,7 @@ macro_rules! idempotent {
 			let load: Option<(bool, String)> = redis
 				.get(&idempotence_token)
 				.await
-				.map_err(Into::<ApiError>::into)?;
+				.map_err(Into::<InternalError>::into)?;
 			if let Some(s) = load {
 				return if s.0 {
 					Ok(serde_json::from_str(&s.1).unwrap())
@@ -29,15 +29,15 @@ macro_rules! idempotent {
 			redis
 				.set_ex(&idempotence_token, (false, ""), 60 * 60)
 				.await
-				.map_err(Into::<ApiError>::into)?;
+				.map_err(Into::<InternalError>::into)?;
 
 			match $e(ctx, req).await {
 				Ok(res) => {
-					let json = serde_json::to_string(&res).map_err(Into::<ApiError>::into)?;
+					let json = serde_json::to_string(&res).map_err(Into::<InternalError>::into)?;
 					redis
 						.set_ex(&idempotence_token, (true, json.clone()), 60 * 60)
 						.await
-						.map_err(Into::<ApiError>::into)?;
+						.map_err(Into::<InternalError>::into)?;
 
 					Ok(res)
 				}
@@ -45,7 +45,7 @@ macro_rules! idempotent {
 					redis
 						.expire(&idempotence_token, 0)
 						.await
-						.map_err(Into::<ApiError>::into)?;
+						.map_err(Into::<InternalError>::into)?;
 					Err(err)
 				}
 			}
