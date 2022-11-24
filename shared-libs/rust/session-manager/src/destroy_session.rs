@@ -1,4 +1,4 @@
-use backend_error_handler::ApiError;
+use backend_error_handler::InternalError;
 use backend_prisma_client::prisma::{session, PrismaClient};
 use redis::{aio::MultiplexedConnection, AsyncCommands};
 
@@ -6,7 +6,7 @@ pub async fn destroy_session(
 	db: &PrismaClient,
 	redis: &mut MultiplexedConnection,
 	client_secret: &str,
-) -> Result<(), ApiError> {
+) -> Result<(), InternalError> {
 	let session_id = hex::decode(client_secret)?;
 	let _ = db
 		.session()

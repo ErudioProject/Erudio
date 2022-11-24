@@ -8,7 +8,7 @@ use version::*;
 
 use crate::{helpers::idempotent, routes::RspcResult, Ctx};
 use argon2::{Config, ThreadMode, Variant, Version};
-use backend_error_handler::ApiError;
+use backend_error_handler::InternalError;
 use redis::{aio::MultiplexedConnection, AsyncCommands};
 use rspc::{ErrorCode, Router, RouterBuilder};
 

@@ -11,7 +11,7 @@ use crate::{
 	routes::{router, Ctx},
 };
 use axum::routing::get;
-use backend_error_handler::ApiResult;
+use backend_error_handler::InternalResult;
 use backend_prisma_client::{prisma, prisma::PrismaClient};
 use color_eyre::eyre;
 use log::{error, info};
@@ -115,7 +115,7 @@ async fn start() -> eyre::Result<()> {
 	Ok(())
 }
 
-async fn check_health(db: Arc<PrismaClient>, mut redis: MultiplexedConnection) -> ApiResult<()> {
+async fn check_health(db: Arc<PrismaClient>, mut redis: MultiplexedConnection) -> InternalResult<()> {
 	let _: i64 = db._execute_raw(raw!("SELECT 1;")).exec().await?;
 	redis.set("HEALTH", Utc::now().timestamp()).await?;
 	Ok(())

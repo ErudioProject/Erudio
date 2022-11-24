@@ -65,8 +65,8 @@ jobs:
       fail-fast: false
       matrix:
         toolchain:
-          # - stable - not suported #![feature(future_join)]
-          # - beta - not supported  #![feature(future_join)]
+          - stable
+          - beta
           - nightly
         environment: [dev] # test, staging, production
     steps:

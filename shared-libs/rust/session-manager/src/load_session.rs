@@ -1,4 +1,4 @@
-use backend_error_handler::ApiError;
+use backend_error_handler::InternalError;
 use backend_prisma_client::{
 	prisma::{session, session::Data, PrismaClient},
 	prisma_client_rust::{rspc::ErrorCode, serde_json},
@@ -13,7 +13,7 @@ pub async fn load_session(
 	redis: &mut MultiplexedConnection,
 	client_secret: &str,
 	redis_expires_seconds: Option<usize>,
-) -> Result<Option<User>, ApiError> {
+) -> Result<Option<User>, InternalError> {
 	let json: Option<String> = redis.get(client_secret).await?;
 	match json {
 		None => {
@@ -38,7 +38,7 @@ pub async fn load_session(
 							.delete(session::session_id::equals(session_id))
 							.exec()
 							.await?;
-						return Err(ApiError::new_rspc(
+						return Err(InternalError::new_rspc(
 							ErrorCode::Unauthorized,
 							"Session timeout".to_string(),
 						));
@@ -51,7 +51,7 @@ pub async fn load_session(
 
 					Ok(Some(*user))
 				}
-				Some(_) => Err(ApiError::Unreachable),
+				Some(_) => Err(InternalError::Unreachable),
 				None => Ok(None),
 			}
 		}

@@ -1,4 +1,4 @@
-use backend_error_handler::{ApiError, ApiResult};
+use backend_error_handler::{InternalError, InternalResult};
 use backend_prisma_client::{
 	prisma::{session, PrismaClient},
 	User,
@@ -10,7 +10,7 @@ pub async fn destroy_all_sessions_for_user(
 	db: &PrismaClient,
 	redis: &mut MultiplexedConnection,
 	user: &User,
-) -> Result<(), ApiError> {
+) -> Result<(), InternalError> {
 	let sessions = db
 		.session()
 		.find_many(vec![session::user_id::equals(user.id.clone())])
@@ -23,7 +23,7 @@ pub async fn destroy_all_sessions_for_user(
 	Ok(())
 }
 
-async fn destroy_redis(redis: &mut MultiplexedConnection, sessions: Vec<session::Data>) -> ApiResult<()> {
+async fn destroy_redis(redis: &mut MultiplexedConnection, sessions: Vec<session::Data>) -> InternalResult<()> {
 	let session_ids = sessions
 		.iter()
 		.map(|s| hex::encode(s.session_id.clone()))
@@ -32,7 +32,7 @@ async fn destroy_redis(redis: &mut MultiplexedConnection, sessions: Vec<session:
 	Ok(())
 }
 
-async fn destroy_db(db: &PrismaClient, user: &User) -> ApiResult<()> {
+async fn destroy_db(db: &PrismaClient, user: &User) -> InternalResult<()> {
 	db.session()
 		.delete_many(vec![session::user_id::equals(user.id.clone())])
 		.exec()
