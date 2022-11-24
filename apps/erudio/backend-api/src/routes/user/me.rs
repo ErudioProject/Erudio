@@ -1,7 +1,6 @@
 use crate::routes::{AuthCtx, RspcResult};
 use backend_prisma_client::prisma::user;
-use rspc::{internal::specta::Type, ErrorCode};
-use serde::Serialize;
+use rspc::ErrorCode;
 
 user::select!(user_data {
 	two_factor_auth_settings : select {
