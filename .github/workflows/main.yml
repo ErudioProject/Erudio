@@ -15,7 +15,7 @@ jobs:
     outputs:
       found: ${{ steps.changed-frontend.outputs.any_changed }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Get changed frontend files
@@ -38,7 +38,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
+        with:
+          fetch-depth: 0
+        
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
@@ -79,7 +81,7 @@ jobs:
     outputs:
       found: ${{ steps.changed-rust.outputs.any_changed }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Get changed rust files
@@ -103,7 +105,7 @@ jobs:
           - nightly
         environment: [dev] # test, staging, production
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - run: cp -a ./envs/${{ matrix.environment }}/. .
@@ -132,7 +134,7 @@ jobs:
       matrix:
         environment: [dev] # test, staging, production
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - run: cp -a ./envs/${{ matrix.environment }}/. .
