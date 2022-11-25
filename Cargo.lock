@@ -253,6 +253,7 @@ dependencies = [
  "chrono",
  "dotenvy",
  "env_logger",
+ "eyre",
  "hex",
  "log",
  "once_cell",
