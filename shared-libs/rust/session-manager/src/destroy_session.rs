@@ -1,10 +1,10 @@
 use backend_error_handler::InternalError;
 use backend_prisma_client::prisma::{session, PrismaClient};
-use redis::{aio::MultiplexedConnection, AsyncCommands};
+use redis::AsyncCommands;
 
-pub async fn destroy_session(
+pub async fn destroy_session<R: AsyncCommands>(
 	db: &PrismaClient,
-	redis: &mut MultiplexedConnection,
+	redis: &mut R,
 	client_secret: &str,
 ) -> Result<(), InternalError> {
 	let session_id = hex::decode(client_secret)?;

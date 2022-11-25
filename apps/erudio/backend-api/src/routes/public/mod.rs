@@ -9,7 +9,7 @@ use version::*;
 use crate::{helpers::idempotent, routes::RspcResult, Ctx};
 use argon2::{Config, ThreadMode, Variant, Version};
 use backend_error_handler::InternalError;
-use redis::{aio::MultiplexedConnection, AsyncCommands};
+use redis::AsyncCommands;
 use rspc::{ErrorCode, Router, RouterBuilder};
 
 const ARGON_CONFIG: Config = Config {

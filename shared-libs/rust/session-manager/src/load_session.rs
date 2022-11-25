@@ -5,11 +5,11 @@ use backend_prisma_client::{
 	User,
 };
 use chrono::Utc;
-use redis::{aio::MultiplexedConnection, AsyncCommands};
+use redis::AsyncCommands;
 
-pub async fn load_session(
+pub async fn load_session<R: AsyncCommands>(
 	db: &PrismaClient,
-	redis: &mut MultiplexedConnection,
+	redis: &mut R,
 	client_secret: &str,
 	redis_expires_seconds: Option<usize>,
 ) -> Result<Option<User>, InternalError> {
@@ -29,7 +29,6 @@ pub async fn load_session(
 					valid_until,
 					..
 				}) => {
-					let mut r = redis.clone();
 					let secret = client_secret.to_string();
 					let json = serde_json::to_string(&*user)?;
 					if valid_until.naive_utc() < Utc::now().naive_utc() {
@@ -44,8 +43,8 @@ pub async fn load_session(
 					};
 
 					match redis_expires_seconds {
-						None => r.set(secret, json).await?,
-						Some(seconds) => r.set_ex(secret, json, seconds).await?,
+						None => redis.set(secret, json).await?,
+						Some(seconds) => redis.set_ex(secret, json, seconds).await?,
 					};
 
 					Ok(Some(*user))

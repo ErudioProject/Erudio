@@ -13,7 +13,7 @@ use backend_prisma_client::{prisma, prisma::PrismaClient};
 use color_eyre::eyre;
 use log::{error, info};
 use prisma_client_rust::{chrono::Utc, raw};
-use redis::{aio::MultiplexedConnection, AsyncCommands};
+use redis::AsyncCommands;
 use std::{
 	env,
 	net::{Ipv4Addr, SocketAddr},
@@ -74,7 +74,7 @@ async fn start() -> eyre::Result<()> {
 				let redis_health = conn.clone();
 
 				move || async move {
-					let result = check_health(db_health, redis_health).await;
+					let result = check_health(&db_health, redis_health).await;
 					match result {
 						Ok(_) => (axum::http::StatusCode::OK, "OK".into()),
 						Err(err) => (axum::http::StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", err)),
@@ -112,7 +112,7 @@ async fn start() -> eyre::Result<()> {
 	Ok(())
 }
 
-async fn check_health(db: Arc<PrismaClient>, mut redis: MultiplexedConnection) -> InternalResult<()> {
+async fn check_health<R: AsyncCommands>(db: &PrismaClient, mut redis: R) -> InternalResult<()> {
 	let _: i64 = db._execute_raw(raw!("SELECT 1;")).exec().await?;
 	redis.set("HEALTH", Utc::now().timestamp()).await?;
 	Ok(())

@@ -87,19 +87,19 @@ async fn init_load_destroy_inner(
 ) -> InternalResult<()> {
 	let client_secret = init_session(&db, redis, user, connection_secret, Some(10)).await?;
 
-	let user = load_session(db.clone(), redis, &client_secret, Some(10)).await?;
+	let user = load_session(&db, redis, &client_secret, Some(10)).await?;
 
 	user.ok_or_else(|| InternalError::TestError("User is none".into()))?;
 
 	redis.del(&client_secret).await?;
 
-	let user = load_session(db.clone(), redis, &client_secret, Some(10)).await?;
+	let user = load_session(&db, redis, &client_secret, Some(10)).await?;
 
 	user.ok_or_else(|| InternalError::TestError("User wasn't successfully recovered".into()))?;
 
 	destroy_session(&db, redis, &client_secret).await?;
 
-	let user = load_session(db, redis, &client_secret, Some(10)).await?;
+	let user = load_session(&db, redis, &client_secret, Some(10)).await?;
 
 	if user.is_some() {
 		return Err(InternalError::TestError("Session didn't got deleted".into()));
