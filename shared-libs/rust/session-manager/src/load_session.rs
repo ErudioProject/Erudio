@@ -6,10 +6,9 @@ use backend_prisma_client::{
 };
 use chrono::Utc;
 use redis::{aio::MultiplexedConnection, AsyncCommands};
-use std::sync::Arc;
 
 pub async fn load_session(
-	db: Arc<PrismaClient>,
+	db: &PrismaClient,
 	redis: &mut MultiplexedConnection,
 	client_secret: &str,
 	redis_expires_seconds: Option<usize>,

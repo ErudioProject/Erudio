@@ -6,10 +6,7 @@ mod helpers;
 mod routes;
 mod shutdown_signal;
 
-use crate::{
-	eyre::Context,
-	routes::{router, Ctx},
-};
+use crate::{eyre::Context, helpers::ctx::Ctx, routes::router};
 use axum::routing::get;
 use backend_error_handler::InternalResult;
 use backend_prisma_client::{prisma, prisma::PrismaClient};
