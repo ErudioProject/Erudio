@@ -26,7 +26,7 @@ const ARGON_CONFIG: Config = Config {
 const SALT_SIZE: usize = 64;
 const SECRET_SIZE: usize = 512;
 
-pub fn mount() -> RouterBuilder<Ctx> {
+pub(crate) fn mount() -> RouterBuilder<Ctx> {
 	Router::<Ctx>::new()
 		.query("version", |t| t(version))
 		.query("login", |t| t(login))

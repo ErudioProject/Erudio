@@ -1,4 +1,4 @@
-use crate::routes::{AuthCtx, RspcResult};
+use crate::{helpers::ctx::AuthCtx, routes::RspcResult};
 use backend_prisma_client::prisma::user;
 use rspc::ErrorCode;
 

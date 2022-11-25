@@ -11,12 +11,12 @@ pub async fn init_session(
 	db: &PrismaClient,
 	redis: &mut MultiplexedConnection,
 	user: &user::Data,
-	client_secret: &Vec<u8>,
+	client_secret: &[u8],
 	redis_expires_seconds: Option<usize>,
 ) -> Result<String, InternalError> {
 	let json = serde_json::to_string(&user)?;
 	let encoded = hex::encode(client_secret);
-	let redis_async = init_redis(redis, &encoded, json, redis_expires_seconds);
+	let redis_async = init_redis(redis, &encoded, &json, redis_expires_seconds);
 	let prisma_async = init_prisma(db, client_secret, &user.id);
 	let result = join!(redis_async, prisma_async);
 	result.0?;
@@ -26,8 +26,8 @@ pub async fn init_session(
 
 async fn init_redis(
 	redis: &mut MultiplexedConnection,
-	client_secret: &String,
-	json: String,
+	client_secret: &str,
+	json: &str,
 	expires: Option<usize>,
 ) -> InternalResult<()> {
 	match expires {

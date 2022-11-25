@@ -17,13 +17,13 @@ pub async fn destroy_all_sessions_for_user(
 		.exec()
 		.await?;
 
-	let result = join!(destroy_redis(redis, sessions), destroy_db(db, user));
+	let result = join!(destroy_redis(redis, &sessions), destroy_db(db, user));
 	result.0?;
 	result.1?;
 	Ok(())
 }
 
-async fn destroy_redis(redis: &mut MultiplexedConnection, sessions: Vec<session::Data>) -> InternalResult<()> {
+async fn destroy_redis(redis: &mut MultiplexedConnection, sessions: &[session::Data]) -> InternalResult<()> {
 	let session_ids = sessions
 		.iter()
 		.map(|s| hex::encode(s.session_id.clone()))

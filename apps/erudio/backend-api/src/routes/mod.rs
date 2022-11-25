@@ -1,32 +1,15 @@
 mod public;
 mod user;
 
-use backend_prisma_client::{prisma::PrismaClient, User};
+use crate::helpers::{
+	consts::SESSION_COOKIE_NAME,
+	ctx::{AuthCtx, Ctx},
+};
 use backend_session_manager::load_session;
-use redis::aio::MultiplexedConnection;
 use rspc::{Config, ErrorCode};
-use std::{path::PathBuf, sync::Arc};
-use tower_cookies::Cookies;
+use std::path::PathBuf;
 
 pub type RspcResult<T> = Result<T, rspc::Error>;
-const SESSION_COOKIE_NAME: &str = "SessionId";
-
-#[derive(Clone)]
-pub struct Ctx {
-	pub(crate) db: Arc<PrismaClient>,
-	pub(crate) redis: MultiplexedConnection,
-	pub(crate) cookies: Cookies,
-	pub(crate) region_id: String,
-}
-
-#[derive(Clone)]
-#[allow(dead_code)] // TODO
-pub struct AuthCtx {
-	db: Arc<PrismaClient>,
-	redis: MultiplexedConnection,
-	user: User,
-	region_id: String,
-}
 
 pub(crate) fn router() -> rspc::Router<Ctx> {
 	rspc::Router::<Ctx>::new()
@@ -41,14 +24,19 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 				let old_ctx: Ctx = mw.ctx.clone();
 				match old_ctx.cookies.get(SESSION_COOKIE_NAME) {
 					Some(session_id) => {
-						match load_session(old_ctx.db.clone(), &mut old_ctx.redis.clone(), session_id.value(), None)
-							.await?
+						match load_session(
+							&old_ctx.db.clone(),
+							&mut old_ctx.redis.clone(),
+							session_id.value(),
+							None,
+						)
+						.await?
 						{
 							Some(user) => Ok(mw.with_ctx(AuthCtx {
 								db: old_ctx.db,
 								redis: old_ctx.redis,
 								user,
-								region_id: old_ctx.region_id
+								region_id: old_ctx.region_id,
 							})),
 							None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
 						}
