@@ -39,6 +39,8 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - run: pnpm run -r build
+      - run: pnpm run -r test
 
   backend-changes:
     runs-on: ubuntu-latest

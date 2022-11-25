@@ -37,7 +37,7 @@ interface TestProps {
     mode: "light" | "dark"
 };
 
-//TODO: Figure out why don't these pass...
+//TODO: Figure out why these won't pass...
 
 function Test(props: TestProps) {
     return (

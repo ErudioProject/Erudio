@@ -12,6 +12,7 @@
         "@testing-library/jest-dom": "^5.16.5",
         "@types/testing-library__jest-dom": "^5.14.5",
         "jsdom": "^20.0.3",
+        "msw": "^0.49.0",
         "solid-js": "^1.6.2",
         "solid-start": "^0.2.5",
         "solid-start-node": "^0.2.5",
