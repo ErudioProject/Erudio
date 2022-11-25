@@ -6,7 +6,7 @@ macro_rules! idempotent {
 	// which the macro will assume is callable (E.g. a closure or function)
 	($e:expr, $c:ty, $r:ty, $ret:ty) => {{
 		async fn wrap(ctx: $c, req: $r) -> RspcResult<$ret> {
-			let mut redis: MultiplexedConnection = ctx.redis.clone();
+			let mut redis = ctx.redis.clone();
 			let idempotence_token = req.idempotence_token.clone();
 
 			if !idempotence_token.starts_with(&ctx.region_id) {

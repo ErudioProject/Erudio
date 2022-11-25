@@ -4,12 +4,12 @@ use backend_prisma_client::{
 	prisma_client_rust::serde_json,
 };
 use chrono::{DateTime, Duration, Utc};
-use redis::{aio::MultiplexedConnection, AsyncCommands};
+use redis::AsyncCommands;
 use tokio::join;
 
-pub async fn init_session(
+pub async fn init_session<R: AsyncCommands>(
 	db: &PrismaClient,
-	redis: &mut MultiplexedConnection,
+	redis: &mut R,
 	user: &user::Data,
 	client_secret: &[u8],
 	redis_expires_seconds: Option<usize>,
@@ -24,8 +24,8 @@ pub async fn init_session(
 	Ok(encoded)
 }
 
-async fn init_redis(
-	redis: &mut MultiplexedConnection,
+async fn init_redis<R: AsyncCommands>(
+	redis: &mut R,
 	client_secret: &str,
 	json: &str,
 	expires: Option<usize>,
@@ -48,4 +48,10 @@ async fn init_prisma(db: &PrismaClient, client_secret: &[u8], id: &str) -> Inter
 		.exec()
 		.await?;
 	Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+	#[test]
+	fn init_redis() {}
 }

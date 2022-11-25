@@ -14,7 +14,6 @@ openssl.workspace = true
 prisma-client-rust = {workspace = true, features = ["postgresql", "rspc"]}
 redis.workspace = true
 tokio.workspace = true
-hyper = { version = "0.14", features = ["full"] }
 tower-http = { version = "^0.3", features = ["cors"] }
 axum = "^0.5"
 serde = {version = "^1", features=["derive"]}
