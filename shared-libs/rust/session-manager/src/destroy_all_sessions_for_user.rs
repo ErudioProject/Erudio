@@ -26,7 +26,7 @@ pub async fn destroy_all_sessions_for_user<R: AsyncCommands>(
 async fn destroy_redis<R: AsyncCommands>(redis: &mut R, sessions: &[session::Data]) -> InternalResult<()> {
 	let session_ids = sessions
 		.iter()
-		.map(|s| hex::encode(s.session_id.clone()))
+		.map(|s| hex::encode(&s.session_id))
 		.collect::<Vec<String>>();
 	redis.del(session_ids).await?;
 	Ok(())

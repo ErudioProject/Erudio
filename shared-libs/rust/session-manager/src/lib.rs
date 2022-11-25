@@ -1,8 +1,5 @@
 #![forbid(unsafe_code)]
 
-#[cfg(test)]
-mod tests;
-
 mod destroy_all_sessions_for_user;
 mod destroy_session;
 mod init_session;
