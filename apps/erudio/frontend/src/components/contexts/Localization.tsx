@@ -1,5 +1,4 @@
-import { createSignal, Show } from 'solid-js';
-import { JSX } from 'solid-js/jsx-runtime';
+import { createSignal, ParentProps, Show } from 'solid-js';
 import {
     detectLocale,
     localStorageDetector,
@@ -12,10 +11,9 @@ import { loadLocaleAsync } from '../../i18n/i18n-util.async';
 
 interface LocalizationProps {
     locale: Locales
-    children?: JSX.Element,
 }
 
-export default function Localization(props: LocalizationProps) {
+export default function Localization(props: ParentProps<LocalizationProps>) {
     const [localeLoaded, setLocaleLoaded] = createSignal(false);
     loadLocaleAsync(props.locale).then(() => setLocaleLoaded(true));
     return (
