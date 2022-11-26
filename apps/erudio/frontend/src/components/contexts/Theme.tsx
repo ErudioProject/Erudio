@@ -1,13 +1,11 @@
 import { createTheme, FormControlLabel, Switch, ThemeProvider } from "@suid/material";
 import { createPalette } from "@suid/material/styles/createPalette";
-import { Accessor, createContext, createMemo, createSignal, untrack, useContext } from "solid-js";
-import { JSX } from "solid-js/jsx-runtime";
+import { Accessor, createContext, createSignal, ParentComponent, ParentProps, useContext } from "solid-js";
 import { useI18nContext } from "../../i18n/i18n-solid";
 import { getDesignTokens } from "../../theme";
 
 type ModeProviderProps = {
     defaultMode: "light" | "dark",
-    children?: JSX.Element
 }
 
 interface ModeContextType {
@@ -18,7 +16,7 @@ interface ModeContextType {
 const ModeContext = createContext<ModeContextType>();
 const useMode = () => useContext(ModeContext)!
 
-function ModeProvider(props: ModeProviderProps) {
+const ModeProvider: ParentComponent<ModeProviderProps> = (props) => {
     const [mode, setMode] = createSignal(props.defaultMode);
     const modeContext: ModeContextType = {
         mode,
@@ -35,11 +33,7 @@ function ModeProvider(props: ModeProviderProps) {
     )
 }
 
-interface ErudioThemeProviderProps {
-    children: JSX.Element;
-};
-
-function ErudioThemeProvider(props: ErudioThemeProviderProps) {
+const ErudioThemeProvider: ParentComponent = (props) => {
     const mode = useMode();
     const palette = () => createPalette(getDesignTokens(mode.mode()))
     const theme = createTheme({ palette });
@@ -51,7 +45,7 @@ function ErudioThemeProvider(props: ErudioThemeProviderProps) {
 }
 
 type ThemeProps = ModeProviderProps;
-export default function Theme(props: ThemeProps) {
+export default function Theme(props: ParentProps<ThemeProps>) {
     return (
         <ModeProvider defaultMode={props.defaultMode}>
             <ErudioThemeProvider>

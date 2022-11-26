@@ -1,5 +1,5 @@
 import { Client } from '@rspc/client';
-import { createContext, JSX, useContext } from 'solid-js';
+import { createContext, JSX, ParentProps, useContext } from 'solid-js';
 import { Procedures } from '../../../../bindings';
 import {
     createFetchApiClient,
@@ -20,7 +20,7 @@ interface ClientContextType {
     getMockClient(): Client<Procedures>;
 }
 
-function ClientProvider(props: ClientProviderProps) {
+function ClientProvider(props: ParentProps<ClientProviderProps>) {
     let fetchClient: Client<Procedures> | null = null;
     let wsClient: Client<Procedures> | null = null;
     let mockClient: Client<Procedures> | null = null;

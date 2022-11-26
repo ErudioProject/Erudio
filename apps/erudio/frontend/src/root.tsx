@@ -38,7 +38,7 @@ export default function Root() {
                                 <Theme defaultMode='dark'>
                                     <CssBaseline />
                                     <ModeSwitch />
-                                    <Container>
+                                    <Container sx={{ height: "100vh" }}>
                                         <Routes>
                                             <FileRoutes />
                                         </Routes>
