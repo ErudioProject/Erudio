@@ -1,5 +1,5 @@
 use crate::{helpers::ctx::AuthCtx, routes::RspcResult};
-use backend_prisma_client::prisma::user;
+use prisma_client::prisma::user;
 use rspc::ErrorCode;
 
 user::select!(user_data {

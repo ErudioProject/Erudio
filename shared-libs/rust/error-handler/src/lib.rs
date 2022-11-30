@@ -2,8 +2,8 @@
 pub mod error_mapping;
 pub use error_mapping::*;
 
-pub fn backend_error_handler() -> String {
-	"backend_error_handler".into()
+pub fn error_handler() -> String {
+	"error_handler".into()
 }
 
 #[cfg(test)]
@@ -12,6 +12,6 @@ mod tests {
 
 	#[test]
 	fn it_works() {
-		assert_eq!(backend_error_handler(), "backend_error_handler".to_string());
+		assert_eq!(error_handler(), "error_handler".to_string());
 	}
 }

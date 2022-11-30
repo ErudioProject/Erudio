@@ -1,13 +1,13 @@
 mod commons;
 
 use crate::commons::init_tests_with_user;
-use backend_error_handler::{InternalError, InternalResult};
-use backend_prisma_client::{
+use error_handler::{InternalError, InternalResult};
+use prisma_client::{
 	prisma::{user, PrismaClient},
 	User,
 };
-use backend_session_manager::{destroy_session, init_session, load_session};
 use redis::AsyncCommands;
+use session_manager::{destroy_session, init_session, load_session};
 
 #[tokio::test]
 async fn init_load_destroy() -> InternalResult<()> {

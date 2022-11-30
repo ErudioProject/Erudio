@@ -5,8 +5,8 @@ use crate::helpers::{
 	consts::SESSION_COOKIE_NAME,
 	ctx::{AuthCtx, Ctx},
 };
-use backend_session_manager::load_session;
 use rspc::{Config, ErrorCode};
+use session_manager::load_session;
 use std::path::PathBuf;
 
 pub type RspcResult<T> = Result<T, rspc::Error>;

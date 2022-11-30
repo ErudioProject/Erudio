@@ -1,10 +1,10 @@
-use backend_error_handler::{InternalError, InternalResult};
-use backend_prisma_client::{
+use chrono::{DateTime, Duration, Utc};
+use error_handler::{InternalError, InternalResult};
+use prisma_client::{
 	prisma::{user, PrismaClient},
 	prisma_client_rust::serde_json,
 	User,
 };
-use chrono::{DateTime, Duration, Utc};
 use redis::AsyncCommands;
 use tokio::join;
 
