@@ -68,7 +68,7 @@ model two_factor_auth_settings {
 
 model user {
   id                          String  @id @default(uuid()) @db.Uuid
-  password_hash               Bytes
+  password_hash               String
   two_factor_auth_settings_id String? @db.Uuid
 
   pii_data                       pii_data?

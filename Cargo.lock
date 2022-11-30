@@ -68,6 +68,7 @@ dependencies = [
  "dotenvy",
  "env_logger",
  "error_handler",
+ "hex",
  "log",
  "openssl",
  "prisma-client-rust",
