@@ -24,9 +24,9 @@ pub async fn init_session<R: AsyncCommands>(
 	Ok(encoded)
 }
 
-async fn init_redis<R: AsyncCommands>(
+async fn init_redis<R: AsyncCommands, U: serde::Serialize>(
 	redis: &mut R,
-	user: &User,
+	user: &U,
 	client_secret: &str,
 	expires: Option<usize>,
 ) -> InternalResult<()> {

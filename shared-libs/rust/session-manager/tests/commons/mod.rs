@@ -43,7 +43,7 @@ pub(crate) async fn init_tests_with_user() -> InternalResult<(PrismaClient, Conn
 	let mut connection_secret = vec![0; 512];
 	let mut random_data_for_email = vec![0; 512];
 	{
-		let mut rng = thread_rng(); // TODO Maybe change rng
+		let mut rng = thread_rng();
 		rng.fill_bytes(&mut connection_secret);
 		rng.fill_bytes(&mut random_data_for_email);
 	}

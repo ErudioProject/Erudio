@@ -17,9 +17,9 @@ pub struct LoginRequest {
 
 #[derive(Type, serde::Serialize, Debug)]
 #[serde(tag = "t", content = "c")]
-#[allow(dead_code)] // TODO
 pub enum LoginResponse {
 	Success,
+	#[allow(dead_code)] // TODO
 	TwoFactorAuth(TwoFactorAuthType),
 }
 
@@ -35,7 +35,7 @@ pub(crate) async fn login(ctx: Ctx, req: LoginRequest) -> RspcResult<LoginRespon
 	debug!("Login Request: {:?}", req);
 	let mut connection_secret = vec![0; SECRET_SIZE];
 	{
-		let mut rng = rand::thread_rng(); // TODO Maybe change
+		let mut rng = rand::thread_rng();
 		rng.fill_bytes(&mut connection_secret);
 	}
 	let user = ctx

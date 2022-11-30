@@ -27,7 +27,7 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 	let mut salt = vec![0; SALT_SIZE];
 	let mut connection_secret = vec![0; SECRET_SIZE];
 	{
-		let mut rng = rand::thread_rng(); // TODO Maybe change
+		let mut rng = rand::thread_rng();
 		rng.fill_bytes(&mut salt);
 		rng.fill_bytes(&mut connection_secret);
 	}
