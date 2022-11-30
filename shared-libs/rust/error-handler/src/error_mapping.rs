@@ -59,8 +59,8 @@ impl From<FromHexError> for InternalError {
 	}
 }
 
-impl From<backend_prisma_client::prisma_client_rust::QueryError> for InternalError {
-	fn from(value: backend_prisma_client::prisma_client_rust::QueryError) -> Self {
+impl From<prisma_client::prisma_client_rust::QueryError> for InternalError {
+	fn from(value: prisma_client::prisma_client_rust::QueryError) -> Self {
 		InternalError::Rspc(rspc::Error::with_cause(
 			ErrorCode::InternalServerError,
 			"Prisma query error".into(),

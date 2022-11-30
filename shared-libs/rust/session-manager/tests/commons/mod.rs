@@ -1,9 +1,9 @@
-use backend_error_handler::{InternalError, InternalResult};
-use backend_prisma_client::{
+use error_handler::{InternalError, InternalResult};
+use eyre::Context;
+use prisma_client::{
 	prisma::{pii_data, user, GrammaticalForm, PrismaClient},
 	User,
 };
-use eyre::Context;
 use rand::{thread_rng, RngCore};
 use redis::aio::Connection;
 use std::env;

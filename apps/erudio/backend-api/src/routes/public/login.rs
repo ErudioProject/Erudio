@@ -2,12 +2,12 @@ use crate::{
 	routes::{public::SECRET_SIZE, RspcResult, SESSION_COOKIE_NAME},
 	Ctx,
 };
-use backend_prisma_client::prisma::{pii_data, user};
-use backend_session_manager::init_session;
 use cookie::{Cookie, SameSite};
 use log::debug;
+use prisma_client::prisma::{pii_data, user};
 use rand::RngCore;
 use rspc::{ErrorCode, Type};
+use session_manager::init_session;
 
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct LoginRequest {

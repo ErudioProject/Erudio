@@ -5,8 +5,8 @@ pub use prisma_client_rust;
 
 pub type User = prisma::user::Data;
 
-pub fn backend_prisma_client() -> String {
-	"backend_prisma_client".into()
+pub fn prisma_client() -> String {
+	"prisma_client".into()
 }
 
 #[cfg(test)]
@@ -15,6 +15,6 @@ mod tests {
 
 	#[test]
 	fn it_works() {
-		assert_eq!(backend_prisma_client(), "backend_prisma_client".to_string());
+		assert_eq!(prisma_client(), "prisma_client".to_string());
 	}
 }

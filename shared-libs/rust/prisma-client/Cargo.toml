@@ -1,5 +1,5 @@
 [package]
-name = "backend_prisma_client"
+name = "prisma_client"
 version = "0.1.0"
 edition = "2021"
 

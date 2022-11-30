@@ -1,12 +1,12 @@
 [package]
-name = "backend_error_handler"
+name = "error_handler"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-backend_prisma_client.workspace = true
+prisma_client.workspace = true
 redis.workspace = true
 serde = "^1"
 serde_json = "^1"

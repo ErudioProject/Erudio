@@ -1,5 +1,5 @@
-use backend_error_handler::InternalError;
-use backend_prisma_client::prisma::{session, PrismaClient};
+use error_handler::InternalError;
+use prisma_client::prisma::{session, PrismaClient};
 use redis::AsyncCommands;
 
 pub async fn destroy_session<R: AsyncCommands>(

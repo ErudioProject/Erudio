@@ -1,5 +1,5 @@
-use backend_error_handler::{InternalError, InternalResult};
-use backend_prisma_client::{
+use error_handler::{InternalError, InternalResult};
+use prisma_client::{
 	prisma::{session, PrismaClient},
 	User,
 };

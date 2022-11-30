@@ -9,9 +9,9 @@ members = [
 ]
 
 [workspace.dependencies]
-backend_prisma_client = { path = "shared-libs/rust/prisma-client" }
-backend_session_manager = { path = "shared-libs/rust/session-manager" }
-backend_error_handler = { path = "shared-libs/rust/error-handler" }
+prisma_client = { path = "shared-libs/rust/prisma-client" }
+session_manager = { path = "shared-libs/rust/session-manager" }
+error_handler = { path = "shared-libs/rust/error-handler" }
 prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations"], rev = "f210ca250c297b39b9bb23cb43bb3ab3712d4a4c"}
 prisma-client-rust-cli = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations"], rev = "f210ca250c297b39b9bb23cb43bb3ab3712d4a4c"}
 redis = {version = "^0.22", features = ["aio", "ahash", "tokio-comp"]}

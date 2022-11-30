@@ -1,4 +1,4 @@
-use backend_prisma_client::{prisma::PrismaClient, User};
+use prisma_client::{prisma::PrismaClient, User};
 use redis::aio::MultiplexedConnection;
 use std::sync::Arc;
 use tower_cookies::Cookies;
