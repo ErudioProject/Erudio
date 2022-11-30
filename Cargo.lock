@@ -2326,7 +2326,6 @@ version = "0.1.0"
 dependencies = [
  "prisma-client-rust",
  "serde",
- "serde_json",
 ]
 
 [[package]]
@@ -2973,6 +2972,7 @@ dependencies = [
  "rand 0.8.5",
  "redis",
  "redis-test",
+ "serde",
  "tokio",
 ]
 
