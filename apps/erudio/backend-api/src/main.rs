@@ -10,7 +10,7 @@ use crate::{eyre::Context, helpers::ctx::Ctx, routes::router};
 use axum::routing::get;
 use color_eyre::eyre;
 use error_handler::InternalResult;
-use log::{error, info};
+use log::{error, info, warn};
 use prisma_client::{prisma, prisma::PrismaClient};
 use prisma_client_rust::{chrono::Utc, raw};
 use redis::AsyncCommands;
@@ -45,6 +45,12 @@ async fn start() -> eyre::Result<()> {
 		.context("No API_PORT environmental variable")?
 		.parse::<u16>()
 		.context("API_PORT is invalid example value '3000'")?;
+	let argon_secret =
+		hex::decode(env::var("ARGON_SECRET").context("No hex value ARGON_SECRET environmental variable")?)
+			.context("ARGON_SECRET is not hex value")?;
+	if argon_secret.len() != 32 {
+		warn!("Recommended ARGON_SECRET length is 32 actual: {}", argon_secret.len())
+	}
 
 	let db: Arc<PrismaClient> = Arc::new(
 		PrismaClient::_builder()
@@ -91,6 +97,7 @@ async fn start() -> eyre::Result<()> {
 					redis: conn,
 					cookies,
 					region_id,
+					argon_secret: Arc::new(argon_secret),
 				})
 				.axum(),
 		)

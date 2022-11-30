@@ -1,8 +1,10 @@
 use crate::{
-	routes::{public::SECRET_SIZE, RspcResult, SESSION_COOKIE_NAME},
+	helpers::consts::SECRET_SIZE,
+	routes::{RspcResult, SESSION_COOKIE_NAME},
 	Ctx,
 };
 use cookie::{Cookie, SameSite};
+use error_handler::InternalError;
 use log::debug;
 use prisma_client::prisma::{pii_data, user};
 use rand::RngCore;
@@ -46,6 +48,12 @@ pub(crate) async fn login(ctx: Ctx, req: LoginRequest) -> RspcResult<LoginRespon
 		.exec()
 		.await?
 		.ok_or_else(|| rspc::Error::new(ErrorCode::NotFound, "Email not found".to_string()))?;
+
+	if !argon2::verify_encoded_ext(&user.password_hash, req.password.as_bytes(), &ctx.argon_secret, &[])
+		.map_err(Into::<InternalError>::into)?
+	{
+		return Err(rspc::Error::new(ErrorCode::Forbidden, "Wrong password".into()));
+	}
 
 	//TODO 2fa handling
 	ctx.cookies.add(

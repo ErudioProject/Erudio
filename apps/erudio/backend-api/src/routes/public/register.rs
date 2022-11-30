@@ -1,10 +1,9 @@
 use crate::{
-	routes::{
-		public::{ARGON_CONFIG, SALT_SIZE, SECRET_SIZE},
-		RspcResult, SESSION_COOKIE_NAME,
-	},
+	helpers::consts::{SALT_SIZE, SECRET_SIZE},
+	routes::{RspcResult, SESSION_COOKIE_NAME},
 	Ctx,
 };
+use argon2::{Config, ThreadMode, Variant, Version};
 use cookie::SameSite;
 use error_handler::InternalError;
 use log::debug;
@@ -24,6 +23,17 @@ pub struct RegisterRequest {
 
 pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 	debug!("Register Request : {:?}", req);
+	let argon_config: Config = Config {
+		variant: Variant::Argon2i,
+		version: Version::Version13,
+		mem_cost: 16384,
+		time_cost: 3,
+		lanes: 4,
+		thread_mode: ThreadMode::Parallel,
+		secret: ctx.argon_secret.as_slice(),
+		ad: &[],
+		hash_length: 32,
+	};
 	let mut salt = vec![0; SALT_SIZE];
 	let mut connection_secret = vec![0; SECRET_SIZE];
 	{
@@ -36,7 +46,7 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 		.db
 		.user()
 		.create(
-			argon2::hash_raw(req.password.as_bytes(), &salt, &ARGON_CONFIG).map_err(Into::<InternalError>::into)?,
+			argon2::hash_encoded(req.password.as_bytes(), &salt, &argon_config).map_err(Into::<InternalError>::into)?,
 			vec![],
 		)
 		.exec()

@@ -9,6 +9,7 @@ pub(crate) struct Ctx {
 	pub redis: MultiplexedConnection,
 	pub cookies: Cookies,
 	pub region_id: String,
+	pub argon_secret: Arc<Vec<u8>>,
 }
 
 #[derive(Clone)]
