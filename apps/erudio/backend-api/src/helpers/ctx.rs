@@ -19,4 +19,5 @@ pub(crate) struct AuthCtx {
 	pub redis: MultiplexedConnection,
 	pub user: User,
 	pub region_id: String,
+	pub session_id: String,
 }

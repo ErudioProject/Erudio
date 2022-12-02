@@ -37,6 +37,7 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 								redis: old_ctx.redis,
 								user,
 								region_id: old_ctx.region_id,
+								session_id: session_id.value().to_string(),
 							})),
 							None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
 						}
