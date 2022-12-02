@@ -4,6 +4,7 @@ pub mod prisma;
 
 use crate::prisma::PrismaClient;
 pub use prisma_client_rust;
+use rand::{thread_rng, Rng};
 
 pub type User = prisma::user::Data;
 
@@ -14,9 +15,9 @@ fn id() -> usize {
 }
 
 pub async fn prisma_mocked_client(db_test_url: String) -> Result<PrismaClient, Box<dyn std::error::Error>> {
-	let id = id().to_string();
+	let rand: usize = thread_rng().gen(); // TODO figure out why schema dont self reset
 	let client = PrismaClient::_builder()
-		.with_url(db_test_url + &id)
+		.with_url(db_test_url + &id().to_string() + &rand.to_string())
 		.build()
 		.await?;
 	client._db_push().accept_data_loss().force_reset().await?;
@@ -32,7 +33,7 @@ pub mod tests {
 	use std::env;
 
 	#[tokio::test]
-	async fn test_init_prisma_expire() {
+	async fn test_prisma_mock() {
 		dotenvy::dotenv().expect(".env file loading error");
 		let db = prisma_mocked_client(env::var("DATABASE_URL_TESTS").expect("DATABASE_URL_TESTS not found")).await;
 		assert!(db.is_ok())
