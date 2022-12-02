@@ -26,7 +26,7 @@ pub async fn prisma_mocked_client(db_test_url: String) -> Result<PrismaClient, B
 }
 
 #[cfg(test)]
-pub mod tests {
+mod tests {
 	use super::*;
 	use prisma_client_rust::tokio;
 	use serial_test::serial;
