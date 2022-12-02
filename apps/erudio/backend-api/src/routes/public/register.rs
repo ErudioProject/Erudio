@@ -18,6 +18,9 @@ pub struct RegisterRequest {
 	pub idempotence_token: String,
 	pub email: String,
 	pub password: String,
+	pub first_name: String,
+	pub middle_name: Option<String>,
+	pub last_name: String,
 	pub code: (),
 }
 
@@ -52,12 +55,19 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 		.exec()
 		.await?;
 
+	let legal_name = req.first_name.clone() + &req.middle_name.unwrap_or("".into()) + &req.last_name;
+	let display_name = req.first_name + &req.last_name;
+
 	let pii_data = ctx
 		.db
 		.pii_data()
-		.create(GrammaticalForm::Indeterminate, user::id::equals(user.id.clone()), vec![
-			pii_data::email::Set(Some(req.email)).into(),
-		])
+		.create(
+			GrammaticalForm::Indeterminate,
+			legal_name,
+			display_name,
+			user::id::equals(user.id.clone()),
+			vec![pii_data::email::Set(Some(req.email)).into()],
+		)
 		.exec()
 		.await?;
 

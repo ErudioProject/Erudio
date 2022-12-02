@@ -60,9 +60,13 @@ pub(crate) async fn init_tests_with_user() -> InternalResult<(PrismaClient, Conn
 
 	let pii_data = db
 		.pii_data()
-		.create(GrammaticalForm::Indeterminate, user::id::equals(user.id.clone()), vec![
-			pii_data::email::Set(Some(hex::encode(random_data_for_email))).into(),
-		])
+		.create(
+			GrammaticalForm::Indeterminate,
+			"legal_name".into(),
+			"diplay_name".into(),
+			user::id::equals(user.id.clone()),
+			vec![pii_data::email::Set(Some(hex::encode(random_data_for_email))).into()],
+		)
 		.exec()
 		.await
 		.context("Db error pii_data")
