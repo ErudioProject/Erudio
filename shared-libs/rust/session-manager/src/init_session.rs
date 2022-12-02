@@ -60,7 +60,7 @@ mod tests {
 	static CLIENT_SECRET: Lazy<String> = Lazy::new(|| hex::encode(vec![0u8; 32]));
 	static USER: Lazy<User> = Lazy::new(|| User {
 		id: "0".repeat(16),
-		password_hash: vec![1u8; 32],
+		password_hash: "1".repeat(32),
 		two_factor_auth_settings_id: None,
 		pii_data: None,
 		two_factor_auth_settings: None,
@@ -88,7 +88,7 @@ mod tests {
 			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
 		]);
 
-		let result = init_redis(&mut mock_redis, &USER, &CLIENT_SECRET, None).await;
+		let result = init_redis(&mut mock_redis, &*USER, &CLIENT_SECRET, None).await;
 		assert!(result.is_ok());
 		assert_eq!(mock_redis.get("last").await, Ok("OK".to_string()));
 	}
@@ -107,7 +107,7 @@ mod tests {
 			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
 		]);
 
-		let result = init_redis(&mut mock_redis, &USER, &CLIENT_SECRET, Some(expire_seconds)).await;
+		let result = init_redis(&mut mock_redis, &*USER, &CLIENT_SECRET, Some(expire_seconds)).await;
 		assert!(result.is_ok());
 		assert_eq!(mock_redis.get("last").await, Ok("OK".to_string()));
 	}

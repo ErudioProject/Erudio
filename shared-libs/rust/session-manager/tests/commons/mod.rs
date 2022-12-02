@@ -52,7 +52,7 @@ pub(crate) async fn init_tests_with_user() -> InternalResult<(PrismaClient, Conn
 	// TODO Further refactor user creating
 	let user = db
 		.user()
-		.create(vec![], vec![])
+		.create("".into(), vec![])
 		.exec()
 		.await
 		.context("Db error user")
