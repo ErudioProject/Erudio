@@ -1,6 +1,6 @@
 import { Show } from "solid-js";
 import { createRouteData, Navigate, Outlet, useRouteData } from "solid-start";
-import { useClient } from "../../components/contexts/ClientProvider";
+import { useClient } from "../components/contexts/ClientProvider";
 
 export function routeData() {
     const client = useClient();
