@@ -2,9 +2,12 @@ use hex::FromHexError;
 use log::warn;
 use redis::RedisError;
 use rspc::ErrorCode;
+use std::sync::Arc;
 
 #[derive(Debug)]
 pub enum InternalError {
+	IntoRspc(ErrorCode, String),
+	IntoRspcWithCause(ErrorCode, String, Arc<dyn std::error::Error + Send + Sync>),
 	Rspc(rspc::Error),
 	Unreachable,       // This error should be unreachable
 	TestError(String), // This is for tests TODO check if there is a way to enforce it
@@ -81,6 +84,8 @@ impl From<InternalError> for rspc::Error {
 				ErrorCode::InternalServerError,
 				"This is an error that is allowed only in tests".to_string(),
 			),
+			InternalError::IntoRspc(code, message) => rspc::Error::new(code, message),
+			InternalError::IntoRspcWithCause(code, message, cause) => rspc::Error::with_cause(code, message, cause),
 		}
 	}
 }
