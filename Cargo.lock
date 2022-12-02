@@ -2340,6 +2340,7 @@ version = "0.1.0"
 dependencies = [
  "dotenvy",
  "prisma-client-rust",
+ "rand 0.8.5",
  "serde",
  "serial_test",
 ]

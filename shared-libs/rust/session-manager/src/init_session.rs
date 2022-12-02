@@ -134,4 +134,31 @@ mod tests {
 
 		init_prisma(&db, &CLIENT_SECRET, &USER.id).await
 	}
+
+	#[tokio::test]
+	async fn test_init() -> InternalResult<()> {
+		dotenvy::dotenv().expect(".env file loading error");
+		let db =
+			prisma_client::prisma_mocked_client(env::var("DATABASE_URL_TESTS").expect("DATABASE_URL_TESTS not found"))
+				.await
+				.expect("Test database error");
+		db.user()
+			.create(USER.password_hash.clone(), vec![user::id::set(USER.id.clone())])
+			.exec()
+			.await?;
+
+		let mut mock_redis = MockRedisConnection::new(vec![
+			MockCmd::new(
+				redis::cmd("SET")
+					.arg(&hex::encode(CLIENT_SECRET.clone()))
+					.arg(serde_json::to_string(&*USER).unwrap()),
+				Ok("OK"),
+			),
+			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
+		]);
+
+		let result = init_session(&db, &mut mock_redis, &USER, &CLIENT_SECRET, None).await?;
+		assert_eq!(result, hex::encode(&*CLIENT_SECRET));
+		Ok(())
+	}
 }
