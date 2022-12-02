@@ -35,9 +35,10 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 							Some(user) => Ok(mw.with_ctx(AuthCtx {
 								db: old_ctx.db,
 								redis: old_ctx.redis,
+								session_id: session_id.value().to_string(),
+								cookies: old_ctx.cookies,
 								user,
 								region_id: old_ctx.region_id,
-								session_id: session_id.value().to_string(),
 							})),
 							None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
 						}
