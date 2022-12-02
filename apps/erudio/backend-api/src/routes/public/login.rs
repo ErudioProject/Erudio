@@ -35,11 +35,6 @@ pub enum TwoFactorAuthType {
 
 pub(crate) async fn login(ctx: Ctx, req: LoginRequest) -> RspcResult<LoginResponse> {
 	debug!("Login Request: {:?}", req);
-	let mut connection_secret = vec![0; SECRET_SIZE];
-	{
-		let mut rng = rand::thread_rng();
-		rng.fill_bytes(&mut connection_secret);
-	}
 	let user = ctx
 		.db
 		.user()
@@ -53,6 +48,12 @@ pub(crate) async fn login(ctx: Ctx, req: LoginRequest) -> RspcResult<LoginRespon
 		.map_err(Into::<InternalError>::into)?
 	{
 		return Err(rspc::Error::new(ErrorCode::Forbidden, "Wrong password".into()));
+	}
+
+	let mut connection_secret = vec![0; SECRET_SIZE];
+	{
+		let mut rng = rand::thread_rng();
+		rng.fill_bytes(&mut connection_secret);
 	}
 
 	//TODO 2fa handling
