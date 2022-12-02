@@ -55,8 +55,10 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 		.exec()
 		.await?;
 
-	let legal_name = req.first_name.clone() + &req.middle_name.unwrap_or("".into()) + &req.last_name;
-	let display_name = req.first_name + &req.last_name;
+	let legal_name = req.first_name.clone()
+		+ " " + &(req.middle_name.map(|name| name + " ")).unwrap_or_else(|| "".into())
+		+ &req.last_name;
+	let display_name = req.first_name + " " + &req.last_name;
 
 	let pii_data = ctx
 		.db
