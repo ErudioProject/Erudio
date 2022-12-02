@@ -49,13 +49,14 @@ model pii_data {
   email            String?          @unique
   pesel            String?
   birth_date       DateTime?
-  legal_name       String?
-  display_name     String?
+  legal_name       String
+  display_name     String
   phone_prefix     String?
-  phone_number     String?          @unique
+  phone_number     String?
   previous_data    Json[]
 
   user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  @@unique([phone_prefix, phone_number])
 }
 
 model two_factor_auth_settings {

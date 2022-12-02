@@ -5,7 +5,7 @@ export type Procedures = {
         { key: "public.login", input: LoginRequest, result: LoginResponse } | 
         { key: "public.version", input: never, result: string } | 
         { key: "user.logout", input: never, result: null } | 
-        { key: "user.me", input: never, result: { pii_data: { display_name: string | null } | null, user_school_relation: Array<{ school_relation_type: SchoolRelationType, school: { name: string } }> } },
+        { key: "user.me", input: never, result: { pii_data: { display_name: string } | null, user_school_relation: Array<{ school_relation_type: SchoolRelationType, school: { name: string } }> } },
     mutations: 
         { key: "public.register", input: RegisterRequest, result: null },
     subscriptions: never
@@ -15,7 +15,7 @@ export interface LoginRequest { email: string, password: string }
 
 export type LoginResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
 
-export interface RegisterRequest { idempotence_token: string, email: string, password: string, code: null }
+export interface RegisterRequest { idempotence_token: string, email: string, password: string, first_name: string, middle_name: string | null, last_name: string, code: null }
 
 export type SchoolRelationType = "student" | "teacher" | "admin" | "director"
 
