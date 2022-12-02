@@ -8,13 +8,13 @@ pub async fn destroy_session<R: AsyncCommands>(
 	client_secret: &str,
 ) -> Result<(), InternalError> {
 	let session_id = hex::decode(client_secret)?;
-	let _ = db
-		.session()
-		.delete(session::session_id::equals(session_id))
-		.exec()
-		.await?;
-
-	redis.del(client_secret).await?;
-
+	let result = tokio::join!(
+		redis.del::<&str, ()>(client_secret),
+		db.session()
+			.delete(session::session_id::equals(session_id))
+			.exec()
+	);
+	result.0?;
+	result.1?;
 	Ok(())
 }

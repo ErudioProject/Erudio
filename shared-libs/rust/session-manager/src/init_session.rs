@@ -56,10 +56,12 @@ mod tests {
 	use super::*;
 	use once_cell::sync::Lazy;
 	use redis_test::{MockCmd, MockRedisConnection};
+	use std::env;
+	use uuid::Uuid;
 
-	static CLIENT_SECRET: Lazy<String> = Lazy::new(|| hex::encode(vec![0u8; 32]));
+	static CLIENT_SECRET: Lazy<Vec<u8>> = Lazy::new(|| vec![0u8; 32]);
 	static USER: Lazy<User> = Lazy::new(|| User {
-		id: "0".repeat(16),
+		id: Uuid::new_v4().to_string(),
 		password_hash: "1".repeat(32),
 		two_factor_auth_settings_id: None,
 		pii_data: None,
@@ -77,29 +79,29 @@ mod tests {
 	});
 
 	#[tokio::test]
-	async fn test_init_redis_no_expire() {
+	async fn test_init_redis_no_expire() -> InternalResult<()> {
 		let mut mock_redis = MockRedisConnection::new(vec![
 			MockCmd::new(
 				redis::cmd("SET")
-					.arg(&*CLIENT_SECRET)
+					.arg(&hex::encode(CLIENT_SECRET.clone()))
 					.arg(serde_json::to_string(&*USER).unwrap()),
 				Ok("OK"),
 			),
 			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
 		]);
 
-		let result = init_redis(&mut mock_redis, &*USER, &CLIENT_SECRET, None).await;
-		assert!(result.is_ok());
+		let result = init_redis(&mut mock_redis, &*USER, &hex::encode(CLIENT_SECRET.clone()), None).await;
 		assert_eq!(mock_redis.get("last").await, Ok("OK".to_string()));
+		result
 	}
 
 	#[tokio::test]
-	async fn test_init_redis_expire() {
+	async fn test_init_redis_expire() -> InternalResult<()> {
 		let expire_seconds = 10;
 		let mut mock_redis = MockRedisConnection::new(vec![
 			MockCmd::new(
 				redis::cmd("SETEX")
-					.arg(&*CLIENT_SECRET)
+					.arg(&hex::encode(CLIENT_SECRET.clone()))
 					.arg(expire_seconds)
 					.arg(serde_json::to_string(&*USER).unwrap()),
 				Ok("OK"),
@@ -107,8 +109,29 @@ mod tests {
 			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
 		]);
 
-		let result = init_redis(&mut mock_redis, &*USER, &CLIENT_SECRET, Some(expire_seconds)).await;
-		assert!(result.is_ok());
+		let result = init_redis(
+			&mut mock_redis,
+			&*USER,
+			&hex::encode(CLIENT_SECRET.clone()),
+			Some(expire_seconds),
+		)
+		.await;
 		assert_eq!(mock_redis.get("last").await, Ok("OK".to_string()));
+		result
+	}
+
+	#[tokio::test]
+	async fn test_init_prisma_expire() -> InternalResult<()> {
+		dotenvy::dotenv().expect(".env file loading error");
+		let db =
+			prisma_client::prisma_mocked_client(env::var("DATABASE_URL_TESTS").expect("DATABASE_URL_TESTS not found"))
+				.await
+				.expect("Test database error");
+		db.user()
+			.create(USER.password_hash.clone(), vec![user::id::set(USER.id.clone())])
+			.exec()
+			.await?;
+
+		init_prisma(&db, &CLIENT_SECRET, &USER.id).await
 	}
 }
