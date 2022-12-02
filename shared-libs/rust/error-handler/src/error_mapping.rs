@@ -9,7 +9,6 @@ pub enum InternalError {
 	IntoRspc(ErrorCode, String),
 	IntoRspcWithCause(ErrorCode, String, Arc<dyn std::error::Error + Send + Sync>),
 	Rspc(rspc::Error),
-	Unreachable,       // This error should be unreachable
 	TestError(String), // This is for tests TODO check if there is a way to enforce it
 }
 pub type InternalResult<T> = Result<T, InternalError>;
@@ -76,10 +75,6 @@ impl From<InternalError> for rspc::Error {
 	fn from(value: InternalError) -> Self {
 		match value {
 			InternalError::Rspc(x) => x,
-			InternalError::Unreachable => rspc::Error::new(
-				ErrorCode::InternalServerError,
-				"This should have been unreachable".to_string(),
-			),
 			InternalError::TestError(_) => rspc::Error::new(
 				ErrorCode::InternalServerError,
 				"This is an error that is allowed only in tests".to_string(),

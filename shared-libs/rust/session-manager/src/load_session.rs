@@ -50,7 +50,7 @@ pub async fn load_session<R: AsyncCommands>(
 
 					Ok(Some(*user))
 				}
-				Some(_) => Err(InternalError::Unreachable),
+				Some(_) => unreachable!(),
 				None => Ok(None),
 			}
 		}
