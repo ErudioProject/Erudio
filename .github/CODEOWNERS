@@ -5,6 +5,7 @@
 # erudio
 /apps/erudio @JK2Kgit
 /apps/erudio/frontend @PatrykGor
+/apps/erudio/bindings.ts @PatrykGor
 
 # libs
 /shared-libs/rust @JK2Kgit
