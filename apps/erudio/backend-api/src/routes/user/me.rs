@@ -3,27 +3,13 @@ use prisma_client::prisma::user;
 use rspc::ErrorCode;
 
 user::select!(user_data {
-	two_factor_auth_settings : select {
-		previous_data
-	}
 	pii_data: select {
-		grammatical_form
-		email
-		pesel
-		birth_date
-		legal_name
 		display_name
-		phone_prefix
-		phone_number
-		previous_data
 	}
 	user_school_relation: select {
+		school_relation_type
 		school: select {
 			name
-			previous_data
-			school_settings: select {
-				previous_data
-			}
 		}
 	}
 });

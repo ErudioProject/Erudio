@@ -5,18 +5,18 @@ export type Procedures = {
         { key: "public.login", input: LoginRequest, result: LoginResponse } | 
         { key: "public.version", input: never, result: string } | 
         { key: "user.logout", input: never, result: null } | 
-        { key: "user.me", input: never, result: { two_factor_auth_settings: { previous_data: Array<any> } | null, pii_data: { grammatical_form: GrammaticalForm, email: string | null, pesel: string | null, birth_date: string | null, legal_name: string | null, display_name: string | null, phone_prefix: string | null, phone_number: string | null, previous_data: Array<any> } | null, user_school_relation: Array<{ school: { name: string, previous_data: Array<any>, school_settings: { previous_data: Array<any> } | null } }> } },
+        { key: "user.me", input: never, result: { pii_data: { display_name: string | null } | null, user_school_relation: Array<{ school_relation_type: SchoolRelationType, school: { name: string } }> } },
     mutations: 
         { key: "public.register", input: RegisterRequest, result: null },
     subscriptions: never
 };
-
-export type GrammaticalForm = "masculinine" | "feminine" | "indeterminate"
 
 export interface LoginRequest { email: string, password: string }
 
 export type LoginResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
 
 export interface RegisterRequest { idempotence_token: string, email: string, password: string, code: null }
+
+export type SchoolRelationType = "student" | "teacher" | "admin" | "director"
 
 export type TwoFactorAuthType = "GoogleAuth" | "Sms" | "EMail"
