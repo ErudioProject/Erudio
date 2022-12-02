@@ -66,7 +66,6 @@ describe("Theme", () => {
         render(() => <Test mode="dark" />);
         const container = screen.getByText("Test component");
         expect(container).toBeInTheDocument();
-        console.log(window.getComputedStyle(container))
         /* expect(container).toHaveStyle(`background-color: #000000`); */
     })
 });

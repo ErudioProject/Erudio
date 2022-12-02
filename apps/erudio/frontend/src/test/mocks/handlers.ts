@@ -1,23 +1,8 @@
 import { rest, RestRequest } from "msw";
 import { LoginRequest, LoginResponse, SchoolRelationType } from "../../../../bindings";
+import { apiTestData } from "../data";
 
 const url = "http://127.0.0.1:3001/rspc" //process.env.FRONTEND_API_URL;
-
-export const apiTestData = {
-    authorizedMail: "test@example.com",
-    authorizedPassword: "Test123!",
-
-    displayName: "Test User",
-    schoolRelations: [
-        {
-            school_relation_type: "student" as SchoolRelationType,
-            school: { name: "My School" }
-        }, {
-            school_relation_type: "teacher" as SchoolRelationType,
-            school: { name: "My School 2" }
-        }
-    ]
-}
 
 interface RSPCError {
     code: number,
