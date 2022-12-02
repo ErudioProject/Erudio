@@ -13,12 +13,10 @@ pub(crate) struct Ctx {
 }
 
 #[derive(Clone)]
-#[allow(dead_code)] // TODO
 pub(crate) struct AuthCtx {
 	pub db: Arc<PrismaClient>,
 	pub redis: MultiplexedConnection,
 	pub cookies: Cookies,
 	pub user: User,
-	pub region_id: String,
 	pub session_id: String,
 }

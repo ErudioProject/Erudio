@@ -38,7 +38,6 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 								session_id: session_id.value().to_string(),
 								cookies: old_ctx.cookies,
 								user,
-								region_id: old_ctx.region_id,
 							})),
 							None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
 						}
