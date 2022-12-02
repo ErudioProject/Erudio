@@ -15,6 +15,7 @@ pub async fn load_session<R: AsyncCommands>(
 ) -> Result<Option<User>, InternalError> {
 	let json: Option<String> = redis.get(client_secret).await?;
 	match json {
+		Some(json) => Ok(Some(serde_json::from_str(&json)?)),
 		None => {
 			let session_id = hex::decode(client_secret)?;
 			let result = db
@@ -53,6 +54,5 @@ pub async fn load_session<R: AsyncCommands>(
 				None => Ok(None),
 			}
 		}
-		Some(json) => Ok(Some(serde_json::from_str(&json)?)),
 	}
 }
