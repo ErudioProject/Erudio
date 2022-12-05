@@ -11,7 +11,7 @@ services:
       - ../../.env
     depends_on:
       - postgres
-      - redis
+      - redis-stack-prod
   postgres:
     image: postgres:15.1
     restart: unless-stopped
@@ -20,10 +20,26 @@ services:
     env_file:
       - ../../.env.postgress
 
-  redis:
-    image: redis:latest
+  redis-stack:
+    profiles: ['']
+    image: redis/redis-stack:latest
     restart: unless-stopped
     network_mode: 'host'
-    command: redis-server /etc/redis.conf
+    command: redis-server /etc/redis-stack.conf
     volumes:
       - ./redis.conf:/etc/redis.conf
+      - redis_data:/data:rw
+
+  redis-stack-prod:
+    profiles: ['prod']
+    image: redis/redis-stack-server:latest
+    restart: unless-stopped
+    network_mode: 'host'
+    command: redis-server /etc/redis-stack.conf
+    volumes:
+      - ./redis.conf:/etc/redis.conf
+      - redis_data:/data:rw
+
+
+volumes:
+  redis_data:

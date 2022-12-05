@@ -52,6 +52,7 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 			argon2::hash_encoded(req.password.as_bytes(), &salt, &argon_config).map_err(Into::<InternalError>::into)?,
 			vec![],
 		)
+		.with(user::user_school_relation::fetch(vec![]))
 		.exec()
 		.await?;
 
@@ -81,7 +82,7 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 	ctx.cookies.add(
 		Cookie::build(
 			SESSION_COOKIE_NAME,
-			session::init(&ctx.db, &mut ctx.redis.clone(), &user, &connection_secret, None).await?,
+			session::init(&ctx.db, &mut ctx.redis.clone(), user, &connection_secret, Some(3600)).await?,
 		)
 		.secure(false) // TODO change one we have ssl set up
 		.http_only(true)

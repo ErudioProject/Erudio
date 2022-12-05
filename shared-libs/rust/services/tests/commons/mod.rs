@@ -53,6 +53,7 @@ pub(crate) async fn init_tests_with_user() -> InternalResult<(PrismaClient, Conn
 	let user = db
 		.user()
 		.create("".into(), vec![])
+		.with(user::user_school_relation::fetch(vec![]))
 		.exec()
 		.await
 		.context("Db error user")

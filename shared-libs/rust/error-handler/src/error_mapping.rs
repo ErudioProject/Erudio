@@ -1,5 +1,5 @@
 use hex::FromHexError;
-use log::warn;
+use log::error;
 use redis::RedisError;
 use rspc::ErrorCode;
 use std::sync::Arc;
@@ -21,6 +21,7 @@ impl InternalError {
 
 impl From<serde_json::Error> for InternalError {
 	fn from(value: serde_json::Error) -> Self {
+		error!("Serde_json failed with error: {:?}", value);
 		InternalError::Rspc(rspc::Error::with_cause(
 			ErrorCode::InternalServerError,
 			"Internal json serialization failed".into(),
@@ -31,7 +32,7 @@ impl From<serde_json::Error> for InternalError {
 
 impl From<argon2::Error> for InternalError {
 	fn from(value: argon2::Error) -> Self {
-		warn!("Argon2 failed with error: {:?}", value);
+		error!("Argon2 failed with error: {:?}", value);
 		InternalError::Rspc(rspc::Error::with_cause(
 			ErrorCode::InternalServerError,
 			"Argon2 Error".into(),
@@ -42,7 +43,7 @@ impl From<argon2::Error> for InternalError {
 
 impl From<RedisError> for InternalError {
 	fn from(value: RedisError) -> Self {
-		warn!("Redis failed with error: {:?}", value);
+		error!("Redis failed with error: {:?}", value);
 		InternalError::Rspc(rspc::Error::with_cause(
 			ErrorCode::InternalServerError,
 			"Redis error".into(),
@@ -52,7 +53,7 @@ impl From<RedisError> for InternalError {
 }
 impl From<FromHexError> for InternalError {
 	fn from(value: FromHexError) -> Self {
-		warn!("Hex failed with error: {:?}", value);
+		error!("Hex failed with error: {:?}", value);
 		InternalError::Rspc(rspc::Error::with_cause(
 			ErrorCode::InternalServerError,
 			"Error decoding hex value".into(),
@@ -63,6 +64,7 @@ impl From<FromHexError> for InternalError {
 
 impl From<prisma_client::prisma_client_rust::QueryError> for InternalError {
 	fn from(value: prisma_client::prisma_client_rust::QueryError) -> Self {
+		error!("Prisma failed with error: {:?}", value);
 		InternalError::Rspc(rspc::Error::with_cause(
 			ErrorCode::InternalServerError,
 			"Prisma query error".into(),

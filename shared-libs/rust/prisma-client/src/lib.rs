@@ -20,7 +20,7 @@ pub async fn prisma_mocked_client(db_test_url: String) -> Result<PrismaClient, B
 		.with_url(db_test_url + &id().to_string() + &rand.to_string())
 		.build()
 		.await?;
-	client._db_push().accept_data_loss().force_reset().await?;
+	client._db_push().accept_data_loss().await?;
 
 	Ok(client)
 }
