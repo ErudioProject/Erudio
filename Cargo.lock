@@ -79,7 +79,7 @@ dependencies = [
  "rust-argon2",
  "serde",
  "serde_json",
- "session_manager",
+ "services",
  "tokio",
  "tower-cookies",
  "tower-http",
@@ -3023,7 +3023,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "session_manager"
+name = "services"
 version = "0.1.0"
 dependencies = [
  "chrono",

@@ -7,7 +7,7 @@ use prisma_client::{
 };
 use redis::AsyncCommands;
 
-pub async fn load_session<R: AsyncCommands>(
+pub async fn load<R: AsyncCommands>(
 	db: &PrismaClient,
 	redis: &mut R,
 	client_secret: &str,

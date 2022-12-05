@@ -1,5 +1,5 @@
 [package]
-name = "session_manager"
+name = "services"
 version = "0.1.0"
 edition = "2021"
 

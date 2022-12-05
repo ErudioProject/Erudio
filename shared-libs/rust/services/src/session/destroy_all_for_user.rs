@@ -3,7 +3,7 @@ use prisma_client::prisma::{session, PrismaClient};
 use redis::AsyncCommands;
 use tokio::join;
 
-pub async fn destroy_all_sessions_for_user<R: AsyncCommands>(
+pub async fn destroy_all_for_user<R: AsyncCommands>(
 	db: &PrismaClient,
 	redis: &mut R,
 	user_id: String,

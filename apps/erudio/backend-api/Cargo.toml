@@ -8,7 +8,7 @@ license = "AGPL-3.0-or-later"
 
 [dependencies]
 prisma_client.workspace = true
-session_manager.workspace = true
+services.workspace = true
 error_handler.workspace = true
 openssl.workspace = true
 prisma-client-rust = {workspace = true, features = ["postgresql", "rspc"]}
