@@ -7,7 +7,7 @@ use prisma_client::{
 	User,
 };
 use redis::AsyncCommands;
-use session_manager::{destroy_session, init_session, load_session};
+use services::session;
 
 #[tokio::test]
 async fn init_load_destroy() -> InternalResult<()> {
@@ -31,21 +31,21 @@ async fn init_load_destroy_inner<C: AsyncCommands>(
 	user: &User,
 	connection_secret: &[u8],
 ) -> InternalResult<()> {
-	let client_secret = init_session(db, redis, user, connection_secret, Some(10)).await?;
+	let client_secret = session::init(db, redis, user, connection_secret, Some(10)).await?;
 
-	let user = load_session(db, redis, &client_secret, Some(10)).await?;
+	let user = session::load(db, redis, &client_secret, Some(10)).await?;
 
 	user.ok_or_else(|| InternalError::TestError("User is none".into()))?;
 
 	redis.del(&client_secret).await?;
 
-	let user = load_session(db, redis, &client_secret, Some(10)).await?;
+	let user = session::load(db, redis, &client_secret, Some(10)).await?;
 
 	user.ok_or_else(|| InternalError::TestError("User wasn't successfully recovered".into()))?;
 
-	destroy_session(db, redis, &client_secret).await?;
+	session::destroy(db, redis, &client_secret).await?;
 
-	let user = load_session(db, redis, &client_secret, Some(10)).await?;
+	let user = session::load(db, redis, &client_secret, Some(10)).await?;
 
 	if user.is_some() {
 		return Err(InternalError::TestError("Session didn't got deleted".into()));

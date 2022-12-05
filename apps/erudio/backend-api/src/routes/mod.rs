@@ -6,7 +6,7 @@ use crate::helpers::{
 	ctx::{AuthCtx, Ctx},
 };
 use rspc::{Config, ErrorCode};
-use session_manager::load_session;
+use services::session;
 use std::path::PathBuf;
 
 pub type RspcResult<T> = Result<T, rspc::Error>;
@@ -24,7 +24,7 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 				let old_ctx: Ctx = mw.ctx.clone();
 				match old_ctx.cookies.get(SESSION_COOKIE_NAME) {
 					Some(session_id) => {
-						match load_session(
+						match session::load(
 							&old_ctx.db.clone(),
 							&mut old_ctx.redis.clone(),
 							session_id.value(),

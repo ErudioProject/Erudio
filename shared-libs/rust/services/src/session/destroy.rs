@@ -7,7 +7,7 @@ use redis::AsyncCommands;
 use std::sync::Arc;
 
 /// Deletes session if exists, successful response guarantees that session with giver secret no longer exists
-pub async fn destroy_session<R: AsyncCommands>(
+pub async fn destroy<R: AsyncCommands>(
 	db: &PrismaClient,
 	redis: &mut R,
 	client_secret: &str,
@@ -33,7 +33,7 @@ pub async fn destroy_session<R: AsyncCommands>(
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::init_session;
+	use crate::session::init;
 	use error_handler::InternalResult;
 	use once_cell::sync::Lazy;
 	use prisma_client::{prisma::user, prisma_client_rust::serde_json};
@@ -69,9 +69,9 @@ mod tests {
 			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
 		]);
 
-		let secret_string = init_session(&db, &mut mock_redis, &user, &CLIENT_SECRET, None).await?;
+		let secret_string = init(&db, &mut mock_redis, &user, &CLIENT_SECRET, None).await?;
 
-		destroy_session(&db, &mut mock_redis, &secret_string).await?;
+		destroy(&db, &mut mock_redis, &secret_string).await?;
 		Ok(())
 	}
 
@@ -85,7 +85,7 @@ mod tests {
 
 		let mut mock_redis = MockRedisConnection::new(vec![MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK"))]);
 
-		let result = destroy_session(&db, &mut mock_redis, "NOT A VALID SECRET").await;
+		let result = destroy(&db, &mut mock_redis, "NOT A VALID SECRET").await;
 		assert!(matches!(
 			result,
 			Err(InternalError::IntoRspcWithCause(ErrorCode::BadRequest, message, _)) if message == "Invalid session string"
@@ -106,7 +106,7 @@ mod tests {
 			MockCmd::new(redis::cmd("DEL").arg(&hex::encode(CLIENT_SECRET.clone())), Ok("OK")),
 			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
 		]);
-		let result = destroy_session(&db, &mut mock_redis, &hex::encode(CLIENT_SECRET.clone())).await; // Not existing session
+		let result = destroy(&db, &mut mock_redis, &hex::encode(CLIENT_SECRET.clone())).await; // Not existing session
 		assert_eq!(mock_redis.get("last").await, Ok("OK".to_string()));
 		result
 	}

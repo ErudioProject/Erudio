@@ -9,7 +9,7 @@ use log::debug;
 use prisma_client::prisma::{pii_data, user};
 use rand::RngCore;
 use rspc::{ErrorCode, Type};
-use session_manager::init_session;
+use services::session;
 
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct LoginRequest {
@@ -60,7 +60,7 @@ pub(crate) async fn login(ctx: Ctx, req: LoginRequest) -> RspcResult<LoginRespon
 	ctx.cookies.add(
 		Cookie::build(
 			SESSION_COOKIE_NAME,
-			init_session(&ctx.db, &mut ctx.redis.clone(), &user, &connection_secret, None).await?,
+			session::init(&ctx.db, &mut ctx.redis.clone(), &user, &connection_secret, None).await?,
 		)
 		.secure(false) // TODO change one we have ssl set up
 		.http_only(true)

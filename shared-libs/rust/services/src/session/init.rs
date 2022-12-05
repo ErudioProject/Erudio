@@ -8,7 +8,7 @@ use prisma_client::{
 use redis::AsyncCommands;
 use tokio::join;
 
-pub async fn init_session<R: AsyncCommands>(
+pub async fn init<R: AsyncCommands>(
 	db: &PrismaClient,
 	redis: &mut R,
 	user: &User,
@@ -157,7 +157,7 @@ mod tests {
 			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
 		]);
 
-		let result = init_session(&db, &mut mock_redis, &USER, &CLIENT_SECRET, None).await?;
+		let result = init(&db, &mut mock_redis, &USER, &CLIENT_SECRET, None).await?;
 		assert_eq!(result, hex::encode(&*CLIENT_SECRET));
 		Ok(())
 	}

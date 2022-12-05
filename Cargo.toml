@@ -3,14 +3,14 @@ resolver = "2"
 members = [
     "shared-libs/rust/error-handler",
     "shared-libs/rust/prisma-client",
-    "shared-libs/rust/session-manager",
+    "shared-libs/rust/services",
     "apps/erudio/backend-api",
     "apps/erudio/backend-prisma-cli"
 ]
 
 [workspace.dependencies]
 prisma_client = { path = "shared-libs/rust/prisma-client" }
-session_manager = { path = "shared-libs/rust/session-manager" }
+services = { path = "shared-libs/rust/services" }
 error_handler = { path = "shared-libs/rust/error-handler" }
 prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations"], rev = "f210ca250c297b39b9bb23cb43bb3ab3712d4a4c"}
 prisma-client-rust-cli = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations"], rev = "f210ca250c297b39b9bb23cb43bb3ab3712d4a4c"}
