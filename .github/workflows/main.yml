@@ -114,7 +114,7 @@ jobs:
           compose-file: "./apps/erudio/docker-compose.yml"
           services: |
             postgres
-            redis
+            redis-stack-prod
       - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }} && rustup component add clippy
       - uses: Swatinem/rust-cache@v2
       - name: Generate prisma client
@@ -146,6 +146,6 @@ jobs:
           up-flags: "--build"
           services: |
             postgres
-            redis
+            redis-stack-prod
             api
       - run: echo "INTEGRATION TESTS"
