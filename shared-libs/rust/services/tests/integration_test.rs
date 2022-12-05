@@ -12,7 +12,7 @@ use services::session;
 #[tokio::test]
 async fn init_load_destroy() -> InternalResult<()> {
 	let (db, mut redis, user, connection_secret) = init_tests_with_user().await.expect("Init Failed");
-	match init_load_destroy_inner(&db, &mut redis, &user, &connection_secret).await {
+	match init_load_destroy_inner(&db, &mut redis, user.clone(), &connection_secret).await {
 		Ok(_) => {
 			db.user().delete(user::id::equals(user.id)).exec().await?;
 			Ok(())
@@ -28,7 +28,7 @@ async fn init_load_destroy() -> InternalResult<()> {
 async fn init_load_destroy_inner<C: AsyncCommands>(
 	db: &PrismaClient,
 	redis: &mut C,
-	user: &User,
+	user: User,
 	connection_secret: &[u8],
 ) -> InternalResult<()> {
 	let client_secret = session::init(db, redis, user, connection_secret, Some(10)).await?;

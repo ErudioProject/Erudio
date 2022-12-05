@@ -4,9 +4,6 @@ use rspc::{ErrorCode, Type};
 use serde::Serialize;
 
 user::select!(user_data {
-	pii_data: select {
-		display_name
-	}
 	user_school_relation: select {
 		school_relation_type
 		school: select {
@@ -25,13 +22,19 @@ pub(crate) async fn me(ctx: AuthCtx, _: ()) -> RspcResult<UserMeResponse> {
 	let user = ctx
 		.db
 		.user()
-		.find_unique(user::id::equals(ctx.user.id))
+		.find_unique(user::id::equals(ctx.session_data.user.id))
 		.select(user_data::select())
 		.exec()
 		.await?
 		.ok_or_else(|| rspc::Error::new(ErrorCode::NotFound, "User not found".into()))?;
 	Ok(UserMeResponse {
-		display_name: user.pii_data.unwrap().display_name, // Unwrap won't fail select in query above
+		display_name: ctx
+			.session_data
+			.user
+			.pii_data
+			.unwrap()
+			.unwrap()
+			.display_name, // there is always pii_data in session
 		school_relations: user
 			.user_school_relation
 			.iter()

@@ -40,6 +40,7 @@ pub(crate) async fn login(ctx: Ctx, req: LoginRequest) -> RspcResult<LoginRespon
 		.user()
 		.find_first(vec![user::pii_data::is(vec![pii_data::email::equals(Some(req.email))])]) // IDK why this Some is needed maybe open issue one dat
 		.with(user::pii_data::fetch())
+		.with(user::user_school_relation::fetch(vec![]))
 		.exec()
 		.await?
 		.ok_or_else(|| rspc::Error::new(ErrorCode::NotFound, "Email not found".to_string()))?;
@@ -60,7 +61,7 @@ pub(crate) async fn login(ctx: Ctx, req: LoginRequest) -> RspcResult<LoginRespon
 	ctx.cookies.add(
 		Cookie::build(
 			SESSION_COOKIE_NAME,
-			session::init(&ctx.db, &mut ctx.redis.clone(), &user, &connection_secret, None).await?,
+			session::init(&ctx.db, &mut ctx.redis.clone(), user, &connection_secret, Some(3600)).await?,
 		)
 		.secure(false) // TODO change one we have ssl set up
 		.http_only(true)
