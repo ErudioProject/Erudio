@@ -18,7 +18,7 @@ pub async fn session<R: AsyncCommands>(
 ) -> Result<String, InternalError> {
 	debug_assert!(user.user_school_relation.is_some());
 	debug_assert!(user.pii_data.is_some());
-	let data = user.into();
+	let data = user.try_into()?;
 	let encoded = hex::encode(client_secret);
 	let redis_async = init::redis(redis, &data, &encoded, redis_expires_seconds);
 	let prisma_async = init::prisma(db, client_secret, &data.user.id);

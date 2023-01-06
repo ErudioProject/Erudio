@@ -43,7 +43,7 @@ pub async fn recover<R: AsyncCommands + JsonAsyncCommands>(
 			let user = *user;
 			debug_assert!(user.user_school_relation.is_some());
 			debug_assert!(user.pii_data.is_some());
-			let data: crate::session::Info = user.into();
+			let data: crate::session::Info = user.try_into()?;
 			init::redis(redis, &data, client_secret, redis_expires_seconds).await?;
 			Ok(Some(data))
 		}

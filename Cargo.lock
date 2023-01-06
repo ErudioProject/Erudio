@@ -813,9 +813,11 @@ dependencies = [
 name = "error_handler"
 version = "0.1.0"
 dependencies = [
+ "eyre",
  "hex",
  "log",
  "prisma_client",
+ "rand 0.8.5",
  "redis",
  "rspc",
  "rust-argon2",
