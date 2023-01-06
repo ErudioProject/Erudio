@@ -1996,6 +1996,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "paste"
+version = "1.0.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d01a5bd0424d00070b0098dd17ebca6f961a959dead1dbcbbbc1d1cd8d3deeba"
+
+[[package]]
 name = "percent-encoding"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2163,7 +2169,7 @@ checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
 [[package]]
 name = "prisma-client-rust"
 version = "0.6.3"
-source = "git+https://github.com/Brendonovich/prisma-client-rust?rev=f876b042495b61b36b36f194f60ed527995b650c#f876b042495b61b36b36f194f60ed527995b650c"
+source = "git+https://github.com/Brendonovich/prisma-client-rust?rev=de2b9a96370948cf15df29c96b7c9730e7382002#de2b9a96370948cf15df29c96b7c9730e7382002"
 dependencies = [
  "base64 0.13.1",
  "bigdecimal",
@@ -2172,9 +2178,11 @@ dependencies = [
  "diagnostics",
  "dml",
  "dmmf",
+ "futures",
  "include_dir",
  "indexmap",
  "migration-core",
+ "paste",
  "prisma-models",
  "psl",
  "query-connector",
@@ -2195,7 +2203,7 @@ dependencies = [
 [[package]]
 name = "prisma-client-rust-cli"
 version = "0.6.3"
-source = "git+https://github.com/Brendonovich/prisma-client-rust?rev=f876b042495b61b36b36f194f60ed527995b650c#f876b042495b61b36b36f194f60ed527995b650c"
+source = "git+https://github.com/Brendonovich/prisma-client-rust?rev=de2b9a96370948cf15df29c96b7c9730e7382002#de2b9a96370948cf15df29c96b7c9730e7382002"
 dependencies = [
  "directories",
  "flate2",
@@ -2215,7 +2223,7 @@ dependencies = [
 [[package]]
 name = "prisma-client-rust-sdk"
 version = "0.6.3"
-source = "git+https://github.com/Brendonovich/prisma-client-rust?rev=f876b042495b61b36b36f194f60ed527995b650c#f876b042495b61b36b36f194f60ed527995b650c"
+source = "git+https://github.com/Brendonovich/prisma-client-rust?rev=de2b9a96370948cf15df29c96b7c9730e7382002#de2b9a96370948cf15df29c96b7c9730e7382002"
 dependencies = [
  "convert_case 0.5.0",
  "dml",

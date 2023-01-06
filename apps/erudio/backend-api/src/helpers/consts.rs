@@ -1,3 +1,3 @@
-pub(crate) const SESSION_COOKIE_NAME: &str = "SessionId";
-pub(crate) const SALT_SIZE: usize = 64;
-pub(crate) const SECRET_SIZE: usize = 256;
+pub const SESSION_COOKIE_NAME: &str = "SessionId";
+pub const SALT_SIZE: usize = 64;
+pub const SECRET_SIZE: usize = 256;

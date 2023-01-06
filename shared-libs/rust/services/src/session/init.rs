@@ -143,6 +143,7 @@ mod tests {
 	#[tokio::test]
 	async fn test_init_prisma_expire() -> InternalResult<()> {
 		dotenvy::dotenv().expect(".env file loading error");
+
 		let db =
 			prisma_client::prisma_mocked_client(env::var("DATABASE_URL_TESTS").expect("DATABASE_URL_TESTS not found"))
 				.await

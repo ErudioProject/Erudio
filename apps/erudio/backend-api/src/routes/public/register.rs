@@ -1,7 +1,7 @@
 use crate::{
 	helpers::consts::{SALT_SIZE, SECRET_SIZE},
 	routes::{RspcResult, SESSION_COOKIE_NAME},
-	Ctx,
+	Public,
 };
 use argon2::{Config, ThreadMode, Variant, Version};
 use cookie::SameSite;
@@ -14,7 +14,7 @@ use services::session;
 use tower_cookies::Cookie;
 
 #[derive(Type, serde::Deserialize, Debug)]
-pub struct RegisterRequest {
+pub struct Request {
 	pub idempotence_token: String,
 	pub email: String,
 	pub password: String,
@@ -24,7 +24,7 @@ pub struct RegisterRequest {
 	pub code: (),
 }
 
-pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
+pub async fn register(ctx: Public, req: Request) -> RspcResult<()> {
 	debug!("Register Request : {:?}", req);
 	let argon_config: Config = Config {
 		variant: Variant::Argon2i,
@@ -56,9 +56,8 @@ pub(crate) async fn register(ctx: Ctx, req: RegisterRequest) -> RspcResult<()> {
 		.exec()
 		.await?;
 
-	let legal_name = req.first_name.clone()
-		+ " " + &(req.middle_name.map(|name| name + " ")).unwrap_or_else(|| "".into())
-		+ &req.last_name;
+	let legal_name =
+		req.first_name.clone() + " " + &(req.middle_name.map_or_else(String::new, |name| name + " ")) + &req.last_name;
 	let display_name = req.first_name + " " + &req.last_name;
 
 	let pii_data = ctx

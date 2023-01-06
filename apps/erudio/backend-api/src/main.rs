@@ -1,12 +1,19 @@
 #![forbid(unsafe_code)]
 #![recursion_limit = "256"]
+#![deny(clippy::all)]
+#![warn(clippy::pedantic)]
+#![warn(clippy::as_conversions)]
+#![warn(clippy::nursery)]
+#![warn(clippy::cargo)]
+#![allow(clippy::cargo_common_metadata)]
+#![allow(clippy::multiple_crate_versions)]
 extern crate argon2;
 
 mod helpers;
 mod routes;
 mod shutdown_signal;
 
-use crate::{eyre::Context, helpers::ctx::Ctx, routes::router};
+use crate::{eyre::Context, helpers::ctx::Public, routes::router};
 use axum::routing::get;
 use color_eyre::eyre;
 use error_handler::InternalResult;
@@ -49,7 +56,7 @@ async fn start() -> eyre::Result<()> {
 		hex::decode(env::var("ARGON_SECRET").context("No hex value ARGON_SECRET environmental variable")?)
 			.context("ARGON_SECRET is not hex value")?;
 	if argon_secret.len() != 32 {
-		warn!("Recommended ARGON_SECRET length is 32 actual: {}", argon_secret.len())
+		warn!("Recommended ARGON_SECRET length is 32 actual: {}", argon_secret.len());
 	}
 
 	let db: Arc<PrismaClient> = Arc::new(
@@ -83,7 +90,7 @@ async fn start() -> eyre::Result<()> {
 					let result = check_health(&db_health, redis_health).await;
 					match result {
 						Ok(_) => (axum::http::StatusCode::OK, "OK".into()),
-						Err(err) => (axum::http::StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", err)),
+						Err(err) => (axum::http::StatusCode::INTERNAL_SERVER_ERROR, format!("{err:?}")),
 					}
 				}
 			}),
@@ -92,7 +99,7 @@ async fn start() -> eyre::Result<()> {
 			"/rspc/:id",
 			router()
 				.arced()
-				.endpoint(move |cookies: Cookies| Ctx {
+				.endpoint(move |cookies: Cookies| Public {
 					db: db.clone(),
 					redis: conn,
 					cookies,

@@ -1,7 +1,7 @@
 use crate::{
 	helpers::consts::SECRET_SIZE,
 	routes::{RspcResult, SESSION_COOKIE_NAME},
-	Ctx,
+	Public,
 };
 use cookie::{Cookie, SameSite};
 use error_handler::InternalError;
@@ -12,14 +12,14 @@ use rspc::{ErrorCode, Type};
 use services::session;
 
 #[derive(Type, serde::Deserialize, Debug)]
-pub struct LoginRequest {
+pub struct Request {
 	pub email: String,
 	pub password: String,
 }
 
 #[derive(Type, serde::Serialize, Debug)]
 #[serde(tag = "t", content = "c")]
-pub enum LoginResponse {
+pub enum Response {
 	Success,
 	#[allow(dead_code)] // TODO
 	TwoFactorAuth(TwoFactorAuthType),
@@ -33,7 +33,7 @@ pub enum TwoFactorAuthType {
 	EMail,
 }
 
-pub(crate) async fn login(ctx: Ctx, req: LoginRequest) -> RspcResult<LoginResponse> {
+pub async fn login(ctx: Public, req: Request) -> RspcResult<Response> {
 	debug!("Login Request: {:?}", req);
 	let user = ctx
 		.db
@@ -69,5 +69,5 @@ pub(crate) async fn login(ctx: Ctx, req: LoginRequest) -> RspcResult<LoginRespon
 		.finish(),
 	);
 
-	Ok(LoginResponse::Success)
+	Ok(Response::Success)
 }

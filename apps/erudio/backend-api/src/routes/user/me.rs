@@ -1,9 +1,10 @@
-use crate::{helpers::ctx::AuthCtx, routes::RspcResult};
+use crate::{helpers::ctx::Auth, routes::RspcResult};
 use prisma_client::prisma::{user, SchoolRelationType};
 use rspc::{ErrorCode, Type};
 use serde::Serialize;
 
 user::select!(user_data {
+	id
 	user_school_relation: select {
 		school_relation_type
 		school: select {
@@ -14,11 +15,12 @@ user::select!(user_data {
 
 #[derive(Serialize, Type)]
 pub struct UserMeResponse {
+	id: String,
 	display_name: String,
 	school_relations: Vec<(SchoolRelationType, String)>,
 }
 
-pub(crate) async fn me(ctx: AuthCtx, _: ()) -> RspcResult<UserMeResponse> {
+pub async fn me(ctx: Auth, _: ()) -> RspcResult<UserMeResponse> {
 	let user = ctx
 		.db
 		.user()
@@ -28,6 +30,7 @@ pub(crate) async fn me(ctx: AuthCtx, _: ()) -> RspcResult<UserMeResponse> {
 		.await?
 		.ok_or_else(|| rspc::Error::new(ErrorCode::NotFound, "User not found".into()))?;
 	Ok(UserMeResponse {
+		id: user.id,
 		display_name: ctx
 			.session_data
 			.user
