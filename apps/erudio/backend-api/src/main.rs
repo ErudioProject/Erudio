@@ -31,16 +31,14 @@ use tower_cookies::{CookieManagerLayer, Cookies};
 use tower_http::{cors, cors::CorsLayer};
 
 // TODO clean up a bit
-pub fn main() {
+#[tokio::main]
+pub async fn main() {
 	dotenvy::dotenv().ok();
 	env_logger::init();
 	let result = start();
-	if let Some(err) = result.err() {
-		error!("{:?}", err);
-	}
+	result.await.into_iter().for_each(|err| error!("{:?}", err));
 }
 
-#[tokio::main]
 async fn start() -> eyre::Result<()> {
 	#[cfg(target_family = "unix")]
 	let url = env::var("DATABASE_URL").context("No DATABASE_URL environmental variable")?;
@@ -88,11 +86,10 @@ async fn start() -> eyre::Result<()> {
 				let redis_health = conn.clone();
 
 				move || async move {
-					let result = check_health(&db_health, redis_health).await;
-					match result {
-						Ok(_) => (axum::http::StatusCode::OK, "OK".into()),
-						Err(err) => (axum::http::StatusCode::INTERNAL_SERVER_ERROR, format!("{err:?}")),
-					}
+					check_health(&db_health, redis_health).await.map_or_else(
+						|err| (axum::http::StatusCode::INTERNAL_SERVER_ERROR, format!("{err:?}")),
+						|_| (axum::http::StatusCode::OK, "OK".into()),
+					)
 				}
 			}),
 		)

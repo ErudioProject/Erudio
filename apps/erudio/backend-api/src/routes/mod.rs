@@ -5,6 +5,7 @@ use crate::helpers::{
 	consts::SESSION_COOKIE_NAME,
 	ctx::{Auth, Public},
 };
+use redis::Value::Int;
 use rspc::{Config, ErrorCode};
 use services::session;
 use std::path::PathBuf;

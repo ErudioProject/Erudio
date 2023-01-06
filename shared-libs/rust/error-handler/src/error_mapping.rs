@@ -1,5 +1,7 @@
+use eyre::Report;
 use hex::FromHexError;
 use log::error;
+use rand::Rng;
 use redis::RedisError;
 use rspc::ErrorCode;
 use std::sync::Arc;
@@ -9,6 +11,7 @@ pub enum InternalError {
 	IntoRspc(ErrorCode, String),
 	IntoRspcWithCause(ErrorCode, String, Arc<dyn std::error::Error + Send + Sync>),
 	Rspc(rspc::Error),
+	ServerError(String, Report),
 	TestError(String), // This is for tests TODO check if there is a way to enforce it
 }
 pub type InternalResult<T> = Result<T, InternalError>;
@@ -22,44 +25,24 @@ impl InternalError {
 
 impl From<serde_json::Error> for InternalError {
 	fn from(value: serde_json::Error) -> Self {
-		error!("Serde_json failed with error: {:?}", value);
-		Self::Rspc(rspc::Error::with_cause(
-			ErrorCode::InternalServerError,
-			"Internal json serialization failed".into(),
-			value,
-		))
+		Self::ServerError("Serde_json failed".into(), value.into())
 	}
 }
 
 impl From<argon2::Error> for InternalError {
 	fn from(value: argon2::Error) -> Self {
-		error!("Argon2 failed with error: {:?}", value);
-		Self::Rspc(rspc::Error::with_cause(
-			ErrorCode::InternalServerError,
-			"Argon2 Error".into(),
-			value,
-		))
+		Self::ServerError("Argon2 failed".into(), value.into())
 	}
 }
 
 impl From<RedisError> for InternalError {
 	fn from(value: RedisError) -> Self {
-		error!("Redis failed with error: {:?}", value);
-		Self::Rspc(rspc::Error::with_cause(
-			ErrorCode::InternalServerError,
-			"Redis error".into(),
-			value,
-		))
+		Self::ServerError("Redis failed".into(), value.into())
 	}
 }
 impl From<FromHexError> for InternalError {
 	fn from(value: FromHexError) -> Self {
-		error!("Hex failed with error: {:?}", value);
-		Self::Rspc(rspc::Error::with_cause(
-			ErrorCode::InternalServerError,
-			"Error decoding hex value".into(),
-			value,
-		))
+		Self::ServerError("Hex failed".into(), value.into())
 	}
 }
 
@@ -82,6 +65,16 @@ impl From<InternalError> for rspc::Error {
 				ErrorCode::InternalServerError,
 				"This is an error that is allowed only in tests".to_string(),
 			),
+			InternalError::ServerError(message, report) => {
+				let buf = &mut [0u8; 128];
+				rand::thread_rng().fill(buf);
+				let trace_id = hex::encode(buf);
+				error!("trace: #{trace_id}# message: {message} err: {report:?}");
+				Self::new(
+					ErrorCode::InternalServerError,
+					format!("Server error trace #{trace_id}#"),
+				)
+			}
 			InternalError::IntoRspc(code, message) => Self::new(code, message),
 			InternalError::IntoRspcWithCause(code, message, cause) => Self::with_cause(code, message, cause),
 		}
