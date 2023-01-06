@@ -14,7 +14,7 @@ use services::session;
 use tower_cookies::Cookie;
 
 #[derive(Type, serde::Deserialize, Debug)]
-pub struct Request {
+pub struct RegisterRequest {
 	pub idempotence_token: String,
 	pub email: String,
 	pub password: String,
@@ -24,7 +24,7 @@ pub struct Request {
 	pub code: (),
 }
 
-pub async fn register(ctx: Public, req: Request) -> RspcResult<()> {
+pub async fn register(ctx: Public, req: RegisterRequest) -> RspcResult<()> {
 	debug!("Register Request : {:?}", req);
 	let argon_config: Config = Config {
 		variant: Variant::Argon2i,
@@ -81,7 +81,7 @@ pub async fn register(ctx: Public, req: Request) -> RspcResult<()> {
 	ctx.cookies.add(
 		Cookie::build(
 			SESSION_COOKIE_NAME,
-			session::init(&ctx.db, &mut ctx.redis.clone(), user, &connection_secret, Some(3600)).await?,
+			session::init::session(&ctx.db, &mut ctx.redis.clone(), user, &connection_secret, Some(3600)).await?,
 		)
 		.secure(false) // TODO change one we have ssl set up
 		.http_only(true)

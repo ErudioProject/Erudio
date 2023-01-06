@@ -1,4 +1,4 @@
-use crate::session::{init::init_redis, SessionData};
+use crate::session::init;
 use chrono::Utc;
 use error_handler::InternalError;
 use prisma_client::{
@@ -7,12 +7,12 @@ use prisma_client::{
 };
 use redis::{AsyncCommands, JsonAsyncCommands};
 
-pub(crate) async fn recover<R: AsyncCommands + JsonAsyncCommands>(
+pub async fn recover<R: AsyncCommands + JsonAsyncCommands>(
 	db: &PrismaClient,
 	redis: &mut R,
 	client_secret: &str,
 	redis_expires_seconds: Option<usize>,
-) -> Result<Option<SessionData>, InternalError> {
+) -> Result<Option<crate::session::Info>, InternalError> {
 	let session_id = hex::decode(client_secret)?;
 	let result = db
 		.session()
@@ -43,8 +43,8 @@ pub(crate) async fn recover<R: AsyncCommands + JsonAsyncCommands>(
 			let user = *user;
 			debug_assert!(user.user_school_relation.is_some());
 			debug_assert!(user.pii_data.is_some());
-			let data: SessionData = user.into();
-			init_redis(redis, &data, client_secret, redis_expires_seconds).await?;
+			let data: crate::session::Info = user.into();
+			init::redis(redis, &data, client_secret, redis_expires_seconds).await?;
 			Ok(Some(data))
 		}
 		Some(_) => unreachable!(),

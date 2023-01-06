@@ -21,4 +21,4 @@ export type SchoolRelationType = "student" | "teacher" | "admin" | "director"
 
 export type TwoFactorAuthType = "GoogleAuth" | "Sms" | "EMail"
 
-export interface UserMeResponse { display_name: string, school_relations: Array<[SchoolRelationType, string]> }
+export interface UserMeResponse { id: string, display_name: string, school_relations: Array<[SchoolRelationType, string]> }

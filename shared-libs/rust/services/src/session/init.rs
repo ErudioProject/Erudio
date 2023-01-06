@@ -1,4 +1,5 @@
-use crate::session::SessionData;
+use crate::session;
+use crate::session::init;
 use chrono::{DateTime, Duration, Utc};
 use error_handler::{InternalError, InternalResult};
 use prisma_client::{
@@ -8,7 +9,7 @@ use prisma_client::{
 use redis::{AsyncCommands, JsonAsyncCommands};
 use tokio::join;
 
-pub async fn init<R: AsyncCommands>(
+pub async fn session<R: AsyncCommands>(
 	db: &PrismaClient,
 	redis: &mut R,
 	user: User,
@@ -19,30 +20,30 @@ pub async fn init<R: AsyncCommands>(
 	debug_assert!(user.pii_data.is_some());
 	let data = user.into();
 	let encoded = hex::encode(client_secret);
-	let redis_async = init_redis(redis, &data, &encoded, redis_expires_seconds);
-	let prisma_async = init_prisma(db, client_secret, &data.user.id);
+	let redis_async = init::redis(redis, &data, &encoded, redis_expires_seconds);
+	let prisma_async = init::prisma(db, client_secret, &data.user.id);
 	let result = join!(redis_async, prisma_async);
 	result.0?;
 	result.1?;
 	Ok(encoded)
 }
 
-pub(crate) async fn init_redis<R: AsyncCommands + JsonAsyncCommands>(
+pub(crate) async fn redis<R: AsyncCommands + JsonAsyncCommands>(
 	redis: &mut R,
-	data: &SessionData,
+	data: &session::Info,
 	client_secret: &str,
 	expires: Option<usize>,
 ) -> InternalResult<()> {
 	let mut data = data.clone();
-	data.user.password_hash = "".to_string();
+	data.user.password_hash = String::new();
 	redis.json_set(client_secret, "$", &data).await?;
 	if let Some(time) = expires {
-		redis.expire(client_secret, time).await?
+		redis.expire(client_secret, time).await?;
 	};
 	Ok(())
 }
 
-async fn init_prisma(db: &PrismaClient, client_secret: &[u8], id: &str) -> InternalResult<()> {
+async fn prisma(db: &PrismaClient, client_secret: &[u8], id: &str) -> InternalResult<()> {
 	db.session()
 		.create(
 			client_secret.into(),
@@ -69,7 +70,7 @@ mod tests {
 		id: Uuid::new_v4().to_string(),
 		password_hash: "1".repeat(32),
 		two_factor_auth_settings_id: None,
-		pii_data: Some(Default::default()),
+		pii_data: Some(None),
 		two_factor_auth_settings: None,
 		session: None,
 		user_school_relation: Some(vec![]),
@@ -92,7 +93,7 @@ mod tests {
 					.arg(&hex::encode(CLIENT_SECRET.clone()))
 					.arg("$")
 					.arg(
-						serde_json::to_string(&SessionData::from(user.clone()))
+						serde_json::to_string(&crate::session::Info::from(user.clone()))
 							.unwrap()
 							.replace(&user.password_hash, ""),
 					),
@@ -100,7 +101,7 @@ mod tests {
 			),
 			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
 		]);
-		let result = init_redis(&mut mock_redis, &user.into(), &hex::encode(CLIENT_SECRET.clone()), None).await;
+		let result = init::redis(&mut mock_redis, &user.into(), &hex::encode(CLIENT_SECRET.clone()), None).await;
 		assert_eq!(mock_redis.get("last").await, Ok("OK".to_string()));
 		result
 	}
@@ -115,7 +116,7 @@ mod tests {
 					.arg(&hex::encode(CLIENT_SECRET.clone()))
 					.arg("$")
 					.arg(
-						serde_json::to_string(&SessionData::from(user.clone()))
+						serde_json::to_string(&crate::session::Info::from(user.clone()))
 							.unwrap()
 							.replace(&user.password_hash, ""),
 					),
@@ -129,7 +130,7 @@ mod tests {
 			),
 			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
 		]);
-		let result = init_redis(
+		let result = init::redis(
 			&mut mock_redis,
 			&user.into(),
 			&hex::encode(CLIENT_SECRET.clone()),
@@ -153,7 +154,7 @@ mod tests {
 			.exec()
 			.await?;
 
-		init_prisma(&db, &CLIENT_SECRET, &USER.id).await
+		init::prisma(&db, &CLIENT_SECRET, &USER.id).await
 	}
 
 	#[tokio::test]
@@ -174,7 +175,7 @@ mod tests {
 					.arg(&hex::encode(CLIENT_SECRET.clone()))
 					.arg("$")
 					.arg(
-						serde_json::to_string(&SessionData::from(user.clone()))
+						serde_json::to_string(&session::Info::from(user.clone()))
 							.unwrap()
 							.replace(&user.password_hash, ""),
 					),
@@ -183,7 +184,7 @@ mod tests {
 			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
 		]);
 
-		let result = init(&db, &mut mock_redis, user.into(), &CLIENT_SECRET, None).await?;
+		let result = init::session(&db, &mut mock_redis, user, &CLIENT_SECRET, None).await?;
 		assert_eq!(result, hex::encode(&*CLIENT_SECRET));
 		Ok(())
 	}
