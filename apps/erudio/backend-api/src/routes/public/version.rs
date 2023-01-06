@@ -1,5 +1,5 @@
-use crate::{routes::RspcResult, Ctx};
+use crate::Public;
 
-pub(crate) async fn version(_: Ctx, _: ()) -> RspcResult<String> {
-	Ok(env!("CARGO_PKG_VERSION").to_string())
+pub fn version(_: Public, _: ()) -> String {
+	env!("CARGO_PKG_VERSION").to_string()
 }

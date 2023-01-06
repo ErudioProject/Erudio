@@ -5,7 +5,7 @@ use std::sync::Arc;
 use tower_cookies::Cookies;
 
 #[derive(Clone)]
-pub(crate) struct Ctx {
+pub struct Public {
 	pub db: Arc<PrismaClient>,
 	pub redis: MultiplexedConnection,
 	pub cookies: Cookies,
@@ -14,7 +14,7 @@ pub(crate) struct Ctx {
 }
 
 #[derive(Clone)]
-pub(crate) struct AuthCtx {
+pub struct Auth {
 	pub db: Arc<PrismaClient>,
 	pub redis: MultiplexedConnection,
 	pub cookies: Cookies,

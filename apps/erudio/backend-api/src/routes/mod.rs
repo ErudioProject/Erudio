@@ -3,7 +3,7 @@ mod user;
 
 use crate::helpers::{
 	consts::SESSION_COOKIE_NAME,
-	ctx::{AuthCtx, Ctx},
+	ctx::{Auth, Public},
 };
 use rspc::{Config, ErrorCode};
 use services::session;
@@ -11,8 +11,8 @@ use std::path::PathBuf;
 
 pub type RspcResult<T> = Result<T, rspc::Error>;
 
-pub(crate) fn router() -> rspc::Router<Ctx> {
-	rspc::Router::<Ctx>::new()
+pub fn router() -> rspc::Router<Public> {
+	rspc::Router::<Public>::new()
 		.config(
 			Config::new()
 				// Doing this will automatically export the bindings when the `build` function is called.
@@ -21,7 +21,7 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 		.merge("public.", public::mount())
 		.middleware(|mw| {
 			mw.middleware(|mw| async move {
-				let old_ctx: Ctx = mw.ctx.clone();
+				let old_ctx: Public = mw.ctx.clone();
 				match old_ctx.cookies.get(SESSION_COOKIE_NAME) {
 					Some(session_id) => {
 						match session::load(
@@ -32,7 +32,7 @@ pub(crate) fn router() -> rspc::Router<Ctx> {
 						)
 						.await?
 						{
-							Some(session_data) => Ok(mw.with_ctx(AuthCtx {
+							Some(session_data) => Ok(mw.with_ctx(Auth {
 								db: old_ctx.db,
 								redis: old_ctx.redis,
 								session_id: session_id.value().to_string(),
