@@ -7,6 +7,7 @@
 #![warn(clippy::cargo)]
 #![allow(clippy::cargo_common_metadata)]
 #![allow(clippy::multiple_crate_versions)]
+#![allow(clippy::module_name_repetitions)]
 extern crate argon2;
 
 mod helpers;

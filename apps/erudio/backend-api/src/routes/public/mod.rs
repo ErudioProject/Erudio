@@ -14,5 +14,7 @@ pub fn mount() -> RouterBuilder<Public> {
 	Router::<Public>::new()
 		.query("version", |t| t(version))
 		.query("login", |t| t(login))
-		.mutation("register", |t| t(idempotent!(register, Public, register::Request, ())))
+		.mutation("register", |t| {
+			t(idempotent!(register, Public, register::RegisterRequest, ()))
+		})
 }

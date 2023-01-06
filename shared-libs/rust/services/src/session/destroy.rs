@@ -33,7 +33,7 @@ pub async fn destroy<R: AsyncCommands>(
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::session::{init, SessionData};
+	use crate::session::init;
 	use error_handler::InternalResult;
 	use once_cell::sync::Lazy;
 	use prisma_client::{prisma::user, prisma_client_rust::serde_json};
@@ -66,7 +66,7 @@ mod tests {
 					.arg(&hex::encode(CLIENT_SECRET.clone()))
 					.arg("$")
 					.arg(
-						serde_json::to_string(&SessionData::from(user.clone()))
+						serde_json::to_string(&crate::session::Info::from(user.clone()))
 							.unwrap()
 							.replace(&user.password_hash, ""),
 					),
@@ -76,7 +76,7 @@ mod tests {
 			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
 		]);
 
-		let secret_string = init(&db, &mut mock_redis, user, &CLIENT_SECRET, None).await?;
+		let secret_string = init::session(&db, &mut mock_redis, user, &CLIENT_SECRET, None).await?;
 
 		destroy(&db, &mut mock_redis, &secret_string).await?;
 		Ok(())

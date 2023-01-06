@@ -12,14 +12,14 @@ use rspc::{ErrorCode, Type};
 use services::session;
 
 #[derive(Type, serde::Deserialize, Debug)]
-pub struct Request {
+pub struct LoginRequest {
 	pub email: String,
 	pub password: String,
 }
 
 #[derive(Type, serde::Serialize, Debug)]
 #[serde(tag = "t", content = "c")]
-pub enum Response {
+pub enum LoginResponse {
 	Success,
 	#[allow(dead_code)] // TODO
 	TwoFactorAuth(TwoFactorAuthType),
@@ -33,7 +33,7 @@ pub enum TwoFactorAuthType {
 	EMail,
 }
 
-pub async fn login(ctx: Public, req: Request) -> RspcResult<Response> {
+pub async fn login(ctx: Public, req: LoginRequest) -> RspcResult<LoginResponse> {
 	debug!("Login Request: {:?}", req);
 	let user = ctx
 		.db
@@ -61,7 +61,7 @@ pub async fn login(ctx: Public, req: Request) -> RspcResult<Response> {
 	ctx.cookies.add(
 		Cookie::build(
 			SESSION_COOKIE_NAME,
-			session::init(&ctx.db, &mut ctx.redis.clone(), user, &connection_secret, Some(3600)).await?,
+			session::init::session(&ctx.db, &mut ctx.redis.clone(), user, &connection_secret, Some(3600)).await?,
 		)
 		.secure(false) // TODO change one we have ssl set up
 		.http_only(true)
@@ -69,5 +69,5 @@ pub async fn login(ctx: Public, req: Request) -> RspcResult<Response> {
 		.finish(),
 	);
 
-	Ok(Response::Success)
+	Ok(LoginResponse::Success)
 }

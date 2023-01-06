@@ -31,7 +31,7 @@ async fn init_load_destroy_inner<C: AsyncCommands>(
 	user: User,
 	connection_secret: &[u8],
 ) -> InternalResult<()> {
-	let client_secret = session::init(db, redis, user, connection_secret, Some(10)).await?;
+	let client_secret = session::init::session(db, redis, user, connection_secret, Some(10)).await?;
 
 	let user = session::load(db, redis, &client_secret, Some(10)).await?;
 
