@@ -15,7 +15,7 @@ error_handler = { path = "shared-libs/rust/error-handler" }
 prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations"], rev = "de2b9a96370948cf15df29c96b7c9730e7382002"}
 prisma-client-rust-cli = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations"], rev = "de2b9a96370948cf15df29c96b7c9730e7382002"}
 redis = {version = "^0.22", features = ["aio", "ahash", "tokio-comp", "json"]}
-tokio = { version = "^1.21", features = ["macros", "parking_lot", "signal"] }
+tokio = { version = "^1.23", features = ["macros", "parking_lot", "signal"] }
 openssl = { version = "^0.10", features = ["vendored"] } # daem openssl
 
 [profile.release]
