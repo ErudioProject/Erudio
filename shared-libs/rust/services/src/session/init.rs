@@ -1,6 +1,6 @@
 use crate::session;
 use crate::session::init;
-use chrono::{DateTime, Duration, Utc};
+use chrono::{DateTime, Duration, DurationRound, Utc};
 use error_handler::{InternalError, InternalResult};
 use prisma_client::{
 	prisma::{user, PrismaClient},
@@ -47,7 +47,12 @@ async fn prisma(db: &PrismaClient, client_secret: &[u8], id: &str) -> InternalRe
 	db.session()
 		.create(
 			client_secret.into(),
-			DateTime::from(Utc::now() + Duration::days(365)),
+			DateTime::from(
+				Utc::now()
+					.duration_round(Duration::days(1))
+					.expect("That can fail Chrono round?")
+					+ Duration::days(365),
+			), // TODO! remove expect , but really that could fail????
 			user::id::equals(id.into()),
 			vec![],
 		)
@@ -57,20 +62,35 @@ async fn prisma(db: &PrismaClient, client_secret: &[u8], id: &str) -> InternalRe
 }
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
 	use super::*;
 	use once_cell::sync::Lazy;
+	use prisma_client::prisma;
+	use prisma_client::prisma::{pii_data, GrammaticalForm};
 	use prisma_client::prisma_client_rust::serde_json;
 	use redis_test::{MockCmd, MockRedisConnection};
-	use std::env;
 	use uuid::Uuid;
 
 	static CLIENT_SECRET: Lazy<Vec<u8>> = Lazy::new(|| vec![0u8; 32]);
-	static USER: Lazy<User> = Lazy::new(|| User {
+	pub static USER: Lazy<User> = Lazy::new(|| User {
+		// todo clean up a little
 		id: Uuid::new_v4().to_string(),
 		password_hash: "1".repeat(32),
 		two_factor_auth_settings_id: None,
-		pii_data: Some(None),
+		pii_data: Some(Some(Box::new(pii_data::Data {
+			id: "".to_string(),
+			user_id: "".to_string(),
+			grammatical_form: GrammaticalForm::Masculinine,
+			email: None,
+			pesel: None,
+			birth_date: None,
+			legal_name: "".to_string(),
+			display_name: "".to_string(),
+			phone_prefix: None,
+			phone_number: None,
+			previous_data: vec![],
+			user: None,
+		}))),
 		two_factor_auth_settings: None,
 		session: None,
 		user_school_relation: Some(vec![]),
@@ -93,7 +113,7 @@ mod tests {
 					.arg(&hex::encode(CLIENT_SECRET.clone()))
 					.arg("$")
 					.arg(
-						serde_json::to_string(&crate::session::Info::from(user.clone()))
+						serde_json::to_string(&crate::session::Info::try_from(user.clone()).unwrap())
 							.unwrap()
 							.replace(&user.password_hash, ""),
 					),
@@ -101,7 +121,13 @@ mod tests {
 			),
 			MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK")),
 		]);
-		let result = init::redis(&mut mock_redis, &user.into(), &hex::encode(CLIENT_SECRET.clone()), None).await;
+		let result = init::redis(
+			&mut mock_redis,
+			&user.try_into().unwrap(),
+			&hex::encode(CLIENT_SECRET.clone()),
+			None,
+		)
+		.await;
 		assert_eq!(mock_redis.get("last").await, Ok("OK".to_string()));
 		result
 	}
@@ -116,7 +142,7 @@ mod tests {
 					.arg(&hex::encode(CLIENT_SECRET.clone()))
 					.arg("$")
 					.arg(
-						serde_json::to_string(&crate::session::Info::from(user.clone()))
+						serde_json::to_string(&crate::session::Info::try_from(user.clone()).unwrap())
 							.unwrap()
 							.replace(&user.password_hash, ""),
 					),
@@ -132,7 +158,7 @@ mod tests {
 		]);
 		let result = init::redis(
 			&mut mock_redis,
-			&user.into(),
+			&user.try_into().unwrap(),
 			&hex::encode(CLIENT_SECRET.clone()),
 			Some(expire_seconds),
 		)
@@ -144,15 +170,22 @@ mod tests {
 	#[tokio::test]
 	async fn test_init_prisma_expire() -> InternalResult<()> {
 		dotenvy::dotenv().expect(".env file loading error");
-
-		let db =
-			prisma_client::prisma_mocked_client(env::var("DATABASE_URL_TESTS").expect("DATABASE_URL_TESTS not found"))
-				.await
-				.expect("Test database error");
-		db.user()
-			.create(USER.password_hash.clone(), vec![user::id::set(USER.id.clone())])
-			.exec()
-			.await?;
+		let (db, mock) = PrismaClient::_mock();
+		mock.expect(
+			db.session().create(
+				CLIENT_SECRET.clone(),
+				DateTime::from(Utc::now().duration_round(Duration::days(1)).unwrap() + Duration::days(365)),
+				user::id::equals(USER.id.clone()),
+				vec![],
+			),
+			prisma::session::Data {
+				user_id: String::new(),
+				session_id: vec![],
+				valid_until: chrono::DateTime::default(),
+				user: Some(Box::new(USER.clone())),
+			},
+		)
+		.await;
 
 		init::prisma(&db, &CLIENT_SECRET, &USER.id).await
 	}
@@ -160,14 +193,22 @@ mod tests {
 	#[tokio::test]
 	async fn test_init() -> InternalResult<()> {
 		dotenvy::dotenv().expect(".env file loading error");
-		let db =
-			prisma_client::prisma_mocked_client(env::var("DATABASE_URL_TESTS").expect("DATABASE_URL_TESTS not found"))
-				.await
-				.expect("Test database error");
-		db.user()
-			.create(USER.password_hash.clone(), vec![user::id::set(USER.id.clone())])
-			.exec()
-			.await?;
+		let (db, mock) = PrismaClient::_mock();
+		mock.expect(
+			db.session().create(
+				CLIENT_SECRET.clone(),
+				DateTime::from(Utc::now().duration_round(Duration::days(1)).unwrap() + Duration::days(365)),
+				user::id::equals(USER.id.clone()),
+				vec![],
+			),
+			prisma::session::Data {
+				user_id: String::new(),
+				session_id: vec![],
+				valid_until: chrono::DateTime::default(),
+				user: Some(Box::new(USER.clone())),
+			},
+		)
+		.await;
 		let user = USER.clone();
 		let mut mock_redis = MockRedisConnection::new(vec![
 			MockCmd::new(
@@ -175,7 +216,7 @@ mod tests {
 					.arg(&hex::encode(CLIENT_SECRET.clone()))
 					.arg("$")
 					.arg(
-						serde_json::to_string(&session::Info::from(user.clone()))
+						serde_json::to_string(&session::Info::try_from(user.clone()).unwrap())
 							.unwrap()
 							.replace(&user.password_hash, ""),
 					),

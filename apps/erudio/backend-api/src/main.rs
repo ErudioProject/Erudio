@@ -31,14 +31,16 @@ use tower_cookies::{CookieManagerLayer, Cookies};
 use tower_http::{cors, cors::CorsLayer};
 
 // TODO clean up a bit
-#[tokio::main]
-pub async fn main() {
+pub fn main() {
 	dotenvy::dotenv().ok();
 	env_logger::init();
 	let result = start();
-	result.await.into_iter().for_each(|err| error!("{:?}", err));
+	if let Some(err) = result.err() {
+		error!("{:?}", err);
+	}
 }
 
+#[tokio::main]
 async fn start() -> eyre::Result<()> {
 	#[cfg(target_family = "unix")]
 	let url = env::var("DATABASE_URL").context("No DATABASE_URL environmental variable")?;
