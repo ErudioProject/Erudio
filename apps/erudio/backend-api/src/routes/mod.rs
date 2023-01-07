@@ -5,7 +5,6 @@ use crate::helpers::{
 	consts::SESSION_COOKIE_NAME,
 	ctx::{Auth, Public},
 };
-use redis::Value::Int;
 use rspc::{Config, ErrorCode};
 use services::session;
 use std::path::PathBuf;
@@ -22,17 +21,12 @@ pub fn router() -> rspc::Router<Public> {
 		.merge("public.", public::mount())
 		.middleware(|mw| {
 			mw.middleware(|mw| async move {
-				let old_ctx: Public = mw.ctx.clone();
+				let mut old_ctx: Public = mw.ctx.clone();
 				match old_ctx.cookies.get(SESSION_COOKIE_NAME) {
+					None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
 					Some(session_id) => {
-						match session::load(
-							&old_ctx.db.clone(),
-							&mut old_ctx.redis.clone(),
-							session_id.value(),
-							Some(3600),
-						)
-						.await?
-						{
+						match session::load(&old_ctx.db, &mut old_ctx.redis, session_id.value(), Some(3600)).await? {
+							None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
 							Some(session_data) => Ok(mw.with_ctx(Auth {
 								db: old_ctx.db,
 								redis: old_ctx.redis,
@@ -40,10 +34,8 @@ pub fn router() -> rspc::Router<Public> {
 								cookies: old_ctx.cookies,
 								session_data,
 							})),
-							None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
 						}
 					}
-					None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
 				}
 			})
 		})
