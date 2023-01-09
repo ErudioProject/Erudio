@@ -1,6 +1,6 @@
 use eyre::Report;
 use hex::FromHexError;
-use log::error;
+use log::{debug, error};
 use rand::Rng;
 use redis::RedisError;
 use rspc::ErrorCode;
@@ -45,38 +45,47 @@ impl From<FromHexError> for InternalError {
 		Self::ServerError("Hex failed".into(), value.into())
 	}
 }
+impl From<chrono::RoundingError> for InternalError {
+	fn from(value: chrono::RoundingError) -> Self {
+		Self::ServerError("Chrono rounding failed?? failed".into(), value.into())
+	}
+}
 
 impl From<prisma_client::prisma_client_rust::QueryError> for InternalError {
 	fn from(value: prisma_client::prisma_client_rust::QueryError) -> Self {
-		error!("Prisma failed with error: {:?}", value);
-		Self::Rspc(rspc::Error::with_cause(
-			ErrorCode::InternalServerError,
-			"Prisma query error".into(),
-			value,
-		))
+		Self::ServerError("Prisma failed".into(), value.into())
 	}
 }
 
 impl From<InternalError> for rspc::Error {
 	fn from(value: InternalError) -> Self {
 		match value {
-			InternalError::Rspc(x) => x,
-			InternalError::TestError(_) => Self::new(
-				ErrorCode::InternalServerError,
-				"This is an error that is allowed only in tests".to_string(),
-			),
+			InternalError::Rspc(err) => {
+				debug!("Rspc Error: {err}");
+				err
+			}
+			InternalError::TestError(err) => {
+				error!("TEST ERROR: {err}");
+				Self::new(
+					ErrorCode::InternalServerError,
+					"This is an error that is allowed only in tests".to_string(),
+				)
+			}
 			InternalError::ServerError(message, report) => {
 				let buf = &mut [0u8; 128];
 				rand::thread_rng().fill(buf);
 				let trace_id = hex::encode(buf);
 				error!("trace: #{trace_id}# message: {message} err: {report:?}");
-				Self::new(
-					ErrorCode::InternalServerError,
-					format!("Server error trace #{trace_id}#"),
-				)
+				Self::new(ErrorCode::InternalServerError, format!("#trace#{trace_id}#"))
 			}
-			InternalError::IntoRspc(code, message) => Self::new(code, message),
-			InternalError::IntoRspcWithCause(code, message, cause) => Self::with_cause(code, message, cause),
+			InternalError::IntoRspc(code, message) => {
+				debug!("Rspc Error: {code:?} Message: {message}");
+				Self::new(code, message)
+			}
+			InternalError::IntoRspcWithCause(code, message, cause) => {
+				debug!("Rspc Error: {code:?} Message: {message}  Cause {cause:?}");
+				Self::with_cause(code, message, cause)
+			}
 		}
 	}
 }

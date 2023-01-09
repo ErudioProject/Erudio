@@ -813,6 +813,7 @@ dependencies = [
 name = "error_handler"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "eyre",
  "hex",
  "log",

@@ -1,3 +1,4 @@
+use crate::cookies::get_cookie;
 use crate::{
 	helpers::consts::SECRET_SIZE,
 	routes::{RspcResult, SESSION_COOKIE_NAME},
@@ -57,17 +58,10 @@ pub async fn login(ctx: Public, req: LoginRequest) -> RspcResult<LoginResponse> 
 		rng.fill_bytes(&mut connection_secret);
 	}
 
-	//TODO 2fa handling
-	ctx.cookies.add(
-		Cookie::build(
-			SESSION_COOKIE_NAME,
-			session::init::session(&ctx.db, &mut ctx.redis.clone(), user, &connection_secret, Some(3600)).await?,
-		)
-		.secure(false) // TODO change one we have ssl set up
-		.http_only(true)
-		.same_site(SameSite::Strict)
-		.finish(),
-	);
+	ctx.cookies.add(get_cookie(
+		SESSION_COOKIE_NAME,
+		session::init::session(&ctx.db, &mut ctx.redis.clone(), user, &connection_secret, Some(3600)).await?,
+	));
 
 	Ok(LoginResponse::Success)
 }
