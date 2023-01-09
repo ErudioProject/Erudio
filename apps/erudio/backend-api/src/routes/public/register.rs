@@ -5,14 +5,12 @@ use crate::{
 	Public,
 };
 use argon2::{Config, ThreadMode, Variant, Version};
-use cookie::SameSite;
 use error_handler::InternalError;
 use log::debug;
 use prisma_client::prisma::{pii_data, user, GrammaticalForm};
 use rand::RngCore;
 use rspc::Type;
 use services::session;
-use tower_cookies::Cookie;
 
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct RegisterRequest {
