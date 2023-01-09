@@ -10,6 +10,7 @@
 #![allow(clippy::module_name_repetitions)]
 extern crate argon2;
 
+mod cookies;
 mod helpers;
 mod routes;
 mod shutdown_signal;

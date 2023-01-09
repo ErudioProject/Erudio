@@ -1,3 +1,4 @@
+use crate::cookies::get_cookie;
 use crate::{
 	helpers::consts::{SALT_SIZE, SECRET_SIZE},
 	routes::{RspcResult, SESSION_COOKIE_NAME},
@@ -44,33 +45,39 @@ pub async fn register(ctx: Public, req: RegisterRequest) -> RspcResult<()> {
 		rng.fill_bytes(&mut salt);
 		rng.fill_bytes(&mut connection_secret);
 	}
-	// TODO transaction + if email duplicate then correct error
-	let user = ctx
-		.db
-		.user()
-		.create(
-			argon2::hash_encoded(req.password.as_bytes(), &salt, &argon_config).map_err(Into::<InternalError>::into)?,
-			vec![],
-		)
-		.with(user::user_school_relation::fetch(vec![]))
-		.exec()
-		.await?;
+	// TODO nested create + if email duplicate then correct error
 
 	let legal_name =
 		req.first_name.clone() + " " + &(req.middle_name.map_or_else(String::new, |name| name + " ")) + &req.last_name;
 	let display_name = req.first_name + " " + &req.last_name;
 
-	let pii_data = ctx
+	let (user, pii_data) = ctx
 		.db
-		.pii_data()
-		.create(
-			GrammaticalForm::Indeterminate,
-			legal_name,
-			display_name,
-			user::id::equals(user.id.clone()),
-			vec![pii_data::email::Set(Some(req.email)).into()],
-		)
-		.exec()
+		._transaction()
+		.run(|db| async move {
+			let user = db
+				.user()
+				.create(
+					argon2::hash_encoded(req.password.as_bytes(), &salt, &argon_config)
+						.map_err(Into::<InternalError>::into)?,
+					vec![],
+				)
+				.with(user::user_school_relation::fetch(vec![]))
+				.exec()
+				.await?;
+			db.pii_data()
+				.create(
+					GrammaticalForm::Indeterminate,
+					legal_name,
+					display_name,
+					user::id::equals(user.id.clone()),
+					vec![pii_data::email::Set(Some(req.email)).into()],
+				)
+				.exec()
+				.await
+				.map_err(Into::<InternalError>::into)
+				.map(|pii_data| (user, pii_data))
+		})
 		.await?;
 
 	let user = user::Data {
@@ -78,16 +85,10 @@ pub async fn register(ctx: Public, req: RegisterRequest) -> RspcResult<()> {
 		..user
 	};
 
-	ctx.cookies.add(
-		Cookie::build(
-			SESSION_COOKIE_NAME,
-			session::init::session(&ctx.db, &mut ctx.redis.clone(), user, &connection_secret, Some(3600)).await?,
-		)
-		.secure(false) // TODO change one we have ssl set up
-		.http_only(true)
-		.same_site(SameSite::Strict)
-		.finish(),
-	);
+	ctx.cookies.add(get_cookie(
+		SESSION_COOKIE_NAME,
+		session::init::session(&ctx.db, &mut ctx.redis.clone(), user, &connection_secret, Some(3600)).await?,
+	));
 
 	Ok(())
 }
