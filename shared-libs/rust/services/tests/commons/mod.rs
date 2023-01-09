@@ -2,7 +2,7 @@ use error_handler::{InternalError, InternalResult};
 use eyre::Context;
 use prisma_client::{
 	prisma::{pii_data, user, GrammaticalForm, PrismaClient},
-	User,
+	prisma_mocked_client, User,
 };
 use rand::{thread_rng, RngCore};
 use redis::aio::Connection;
@@ -11,17 +11,10 @@ use std::env;
 pub(crate) async fn init_tests_with_user() -> InternalResult<(PrismaClient, Connection, User, Vec<u8>)> {
 	dotenvy::dotenv().ok();
 	env_logger::init();
-	#[cfg(target_family = "unix")]
-	let url = env::var("DATABASE_URL").expect("Set DATABASE_URL env");
-	#[cfg(target_family = "windows")]
-	let url = env::var("DATABASE_URL_WIN").expect("Set DATABASE_URL_WIN env");
 
-	let db = PrismaClient::_builder()
-		.with_url(url)
-		.build()
+	let db = prisma_mocked_client(env::var("DATABASE_URL_TESTS").expect("DATABASE_URL_TESTS not found"))
 		.await
-		.context("db connection error")
-		.map_err(|err| InternalError::TestError(format!("{:?}", err)))?;
+		.expect("Test database error");
 
 	db._db_push()
 		.await
