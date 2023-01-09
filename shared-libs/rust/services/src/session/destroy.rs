@@ -42,19 +42,16 @@ mod tests {
 	use prisma_client::prisma::user;
 	use prisma_client::prisma_client_rust::serde_json;
 	use redis_test::{MockCmd, MockRedisConnection};
-	use std::env;
-	use uuid::Uuid;
-
 	static CLIENT_SECRET: Lazy<Vec<u8>> = Lazy::new(|| vec![0u8; 32]);
-	static USER_ID: Lazy<String> = Lazy::new(|| Uuid::new_v4().to_string());
+	//static USER_ID: Lazy<String> = Lazy::new(|| Uuid::new_v4().to_string());
 
 	#[tokio::test]
 	async fn destroy_existing_session() -> InternalResult<()> {
-		// TODO prisma issue?
-		/*dotenvy::dotenv().expect(".env file loading error");
+		dotenvy::dotenv().expect(".env file loading error");
 		let (db, mock) = PrismaClient::_mock();
 
 		mock.expect(
+			// TODO maybe refactor
 			db.session().create(
 				CLIENT_SECRET.clone(),
 				DateTime::from(Utc::now().duration_round(Duration::days(1)).unwrap() + Duration::days(365)),
@@ -71,13 +68,8 @@ mod tests {
 		.await;
 		mock.expect(
 			db.session()
-				.delete_many(vec![session::session_id::equals(session_id)]),
-			session::Data {
-				user_id: USER_ID.clone(),
-				session_id: CLIENT_SECRET.clone(),
-				valid_until: Default::default(),
-				user: None,
-			},
+				.delete_many(vec![session::session_id::equals(CLIENT_SECRET.clone())]),
+			1i64,
 		)
 		.await;
 
@@ -99,18 +91,14 @@ mod tests {
 
 		let secret_string = init::session(&db, &mut mock_redis, USER.clone(), &CLIENT_SECRET, None).await?;
 
-		destroy(&db, &mut mock_redis, &secret_string).await?;*/
+		destroy(&db, &mut mock_redis, &secret_string).await?;
 		Ok(())
 	}
 
 	#[tokio::test]
 	async fn destroy_invalid_session() -> InternalResult<()> {
 		dotenvy::dotenv().expect(".env file loading error");
-		let db =
-			prisma_client::prisma_mocked_client(env::var("DATABASE_URL_TESTS").expect("DATABASE_URL_TESTS not found"))
-				.await
-				.expect("Test database error");
-
+		let (db, _) = PrismaClient::_mock();
 		let mut mock_redis = MockRedisConnection::new(vec![MockCmd::new(redis::cmd("GET").arg("last"), Ok("OK"))]);
 
 		let result = destroy(&db, &mut mock_redis, "NOT A VALID SECRET").await;
@@ -125,10 +113,14 @@ mod tests {
 	#[tokio::test]
 	async fn destroy_not_existing_session() -> InternalResult<()> {
 		dotenvy::dotenv().expect(".env file loading error");
-		let db =
-			prisma_client::prisma_mocked_client(env::var("DATABASE_URL_TESTS").expect("DATABASE_URL_TESTS not found"))
-				.await
-				.expect("Test database error");
+		let (db, mock) = PrismaClient::_mock();
+
+		mock.expect(
+			db.session()
+				.delete_many(vec![session::session_id::equals(CLIENT_SECRET.clone())]),
+			0i64,
+		)
+		.await;
 
 		let mut mock_redis = MockRedisConnection::new(vec![
 			MockCmd::new(redis::cmd("DEL").arg(&hex::encode(CLIENT_SECRET.clone())), Ok("OK")),
@@ -137,6 +129,6 @@ mod tests {
 		let result = destroy(&db, &mut mock_redis, &hex::encode(CLIENT_SECRET.clone())).await; // Not existing session
 		assert_eq!(mock_redis.get("last").await, Ok("OK".to_string()));
 		assert!(matches!(result, Ok(0)));
-		result.map(|_| ())
+		Ok(())
 	}
 }

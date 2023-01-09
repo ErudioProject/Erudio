@@ -12,8 +12,8 @@ members = [
 prisma_client = { path = "shared-libs/rust/prisma-client" }
 services = { path = "shared-libs/rust/services" }
 error_handler = { path = "shared-libs/rust/error-handler" }
-prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations", "mocking"], rev = "de2b9a96370948cf15df29c96b7c9730e7382002"}
-prisma-client-rust-cli = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations", "mocking"], rev = "de2b9a96370948cf15df29c96b7c9730e7382002"}
+prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations", "mocking"], rev = "13fdf89503de65156011b9a135d9d12fb589e8f8"}
+prisma-client-rust-cli = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations", "mocking"], rev = "13fdf89503de65156011b9a135d9d12fb589e8f8"}
 redis = {version = "^0.22", features = ["aio", "ahash", "tokio-comp", "json"]}
 tokio = { version = "^1.23", features = ["macros", "parking_lot", "signal"] }
 openssl = { version = "^0.10", features = ["vendored"] } # daem openssl
