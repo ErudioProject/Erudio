@@ -47,12 +47,7 @@ async fn prisma(db: &PrismaClient, client_secret: &[u8], id: &str) -> InternalRe
 	db.session()
 		.create(
 			client_secret.into(),
-			DateTime::from(
-				Utc::now()
-					.duration_round(Duration::days(1))
-					.expect("That can fail Chrono round?")
-					+ Duration::days(365),
-			), // TODO! remove expect , but really that could fail????
+			DateTime::from(Utc::now().duration_round(Duration::days(1))? + Duration::days(365)),
 			user::id::equals(id.into()),
 			vec![],
 		)
