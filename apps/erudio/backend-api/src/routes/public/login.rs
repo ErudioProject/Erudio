@@ -4,7 +4,6 @@ use crate::{
 	routes::{RspcResult, SESSION_COOKIE_NAME},
 	Public,
 };
-use cookie::{Cookie, SameSite};
 use error_handler::InternalError;
 use log::debug;
 use prisma_client::prisma::{pii_data, user};
