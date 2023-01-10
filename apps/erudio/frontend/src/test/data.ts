@@ -3,15 +3,17 @@ import { SchoolRelationType } from "../../../bindings";
 export const apiTestData = {
     authorizedMail: "test@example.com",
     authorizedPassword: "Test123!",
+    userId: "testid",
 
     displayName: "Test User",
     schoolRelations: [
-        {
-            school_relation_type: "student" as SchoolRelationType,
-            school: { name: "My School" }
-        }, {
-            school_relation_type: "teacher" as SchoolRelationType,
-            school: { name: "My School 2" }
-        }
+        [
+            "student" as SchoolRelationType,
+            "My School"
+        ],
+        [
+            "teacher" as SchoolRelationType,
+            "Zespół Szkół Łączności"
+        ]
     ]
 }

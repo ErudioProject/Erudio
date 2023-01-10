@@ -1,5 +1,5 @@
 import { rest, RestRequest } from "msw";
-import { LoginRequest, LoginResponse, SchoolRelationType } from "../../../../bindings";
+import { LoginRequest, LoginResponse, SchoolRelationType, UserMeResponse } from "../../../../bindings";
 import { apiTestData } from "../data";
 
 const url = "http://127.0.0.1:3001/rspc" //TODO: process.env.FRONTEND_API_URL;
@@ -36,18 +36,15 @@ function getData<T>(req: RestRequest): T {
     return JSON.parse(req.url.searchParams.get("input") ?? "{}") as T
 }
 
-type UserMeResponse = { pii_data: { display_name: string } | null, user_school_relation: Array<{ school_relation_type: SchoolRelationType, school: { name: string } }> }
-
 export const handlers = [
     rest.get(`${url}/user.me`, (_, res, ctx) => {
         if (sessionStorage.getItem('is-authenticated') === 'true') {
             return res(
                 ctx.status(200),
                 ctx.json(wrapResponse<UserMeResponse>({
-                    pii_data: {
-                        display_name: apiTestData.displayName
-                    },
-                    user_school_relation: apiTestData.schoolRelations
+                    display_name: apiTestData.displayName,
+                    school_relations: apiTestData.schoolRelations as [SchoolRelationType, string][],
+                    id: apiTestData.userId
                 }))
             )
         }
