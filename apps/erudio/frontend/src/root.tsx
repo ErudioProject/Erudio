@@ -13,11 +13,7 @@ import {
 } from 'solid-start';
 import './root.css';
 import Localization from './components/contexts/Localization';
-import Container from '@suid/material/Container';
-import ClientProvider from './components/contexts/ClientProvider';
-import LoadingPage from './components/placeholders/LoadingPage';
-import Theme, { ModeSwitch } from './components/contexts/Theme';
-import { CssBaseline } from '@suid/material';
+import LoadingPage from './components/LoadingPage';
 
 export default function Root() {
     //TODO: fix/file vite issue:
@@ -31,23 +27,17 @@ export default function Root() {
                 <Meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
             <Body>
-                <Suspense fallback={LoadingPage}>
-                    <ErrorBoundary>
-                        <Localization locale={lang}>
-                            <ClientProvider url={import.meta.env.FRONTEND_API_URL}>
-                                <Theme defaultMode='dark'>
-                                    <CssBaseline />
-                                    <ModeSwitch />
-                                    <Container sx={{ height: "100vh" }}>
-                                        <Routes>
-                                            <FileRoutes />
-                                        </Routes>
-                                    </Container>
-                                </Theme>
-                            </ClientProvider>
-                        </Localization>
-                    </ErrorBoundary>
-                </Suspense>
+                <ErrorBoundary>
+                    <Localization locale={lang}>
+                        <Suspense fallback={LoadingPage}>
+                            <div class="mx-5">
+                                <Routes>
+                                    <FileRoutes />
+                                </Routes>
+                            </div>
+                        </Suspense>
+                    </Localization>
+                </ErrorBoundary>
                 <Scripts />
             </Body>
         </Html>

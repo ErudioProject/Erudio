@@ -1,20 +1,13 @@
-import Button from '@suid/material/Button';
 import { createRouteAction, createRouteData, FormError, FormProps, Navigate, redirect, useRouteData } from 'solid-start';
-import { useClient } from '../components/contexts/ClientProvider';
 import { Component, ParentComponent, Show } from 'solid-js';
-import Alert from '@suid/material/Alert';
 import { useI18nContext } from '../i18n/i18n-solid';
-import { Stack, TextField } from '@suid/material';
+import { FetchClient } from '../api-setup';
+import LoadingPage from '../components/LoadingPage';
 
 export function routeData() {
-    const client = useClient();
     return createRouteData(async () => {
-        return client
-            .getFetchClient()
+        return await FetchClient
             .query(['user.me'])
-            .catch((e: Error) => {
-                throw e;
-            });
     });
 }
 
@@ -29,40 +22,49 @@ const LoginPage: Component<LoginPageProps> = (props) => {
     return (
         <>
             <props.FormElement>
-                <Stack textAlign="center" spacing={3} alignItems="center" justifyContent="center" sx={{ height: "100vh" }}>
+                <div class="mx-auto flex flex-col justify-center items-center h-screen gap-4">
                     <picture>
                         <source srcset="logo.svg" />
-                        <img src="logo.svg" alt="Logo" style="width:200px;height:auto" />
+                        <img src="logo.svg" alt="Logo" style={{ "width": "200px", "height": "auto" }} />
                     </picture>
-                    <TextField type="email" required label={LL().EMAIL()} name="email" disabled={props.loading} />
-                    <TextField
-                        required
-                        type="password"
-                        label={LL().PASSWORD()}
-                        name="password"
-                        disabled={props.loading}
-                    />
-                    <Button variant="contained" type="submit" disabled={props.loading}>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">{LL().EMAIL()}</span>
+                        </label>
+                        <input type="email" required disabled={props.loading} name="email" class="input input-primary input-bordered" />
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">{LL().PASSWORD()}</span>
+                        </label>
+                        <input type="password" required disabled={props.loading} name="password" class="input input-primary input-bordered" />
+                    </div>
+                    <button type="submit" class="btn btn-primary" classList={{ 'loading': props.loading }}>
                         {LL().LOGINBUTTON()}
-                    </Button>
+                    </button>
                     <Show when={props.error}>
-                        <Alert severity="error">{LL().INVALIDLOGIN()}</Alert>
+                        <div class="alert alert-error w-auto">
+                            <div class="flex-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 mx-2 stroke-current">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                </svg>
+                                <p>{LL().INVALIDLOGIN()}</p>
+                            </div>
+                        </div>
                     </Show>
-                </Stack>
+                </div>
             </props.FormElement>
         </>
     )
 }
 
 export default function Index() {
-    const client = useClient();
     const me = useRouteData<typeof routeData>();
     const [logging, login] = createRouteAction(async (formData: FormData) => {
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
         try {
-            let response = await client
-                .getFetchClient()
+            let response = await FetchClient
                 .query(['public.login', { email: email, password: password }])
             if (response.t === 'Success') return redirect('/dashboard');
         }
@@ -72,10 +74,13 @@ export default function Index() {
     });
     return (
         <>
+            <Show when={me.state === "pending"}
+                fallback={<LoginPage FormElement={login.Form} loading={logging.pending} error={logging.error} />}>
+                <LoadingPage />
+            </Show>
             <Show when={me.state !== "pending" && me.state !== "errored"}>
                 <Navigate href="/dashboard" />
             </Show>
-            <LoginPage FormElement={login.Form} loading={logging.pending} error={logging.error} />
         </>
     );
 }
