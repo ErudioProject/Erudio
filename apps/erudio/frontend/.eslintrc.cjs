@@ -1,26 +1,16 @@
 module.exports = {
-  parser: '@typescript-eslint/parser',
-  plugins: ['solid', '@typescript-eslint'],
-  extends: ['../../../.eslintrc.json'],
-  ignorePatterns: ['!**/*', 'vite.config.ts'],
-  overrides: [
-    {
-      files: ['*.ts', '*.js', '*.tsx'],
-      parserOptions: {
-        project: ['apps/erudio/tsconfig.*?.json'],
-      },
-      rules: {},
+    "env": {
+        "es2021": true
     },
-    {
-      files: ['*.ts', '*.tsx'],
-      rules: {},
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["solid", "jsx-a11y"],
+    "extends": ["eslint:recommended", "plugin:solid/typescript", "plugin:jsx-a11y/recommended"],
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
     },
-    {
-      files: ['*.js', '*.jsx'],
-      rules: {},
-    },
-  ],
-  settings: {
-    'solid/typescript': require('typescript'),
-  },
-};
+    "rules": {
+    }
+}
