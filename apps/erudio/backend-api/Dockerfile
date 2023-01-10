@@ -1,4 +1,4 @@
-FROM clux/muslrust:nightly AS chef
+FROM clux/muslrust:stable AS chef
 USER root
 RUN apt update
 RUN apt install wget
@@ -30,9 +30,9 @@ COPY . .
 #RUN cp -r .cargo-tmp/* ~/.cargo | true
 #RUN cp -r .cargo-tmp/.* ~/.cargo | true
 WORKDIR apps/erudio/backend-prisma-cli/
-RUN cargo +nightly run --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
+RUN cargo run --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
 WORKDIR ../../../
-RUN cargo +nightly build --target x86_64-unknown-linux-musl --bin api
+RUN cargo build --target x86_64-unknown-linux-musl --bin api
 
 
 FROM alpine AS runtime
