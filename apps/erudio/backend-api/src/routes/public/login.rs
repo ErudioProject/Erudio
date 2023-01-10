@@ -5,7 +5,7 @@ use crate::{
 	Public,
 };
 use error_handler::InternalError;
-use log::debug;
+use log::info;
 use prisma_client::prisma::{pii_data, user};
 use rand::RngCore;
 use rspc::{ErrorCode, Type};
@@ -34,7 +34,7 @@ pub enum TwoFactorAuthType {
 }
 
 pub async fn login(ctx: Public, req: LoginRequest) -> RspcResult<LoginResponse> {
-	debug!("Login Request: {:?}", req);
+	info!("Login Request: {:?}", req);
 	let user = ctx
 		.db
 		.user()
