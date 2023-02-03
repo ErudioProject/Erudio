@@ -1,15 +1,26 @@
-use argon2::{ThreadMode, Variant, Version};
+use crate::helpers::consts::{Argon2ConfigVec, ThreadModeDef, VariantDef, VersionDef};
 
-pub fn get_argon_config(argon_secret: &[u8]) -> argon2::Config {
+pub fn get_argon_config(argon2conf: &Argon2ConfigVec) -> argon2::Config {
+	// yes that boilerplate to make config work properly
 	argon2::Config {
-		variant: Variant::Argon2i,
-		version: Version::Version13,
-		mem_cost: 16384,
-		time_cost: 3,
-		lanes: 4,
-		thread_mode: ThreadMode::Parallel,
-		secret: argon_secret,
-		ad: &[],
-		hash_length: 32,
+		ad: &argon2conf.ad,
+		hash_length: argon2conf.hash_length,
+		lanes: argon2conf.lanes,
+		mem_cost: argon2conf.mem_cost,
+		secret: &argon2conf.secret,
+		thread_mode: match &argon2conf.thread_mode {
+			ThreadModeDef::Sequential => argon2::ThreadMode::Sequential,
+			ThreadModeDef::Parallel => argon2::ThreadMode::Parallel,
+		},
+		time_cost: argon2conf.time_cost,
+		variant: match &argon2conf.variant {
+			VariantDef::Argon2d => argon2::Variant::Argon2d,
+			VariantDef::Argon2i => argon2::Variant::Argon2i,
+			VariantDef::Argon2id => argon2::Variant::Argon2id,
+		},
+		version: match &argon2conf.version {
+			VersionDef::Version10 => argon2::Version::Version10,
+			VersionDef::Version13 => argon2::Version::Version13,
+		},
 	}
 }

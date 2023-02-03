@@ -1,0 +1,19 @@
+Config (
+    argon2: (
+        ad: [],
+        hash_length: 32,
+        lanes: 4,
+        mem_cost: 16384,
+        secret: [0x0e, 0x7f, 0xd7, 0xa2, 0x1a, 0xf6, 0xa3, 0xc3, 0x10, 0x47, 0x3a, 0x2c, 0x84, 0x94, 0x15, 0x82, 0x67, 0xaf, 0xa3, 0x30, 0xaa, 0xea, 0x97, 0x5a, 0x01, 0xde, 0xed, 0x51, 0x87, 0x49, 0xb7, 0x33],
+        thread_mode: Parallel,
+        time_cost: 3,
+        variant: Argon2i,
+        version: Version13,
+    ),
+    salt_size: 32,
+    secret_size: 32,
+    db_url: "postgresql://postgres:password@localhost:5432/erudio?schema=public",
+    redis_url: "redis://127.0.0.1/",
+    region_id: "TEST_REGION",
+    api_port: 3001
+)

@@ -15,6 +15,7 @@ mod helpers;
 mod routes;
 mod shutdown_signal;
 
+use crate::helpers::consts::Config;
 use crate::{eyre::Context, helpers::ctx::Public, routes::router};
 use axum::routing::get;
 use color_eyre::eyre;
@@ -24,10 +25,10 @@ use prisma_client::{prisma, prisma::PrismaClient};
 use prisma_client_rust::{chrono::Utc, raw};
 use redis::AsyncCommands;
 use std::{
-	env,
 	net::{Ipv4Addr, SocketAddr},
 	sync::Arc,
 };
+use tokio::fs;
 use tower_cookies::{CookieManagerLayer, Cookies};
 use tower_http::{cors, cors::CorsLayer};
 
@@ -43,27 +44,20 @@ pub fn main() {
 
 #[tokio::main]
 async fn start() -> eyre::Result<()> {
-	#[cfg(target_family = "unix")]
-	let url = env::var("DATABASE_URL").context("No DATABASE_URL environmental variable")?;
-	#[cfg(target_family = "windows")]
-	let url = env::var("DATABASE_URL_WIN").context("No DATABASE_URL_WIN environmental variable")?;
-
-	let redis_url = env::var("REDIS_URL").context("No REDIS_URL environmental variable")?;
-	let region_id = env::var("REGION_ID").context("No REGION_ID environmental variable")?;
-	let port = env::var("API_PORT")
-		.context("No API_PORT environmental variable")?
-		.parse::<u16>()
-		.context("API_PORT is invalid example value '3000'")?;
-	let argon_secret =
-		hex::decode(env::var("ARGON_SECRET").context("No hex value ARGON_SECRET environmental variable")?)
-			.context("ARGON_SECRET is not hex value")?;
-	if argon_secret.len() != 32 {
-		warn!("Recommended ARGON_SECRET length is 32 actual: {}", argon_secret.len());
+	let contents = fs::read_to_string("./Config.ron")
+		.await
+		.context("no Config.ron file")?;
+	let config: Config = ron::from_str(&contents).context("Config.ron is invalid")?;
+	if config.argon2.secret.len() != 32 {
+		warn!(
+			"Recommended ARGON_SECRET length is 32 actual: {}",
+			config.argon2.secret.len()
+		);
 	}
 
 	let db: Arc<PrismaClient> = Arc::new(
 		PrismaClient::_builder()
-			.with_url(url)
+			.with_url(config.db_url.clone())
 			.build()
 			.await
 			.context("Database ERROR")?,
@@ -74,7 +68,7 @@ async fn start() -> eyre::Result<()> {
 	#[cfg(not(debug_assertions))]
 	db._migrate_deploy().await?;
 
-	let redis = redis::Client::open(redis_url)?;
+	let redis = redis::Client::open(config.redis_url.clone())?;
 	let conn = redis
 		.get_multiplexed_async_connection()
 		.await
@@ -100,12 +94,14 @@ async fn start() -> eyre::Result<()> {
 			"/rspc/:id",
 			router()
 				.arced()
-				.endpoint(move |cookies: Cookies| Public {
-					db: db.clone(),
-					redis: conn,
-					cookies,
-					region_id,
-					argon_secret: Arc::new(argon_secret),
+				.endpoint({
+					let config = config.clone();
+					move |cookies: Cookies| Public {
+						config,
+						db: db.clone(),
+						redis: conn,
+						cookies,
+					}
 				})
 				.axum(),
 		)
@@ -117,7 +113,7 @@ async fn start() -> eyre::Result<()> {
 		)
 		.layer(CookieManagerLayer::new());
 
-	let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, port));
+	let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, config.api_port));
 	info!("listening on {}", addr);
 	axum::Server::try_bind(&addr)?
 		.serve(app.into_make_service())

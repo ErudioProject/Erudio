@@ -1,6 +1,5 @@
 use crate::cookies::get_cookie;
 use crate::{
-	helpers::consts::SECRET_SIZE,
 	routes::{RspcResult, SESSION_COOKIE_NAME},
 	Public,
 };
@@ -45,13 +44,18 @@ pub async fn login(ctx: Public, req: LoginRequest) -> RspcResult<LoginResponse> 
 		.await?
 		.ok_or_else(|| rspc::Error::new(ErrorCode::NotFound, "Email not found".to_string()))?;
 
-	if !argon2::verify_encoded_ext(&user.password_hash, req.password.as_bytes(), &ctx.argon_secret, &[])
-		.map_err(Into::<InternalError>::into)?
+	if !argon2::verify_encoded_ext(
+		&user.password_hash,
+		req.password.as_bytes(),
+		&ctx.config.argon2.secret,
+		&[],
+	)
+	.map_err(Into::<InternalError>::into)?
 	{
 		return Err(rspc::Error::new(ErrorCode::Forbidden, "Wrong password".into()));
 	}
 
-	let mut connection_secret = vec![0; SECRET_SIZE];
+	let mut connection_secret = vec![0; ctx.config.secret_size];
 	{
 		let mut rng = rand::thread_rng();
 		rng.fill_bytes(&mut connection_secret);
