@@ -1,6 +1,6 @@
+use color_eyre::eyre::Context;
 use config::Config;
 use error_handler::{InternalError, InternalResult};
-use eyre::Context;
 use log::debug;
 use prisma_client::{
 	prisma::{pii_data, user, GrammaticalForm, PrismaClient},
