@@ -43,4 +43,5 @@ Thumbs.db
 shell.nix
 
 .env*
+Config.ron
 !.env*.template
