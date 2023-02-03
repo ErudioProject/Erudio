@@ -10,23 +10,25 @@ license = "AGPL-3.0-or-later"
 prisma_client.workspace = true
 services.workspace = true
 error_handler.workspace = true
-openssl.workspace = true
 config.workspace = true
+# external
 prisma-client-rust = {workspace = true, features = ["postgresql", "rspc"]}
+serde = {workspace = true, features=["derive"]}
+rspc = {workspace = true, features = ["axum"] }
+openssl.workspace = true
 redis.workspace = true
 tokio.workspace = true
+serde_json.workspace = true
+rand.workspace = true
+dotenvy.workspace = true
+log.workspace = true
+rust-argon2.workspace = true
+hex.workspace = true
+env_logger.workspace = true
+ron.workspace = true
+color-eyre.workspace = true
+
 tower-http = { version = "^0.3", features = ["cors"] }
 axum = "^0.5"
-serde = {version = "^1", features=["derive"]}
-serde_json = "^1"
-dotenvy = "^0"
-rspc = { version = "^0", features = ["axum"] }
-env_logger = "^0"
-log = "^0"
-color-eyre = "^0"
 tower-cookies = "^0.7"
 cookie = "^0.16"
-rust-argon2 = "^1.0"
-rand = "^0.8"
-hex = "^0.4"
-ron = "^0.8"

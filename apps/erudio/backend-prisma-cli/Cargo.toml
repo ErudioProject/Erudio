@@ -8,4 +8,4 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 prisma-client-rust-cli.workspace = true
-serde = "^1.0"
+serde.workspace = true

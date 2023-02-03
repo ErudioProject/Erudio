@@ -879,7 +879,7 @@ name = "error_handler"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "eyre",
+ "color-eyre",
  "hex",
  "log",
  "prisma_client",
@@ -3186,11 +3186,11 @@ name = "services"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "color-eyre",
  "config",
  "dotenvy",
  "env_logger",
  "error_handler",
- "eyre",
  "hex",
  "log",
  "once_cell",

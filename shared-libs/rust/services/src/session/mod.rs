@@ -8,9 +8,9 @@ mod load;
 mod recover;
 
 pub use check::check;
+use color_eyre::eyre::eyre;
 pub use destroy::destroy;
 pub use destroy_all_for_user::destroy_all_for_user;
-use eyre::eyre;
 pub use load::load;
 
 use error_handler::InternalError;
