@@ -108,7 +108,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - run: cp -a ./envs/${{ matrix.environment }}/. .
+      - run: cp -a ./configs/${{ matrix.environment }}/. .
       - uses: isbang/compose-action@v1.4.1
         with:
           compose-file: "./apps/erudio/docker-compose.yml"
@@ -137,7 +137,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - run: cp -a ./envs/${{ matrix.environment }}/. .
+      - run: cp -a ./configs/${{ matrix.environment }}/. .
       - run: docker-compose pull
         working-directory: ./apps/erudio
       - uses: isbang/compose-action@v1.4.1
