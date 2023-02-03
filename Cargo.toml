@@ -7,7 +7,6 @@ members = [
     "apps/erudio/backend-api",
     "apps/erudio/backend-prisma-cli"
 ]
-# TODO move all common dependecies here
 [workspace.dependencies]
 prisma_client = { path = "shared-libs/rust/prisma-client" }
 services = { path = "shared-libs/rust/services" }
