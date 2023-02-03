@@ -7,15 +7,11 @@ use crate::helpers::{
 };
 use rspc::{Config, ErrorCode};
 use services::session;
-use std::collections::HashMap;
 use std::path::PathBuf;
-use std::sync::Arc;
 
 pub type RspcResult<T> = Result<T, rspc::Error>;
 
 pub fn router() -> rspc::Router<Public> {
-	let buckets = Arc::new(HashMap::new()); // TODO config load
-
 	rspc::Router::<Public>::new()
 		.config(
 			Config::new()
@@ -32,12 +28,12 @@ pub fn router() -> rspc::Router<Public> {
 						match session::load(&old_ctx.db, &mut old_ctx.redis, session_id.value(), Some(3600)).await? {
 							None => Err(rspc::Error::new(ErrorCode::Unauthorized, "Unauthorized".into())),
 							Some(session_data) => Ok(mw.with_ctx(Auth {
+								config: old_ctx.config,
 								db: old_ctx.db,
 								redis: old_ctx.redis,
 								session_id: session_id.value().to_string(),
 								cookies: old_ctx.cookies,
 								session_data,
-								buckets: buckets.clone(),
 							})),
 						}
 					}

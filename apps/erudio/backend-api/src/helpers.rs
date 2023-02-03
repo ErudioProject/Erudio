@@ -17,7 +17,7 @@ macro_rules! idempotent {
 			let mut redis = ctx.redis.clone();
 			let idempotence_token = req.idempotence_token.clone();
 
-			if !idempotence_token.starts_with(&ctx.region_id) {
+			if !idempotence_token.starts_with(&ctx.config.region_id) {
 				return Err(rspc::Error::new(
 					ErrorCode::InternalServerError,
 					"NO REGION HANDLING YET".into(),

@@ -1,7 +1,6 @@
 use crate::cookies::get_cookie;
 use crate::helpers::argon::get_argon_config;
 use crate::{
-	helpers::consts::{SALT_SIZE, SECRET_SIZE},
 	routes::{RspcResult, SESSION_COOKIE_NAME},
 	Public,
 };
@@ -31,9 +30,9 @@ pub async fn register(ctx: Public, req: RegisterRequest) -> RspcResult<()> {
 			"Max password length is 1024 characters".into(),
 		));
 	}
-	let argon_config = get_argon_config(&ctx.argon_secret);
-	let mut salt = vec![0; SALT_SIZE];
-	let mut connection_secret = vec![0; SECRET_SIZE];
+	let argon_config = get_argon_config(&ctx.config.argon2);
+	let mut salt = vec![0; ctx.config.salt_size];
+	let mut connection_secret = vec![0; ctx.config.secret_size];
 	{
 		let mut rng = rand::thread_rng();
 		rng.fill_bytes(&mut salt);
@@ -41,9 +40,15 @@ pub async fn register(ctx: Public, req: RegisterRequest) -> RspcResult<()> {
 	}
 	// TODO nested create
 
-	let legal_name =
-		req.first_name.clone() + " " + &(req.middle_name.map_or_else(String::new, |name| name + " ")) + &req.last_name;
-	let display_name = req.first_name + " " + &req.last_name;
+	let legal_name = match req.middle_name {
+		None => {
+			format!("{} {}", req.first_name, req.last_name)
+		}
+		Some(middle_name) => {
+			format!("{} {} {}", req.first_name, middle_name, req.last_name)
+		}
+	};
+	let display_name = format!("{} {}", req.first_name, req.last_name);
 
 	let user = ctx
 		.db
