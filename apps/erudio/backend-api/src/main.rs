@@ -15,12 +15,12 @@ mod helpers;
 mod routes;
 mod shutdown_signal;
 
-use crate::helpers::consts::Config;
+use crate::helpers::config::Config;
 use crate::{eyre::Context, helpers::ctx::Public, routes::router};
 use axum::routing::get;
 use color_eyre::eyre;
 use error_handler::InternalResult;
-use log::{error, info, warn};
+use log::{debug, error, info, warn};
 use prisma_client::{prisma, prisma::PrismaClient};
 use prisma_client_rust::{chrono::Utc, raw};
 use redis::AsyncCommands;
@@ -54,6 +54,7 @@ async fn start() -> eyre::Result<()> {
 			config.argon2.secret.len()
 		);
 	}
+	debug!("Config: {:?}", config);
 
 	let db: Arc<PrismaClient> = Arc::new(
 		PrismaClient::_builder()

@@ -2,7 +2,7 @@ mod public;
 mod user;
 
 use crate::helpers::{
-	consts::SESSION_COOKIE_NAME,
+	config::SESSION_COOKIE_NAME,
 	ctx::{Auth, Public},
 };
 use rspc::{Config, ErrorCode};

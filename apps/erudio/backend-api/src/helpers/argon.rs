@@ -1,4 +1,4 @@
-use crate::helpers::consts::{Argon2ConfigVec, ThreadModeDef, VariantDef, VersionDef};
+use crate::helpers::config::{Argon2ConfigVec, ThreadModeDef, VariantDef, VersionDef};
 
 pub fn get_argon_config(argon2conf: &Argon2ConfigVec) -> argon2::Config {
 	// yes that boilerplate to make config work properly

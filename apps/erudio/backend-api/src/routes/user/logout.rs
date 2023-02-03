@@ -1,5 +1,5 @@
 use crate::{
-	helpers::{consts::SESSION_COOKIE_NAME, ctx::Auth},
+	helpers::{config::SESSION_COOKIE_NAME, ctx::Auth},
 	routes::RspcResult,
 };
 use cookie::Cookie;
