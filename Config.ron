@@ -15,5 +15,12 @@ Config (
     db_url: "postgresql://postgres:password@localhost:5432/erudio?schema=public",
     redis_url: "redis://127.0.0.1/",
     region_id: "TEST_REGION",
-    api_port: 3001
+    api_port: 3001,
+    buckets: {
+        MessageAttachments: (
+            name: "name",
+            region: "region",
+            //credentials: ()
+        )
+    }
 )
