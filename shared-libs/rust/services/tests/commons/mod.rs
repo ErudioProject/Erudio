@@ -1,5 +1,7 @@
+use config::Config;
 use error_handler::{InternalError, InternalResult};
 use eyre::Context;
+use log::debug;
 use prisma_client::{
 	prisma::{pii_data, user, GrammaticalForm, PrismaClient},
 	prisma_mocked_client, User,
@@ -7,24 +9,32 @@ use prisma_client::{
 use rand::{thread_rng, RngCore};
 use redis::aio::Connection;
 use std::env;
+use tokio::fs;
+// TODO FIX REMOVE TEMPORARY
 
 pub(crate) async fn init_tests_with_user() -> InternalResult<(PrismaClient, Connection, User, Vec<u8>)> {
 	dotenvy::dotenv().ok();
 	env_logger::init();
-
-	let db = prisma_mocked_client(env::var("DATABASE_URL_TESTS").expect("DATABASE_URL_TESTS not found"))
+	// TODO pull over http from server
+	let contents = fs::read_to_string("../../../Config.ron")
 		.await
-		.expect("Test database error");
+		.context("no Config.ron file")
+		.map_err(|err| InternalError::TestError(format!("{:?}", err)))?;
+	let config: Config = ron::from_str(&contents)
+		.context("Config.ron is invalid")
+		.map_err(|err| InternalError::TestError(format!("{:?}", err)))?;
+	debug!("Config: {:?}", config);
+
+	let db = prisma_mocked_client(config.db_url_test.clone())
+		.await
+		.map_err(|err| InternalError::TestError(format!("{:?}", err)))?;
 
 	db._db_push()
 		.await
 		.context("DB push failed")
 		.map_err(|err| InternalError::TestError(format!("{:?}", err)))?;
-	let redis_url = env::var("REDIS_URL")
-		.context("set REDIS_URL env")
-		.map_err(|err| InternalError::TestError(format!("{:?}", err)))?;
 
-	let redis_client = redis::Client::open(redis_url)
+	let redis_client = redis::Client::open(config.redis_url)
 		.context("Redis not found")
 		.map_err(|err| InternalError::TestError(format!("{:?}", err)))?;
 	let redis = redis_client

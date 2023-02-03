@@ -1,4 +1,4 @@
-use crate::helpers::config::Config;
+use config::Config;
 use prisma_client::prisma::PrismaClient;
 use redis::aio::MultiplexedConnection;
 use services::session;

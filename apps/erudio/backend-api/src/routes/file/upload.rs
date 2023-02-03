@@ -1,7 +1,8 @@
 use crate::helpers::ctx::Auth;
 use crate::routes::RspcResult;
+use config::Buckets;
 use rspc::Type;
-use services::s3::{get_bucket, Buckets};
+use services::s3::get_bucket;
 
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct UploadRequest {

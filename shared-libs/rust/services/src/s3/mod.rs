@@ -1,18 +1,6 @@
+use config::BucketConfig;
 pub use s3::creds::Credentials;
 use s3::Bucket;
-use serde::Deserialize;
-
-#[derive(Debug, Clone, Deserialize, Ord, PartialOrd, Eq, PartialEq, Hash)]
-pub enum Buckets {
-	MessageAttachments,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct BucketConfig {
-	pub name: String,
-	pub region: String,
-	//pub credentials: Credentials, // TODO fix
-}
 
 /// # Panics
 ///

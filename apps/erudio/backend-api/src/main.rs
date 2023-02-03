@@ -15,10 +15,10 @@ mod helpers;
 mod routes;
 mod shutdown_signal;
 
-use crate::helpers::config::Config;
 use crate::{eyre::Context, helpers::ctx::Public, routes::router};
 use axum::routing::get;
 use color_eyre::eyre;
+use config::Config;
 use error_handler::InternalResult;
 use log::{debug, error, info, warn};
 use prisma_client::{prisma, prisma::PrismaClient};
