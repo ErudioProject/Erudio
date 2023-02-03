@@ -1,4 +1,4 @@
-use eyre::Report;
+use color_eyre::Report;
 use hex::FromHexError;
 use log::{debug, error};
 use rand::Rng;

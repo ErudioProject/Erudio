@@ -7,9 +7,9 @@ edition = "2021"
 
 [dependencies]
 prisma-client-rust = {workspace = true, features = ["postgresql", "rspc"]}
-serde = {version = "^1", features=["derive"]}
-rand = "^0.8"
+serde = {workspace = true, features=["derive"]}
+rand.workspace = true
 
 [dev-dependencies]
-dotenvy = "^0.15"
+dotenvy.workspace = true
 serial_test = "^0.9"
