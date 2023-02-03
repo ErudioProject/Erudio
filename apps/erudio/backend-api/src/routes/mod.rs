@@ -1,3 +1,4 @@
+mod file;
 mod public;
 mod user;
 
@@ -41,6 +42,7 @@ pub fn router() -> rspc::Router<Public> {
 			})
 		})
 		.merge("user.", user::mount())
+		.merge("file.", file::mount())
 		.build()
 }
 

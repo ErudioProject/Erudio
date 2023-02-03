@@ -1,5 +1,5 @@
 use serde::Deserialize;
-use services::s3::{Buckets, Credentials};
+use services::s3::{BucketConfig, Buckets};
 use std::collections::HashMap;
 
 pub const SESSION_COOKIE_NAME: &str = "SessionId";
@@ -14,13 +14,6 @@ pub struct Config {
 	pub region_id: String,
 	pub api_port: u16,
 	pub buckets: HashMap<Buckets, BucketConfig>,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct BucketConfig {
-	pub name: String,
-	pub region: String,
-	//pub credentials: Credentials,
 }
 
 #[derive(Debug, Clone, Deserialize)]
