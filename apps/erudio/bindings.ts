@@ -7,6 +7,7 @@ export type Procedures = {
         { key: "user.logout", input: never, result: null } | 
         { key: "user.me", input: never, result: UserMeResponse },
     mutations: 
+        { key: "file.upload", input: UploadRequest, result: UploadResponse } | 
         { key: "public.register", input: RegisterRequest, result: null },
     subscriptions: never
 };
@@ -20,5 +21,9 @@ export interface RegisterRequest { idempotence_token: string, email: string, pas
 export type SchoolRelationType = "student" | "teacher" | "admin" | "director"
 
 export type TwoFactorAuthType = "GoogleAuth" | "Sms" | "EMail"
+
+export interface UploadRequest { idempotence_token: string, idk: string }
+
+export interface UploadResponse { presigned_url: string }
 
 export interface UserMeResponse { id: string, display_name: string, school_relations: Array<[SchoolRelationType, string]> }

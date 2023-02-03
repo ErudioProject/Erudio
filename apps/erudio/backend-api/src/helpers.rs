@@ -13,13 +13,14 @@ macro_rules! idempotent {
 	// which the macro will assume is callable (E.g. a closure or function)
 	($e:expr, $c:ty, $r:ty, $ret:ty) => {{
 		use crate::helpers::IdempotentSaveState;
-		async fn wrap(ctx: $c, req: $r) -> RspcResult<$ret> {
+		use redis::AsyncCommands;
+		async fn wrap(ctx: $c, req: $r) -> crate::routes::RspcResult<$ret> {
 			let mut redis = ctx.redis.clone();
 			let idempotence_token = req.idempotence_token.clone();
 
 			if !idempotence_token.starts_with(&ctx.config.region_id) {
 				return Err(rspc::Error::new(
-					ErrorCode::InternalServerError,
+					rspc::ErrorCode::InternalServerError,
 					"NO REGION HANDLING YET".into(),
 				));
 			}
@@ -27,14 +28,14 @@ macro_rules! idempotent {
 			let load: Option<String> = redis
 				.get(&idempotence_token)
 				.await
-				.map_err(Into::<InternalError>::into)?;
+				.map_err(Into::<error_handler::InternalError>::into)?;
 			if let Some(s) = load {
 				let state: IdempotentSaveState = serde_json::from_str(&s).unwrap();
 				return if state.finished {
 					Ok(serde_json::from_str(&state.data).unwrap())
 				} else {
 					// TODO replace with too many requests
-					Err(rspc::Error::new(ErrorCode::Conflict, "TOO MANY REQUESTS".into()))
+					Err(rspc::Error::new(rspc::ErrorCode::Conflict, "TOO MANY REQUESTS".into()))
 				};
 			}
 
@@ -45,15 +46,15 @@ macro_rules! idempotent {
 			redis
 				.set_ex(
 					&idempotence_token,
-					serde_json::to_string(&state).map_err(Into::<InternalError>::into)?,
+					serde_json::to_string(&state).map_err(Into::<error_handler::InternalError>::into)?,
 					60 * 60,
 				)
 				.await
-				.map_err(Into::<InternalError>::into)?;
+				.map_err(Into::<error_handler::InternalError>::into)?;
 
 			match $e(ctx, req).await {
 				Ok(res) => {
-					let json = serde_json::to_string(&res).map_err(Into::<InternalError>::into)?;
+					let json = serde_json::to_string(&res).map_err(Into::<error_handler::InternalError>::into)?;
 					let state = IdempotentSaveState {
 						finished: true,
 						data: json.clone(),
@@ -61,11 +62,11 @@ macro_rules! idempotent {
 					redis
 						.set_ex(
 							&idempotence_token,
-							serde_json::to_string(&state).map_err(Into::<InternalError>::into)?,
+							serde_json::to_string(&state).map_err(Into::<error_handler::InternalError>::into)?,
 							60 * 60,
 						)
 						.await
-						.map_err(Into::<InternalError>::into)?;
+						.map_err(Into::<error_handler::InternalError>::into)?;
 
 					Ok(res)
 				}
@@ -73,7 +74,7 @@ macro_rules! idempotent {
 					redis
 						.expire(&idempotence_token, 0)
 						.await
-						.map_err(Into::<InternalError>::into)?;
+						.map_err(Into::<error_handler::InternalError>::into)?;
 					Err(err)
 				}
 			}
