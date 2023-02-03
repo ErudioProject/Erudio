@@ -10,7 +10,6 @@ use rand::{thread_rng, RngCore};
 use redis::aio::Connection;
 use std::env;
 use tokio::fs;
-// TODO FIX REMOVE TEMPORARY
 
 pub(crate) async fn init_tests_with_user() -> InternalResult<(PrismaClient, Connection, User, Vec<u8>)> {
 	dotenvy::dotenv().ok();
