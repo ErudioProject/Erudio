@@ -7,11 +7,15 @@ use crate::helpers::{
 };
 use rspc::{Config, ErrorCode};
 use services::session;
+use std::collections::HashMap;
 use std::path::PathBuf;
+use std::sync::Arc;
 
 pub type RspcResult<T> = Result<T, rspc::Error>;
 
 pub fn router() -> rspc::Router<Public> {
+	let buckets = Arc::new(HashMap::new()); // TODO config load
+
 	rspc::Router::<Public>::new()
 		.config(
 			Config::new()
@@ -33,6 +37,7 @@ pub fn router() -> rspc::Router<Public> {
 								session_id: session_id.value().to_string(),
 								cookies: old_ctx.cookies,
 								session_data,
+								buckets: buckets.clone(),
 							})),
 						}
 					}
