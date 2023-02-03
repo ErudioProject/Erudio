@@ -11,6 +11,7 @@ prisma_client.workspace = true
 services.workspace = true
 error_handler.workspace = true
 openssl.workspace = true
+config.workspace = true
 prisma-client-rust = {workspace = true, features = ["postgresql", "rspc"]}
 redis.workspace = true
 tokio.workspace = true

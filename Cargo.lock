@@ -64,6 +64,7 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "color-eyre",
+ "config",
  "cookie",
  "dotenvy",
  "env_logger",
@@ -478,6 +479,13 @@ dependencies = [
  "pin-project-lite",
  "tokio",
  "tokio-util",
+]
+
+[[package]]
+name = "config"
+version = "0.1.0"
+dependencies = [
+ "serde",
 ]
 
 [[package]]
@@ -3178,6 +3186,7 @@ name = "services"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "config",
  "dotenvy",
  "env_logger",
  "error_handler",
@@ -3190,6 +3199,7 @@ dependencies = [
  "rand 0.8.5",
  "redis",
  "redis-test",
+ "ron",
  "rust-s3",
  "serde",
  "tokio",

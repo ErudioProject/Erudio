@@ -1,15 +1,13 @@
 use serde::Deserialize;
-use services::s3::{BucketConfig, Buckets};
 use std::collections::HashMap;
 
-pub const SESSION_COOKIE_NAME: &str = "SessionId";
-// Config file?
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
 	pub argon2: Argon2ConfigVec,
 	pub salt_size: usize,
 	pub secret_size: usize,
 	pub db_url: String,
+	pub db_url_test: String,
 	pub redis_url: String,
 	pub region_id: String,
 	pub api_port: u16,
@@ -46,4 +44,16 @@ pub enum VariantDef {
 pub enum VersionDef {
 	Version10 = 0x10,
 	Version13 = 0x13,
+}
+
+#[derive(Debug, Clone, Deserialize, Ord, PartialOrd, Eq, PartialEq, Hash)]
+pub enum Buckets {
+	MessageAttachments,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct BucketConfig {
+	pub name: String,
+	pub region: String,
+	//pub credentials: Credentials, // TODO fix
 }

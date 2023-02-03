@@ -1,5 +1,5 @@
 pub mod argon;
-pub mod config;
+pub mod consts;
 pub mod ctx;
 
 #[derive(Serialize, Deserialize)]
