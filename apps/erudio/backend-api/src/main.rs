@@ -44,6 +44,7 @@ pub fn main() {
 
 #[tokio::main]
 async fn start() -> eyre::Result<()> {
+	// TODO pull over http from server
 	let contents = fs::read_to_string("./Config.ron")
 		.await
 		.context("no Config.ron file")?;
