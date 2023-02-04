@@ -11,6 +11,7 @@ use rand::RngCore;
 use rspc::{ErrorCode, Type};
 use services::session;
 
+#[serde_zod::codegen]
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct RegisterRequest {
 	pub idempotence_token: String,
@@ -19,7 +20,7 @@ pub struct RegisterRequest {
 	pub first_name: String,
 	pub middle_name: Option<String>,
 	pub last_name: String,
-	pub code: (),
+	pub code: Option<String>,
 }
 
 pub async fn register(ctx: Public, req: RegisterRequest) -> RspcResult<()> {

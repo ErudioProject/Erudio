@@ -1,5 +1,5 @@
-mod logout;
-mod me;
+pub mod logout;
+pub mod me;
 
 use crate::{
 	helpers::ctx::Auth,
@@ -10,5 +10,5 @@ use rspc::{Router, RouterBuilder};
 pub fn mount() -> RouterBuilder<Auth> {
 	Router::<Auth>::new()
 		.query("me", |t| t(me))
-		.query("logout", |t| t(logout))
+		.mutation("logout", |t| t(logout))
 }

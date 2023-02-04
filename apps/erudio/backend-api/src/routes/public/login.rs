@@ -10,6 +10,7 @@ use rand::RngCore;
 use rspc::{ErrorCode, Type};
 use services::session;
 
+#[serde_zod::codegen]
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct LoginRequest {
 	pub email: String,
