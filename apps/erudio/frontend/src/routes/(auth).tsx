@@ -17,7 +17,7 @@ export default function AuthLayout() {
             <Show when={me.state !== "pending" && me.state === "errored"}>
                 <Navigate href="/" />
             </Show>
-            <Nav displayName={me()?.display_name} userId={me()?.id} />
+            <Nav displayName={me()?.display_name ?? ""} userId={me()?.id ?? ""} />
             <Outlet />
         </>
     );

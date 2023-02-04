@@ -11,7 +11,7 @@ export function routeData() {
     });
 }
 
-interface LoginPageProps {
+type LoginPageProps = {
     FormElement: ParentComponent<FormProps>
     loading: boolean
     error: FormError
