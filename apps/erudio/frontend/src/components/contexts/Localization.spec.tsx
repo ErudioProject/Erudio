@@ -1,34 +1,45 @@
 import { createPreferredLocale } from './Localization';
 import { Locales } from '../../i18n/i18n-types';
 import { vi, describe, beforeEach, it, expect } from 'vitest';
+import { waitFor } from 'solid-testing-library';
+import { GetOptions, GetResult } from '@capacitor/preferences';
 
-let localStorageItems: Record<string, string> = {};
+let preferencesItems: Record<string, GetResult> = {};
 let navigatorLanguages: Array<string> = [];
 let fallbackLocale: Locales = 'pl';
 
 vi.spyOn(navigator, 'languages', 'get').mockImplementation(() => {
     return navigatorLanguages;
 });
-vi.spyOn(Storage.prototype, 'setItem');
-Storage.prototype.getItem = vi.fn((key: string) => localStorageItems[key]);
+vi.mock("@capacitor/preferences", () => {
+    return {
+        ...vi.importActual("@capacitor/preferences"),
+        Preferences: {
+            get: vi.fn().mockImplementation((options: GetOptions) => Promise.resolve(preferencesItems[options.key] ?? { value: null }))
+        }
+    }
+})
 
 describe('createPreferredLocale', () => {
     beforeEach(() => {
-        localStorageItems = {};
+        preferencesItems = {};
         navigatorLanguages = [];
         fallbackLocale = 'pl';
     });
 
-    it('detects correct locale for localStorage', () => {
-        localStorageItems = { data: 'garbage', lang: 'de' };
-        navigatorLanguages = ['en'];
-        expect(createPreferredLocale(fallbackLocale)).toBe('de');
+    it('detects correct locale for Preferences API', async () => {
+        preferencesItems = { data: { value: 'garbage' }, lang: { value: 'de' } };
+        navigatorLanguages = ['es'];
+        const [locale] = createPreferredLocale(fallbackLocale);
+        await waitFor(() => expect(locale()).toBe("de"));
     });
-    it('detects correct locale for navigator', () => {
+    it('detects correct locale for navigator', async () => {
         navigatorLanguages = ['de', 'es'];
-        expect(createPreferredLocale(fallbackLocale)).toBe('de');
+        const [locale] = createPreferredLocale(fallbackLocale);
+        await waitFor(() => expect(locale()).toBe("de"));
     });
-    it('returns correct fallback locale', () => {
-        expect(createPreferredLocale(fallbackLocale)).toBe('pl');
+    it('returns correct fallback locale', async () => {
+        const [locale] = createPreferredLocale(fallbackLocale);
+        await waitFor(() => expect(locale()).toBe("pl"));
     });
 });
