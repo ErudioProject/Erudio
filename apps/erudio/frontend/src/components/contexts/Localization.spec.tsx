@@ -1,4 +1,4 @@
-import { usePrefferedLocale } from './Localization';
+import { createPreferredLocale } from './Localization';
 import { Locales } from '../../i18n/i18n-types';
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 
@@ -12,7 +12,7 @@ vi.spyOn(navigator, 'languages', 'get').mockImplementation(() => {
 vi.spyOn(Storage.prototype, 'setItem');
 Storage.prototype.getItem = vi.fn((key: string) => localStorageItems[key]);
 
-describe('usePreferredLocale', () => {
+describe('createPreferredLocale', () => {
     beforeEach(() => {
         localStorageItems = {};
         navigatorLanguages = [];
@@ -22,13 +22,13 @@ describe('usePreferredLocale', () => {
     it('detects correct locale for localStorage', () => {
         localStorageItems = { data: 'garbage', lang: 'de' };
         navigatorLanguages = ['en'];
-        expect(usePrefferedLocale(fallbackLocale)).toBe('de');
+        expect(createPreferredLocale(fallbackLocale)).toBe('de');
     });
     it('detects correct locale for navigator', () => {
         navigatorLanguages = ['de', 'es'];
-        expect(usePrefferedLocale(fallbackLocale)).toBe('de');
+        expect(createPreferredLocale(fallbackLocale)).toBe('de');
     });
     it('returns correct fallback locale', () => {
-        expect(usePrefferedLocale(fallbackLocale)).toBe('pl');
+        expect(createPreferredLocale(fallbackLocale)).toBe('pl');
     });
 });
