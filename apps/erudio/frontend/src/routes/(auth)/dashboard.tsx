@@ -1,7 +1,7 @@
 import { Component, For, Show, Suspense } from "solid-js";
-import { A, Navigate, useRouteData } from "solid-start";
-import { routeData as authData } from "../(auth)";
+import { A, Navigate } from "solid-start";
 import { SchoolRelationType } from "../../../../bindings";
+import rspc from "../../api-setup";
 
 const SchoolCard: Component<{ school: [SchoolRelationType, string] }> = (props) => {
     return (
@@ -15,15 +15,15 @@ const SchoolCard: Component<{ school: [SchoolRelationType, string] }> = (props) 
 }
 
 export default function Dashboard() {
-    const me = useRouteData<typeof authData>();
+    const me = rspc.createQuery(() => ["user.me"]);
     return (
         <>
-            <Show when={me()?.school_relations.length === 1}>
-                <Navigate href={`/user/${encodeURIComponent(me()?.school_relations[0][1]!)}`} />
+            <Show when={me.data?.school_relations.length === 1}>
+                <Navigate href={`/user/${encodeURIComponent(me.data?.school_relations[0][1]!)}`} />
             </Show>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 m-3">
                 <Suspense>
-                    <For each={me()?.school_relations}>
+                    <For each={me.data?.school_relations}>
                         {school =>
                             <A href={`/user/${encodeURIComponent(school[1])}`}>
                                 <SchoolCard school={school} />

@@ -20,14 +20,22 @@
   "dependencies": {
     "@capacitor/core": "^4.6.1",
     "@capacitor/preferences": "^4.0.2",
+    "@felte/reporter-solid": "^1.2.5",
+    "@felte/solid": "^1.2.7",
+    "@felte/validator-zod": "^1.0.13",
+    "@rspc/client": "^0.1.2",
+    "@rspc/solid": "^0.1.2",
     "@solidjs/meta": "^0.28.0",
     "@solidjs/router": "^0.5.0",
     "@suid/vite-plugin": "^0.0.3",
+    "@tanstack/solid-query": "^4.24.4",
     "daisyui": "^2.46.1",
     "solid-js": "^1.6.0",
     "solid-start": "^0.2.0",
+    "ts-pattern": "^4.1.3",
     "undici": "^5.11.0",
-    "vite": "^3.1.8"
+    "vite": "^3.1.8",
+    "zod": "^3.20.2"
   },
   "engines": {
     "node": ">=16"

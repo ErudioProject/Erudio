@@ -14,6 +14,7 @@ import {
 import './root.css';
 import Localization from './components/contexts/Localization';
 import LoadingPage from './components/LoadingPage';
+import rspc, { client, queryClient } from './api-setup';
 
 export default function Root() {
     //TODO: fix/file vite issue:
@@ -28,15 +29,17 @@ export default function Root() {
             </Head>
             <Body>
                 <ErrorBoundary>
-                    <Localization locale={lang}>
-                        <Suspense fallback={LoadingPage}>
-                            <div class="mx-5">
-                                <Routes>
-                                    <FileRoutes />
-                                </Routes>
-                            </div>
-                        </Suspense>
-                    </Localization>
+                    <Suspense fallback={LoadingPage}>
+                        <rspc.Provider client={client} queryClient={queryClient}>
+                            <Localization locale={lang}>
+                                <div class="mx-5">
+                                    <Routes>
+                                        <FileRoutes />
+                                    </Routes>
+                                </div>
+                            </Localization>
+                        </rspc.Provider>
+                    </Suspense>
                 </ErrorBoundary>
                 <Scripts />
             </Body>
