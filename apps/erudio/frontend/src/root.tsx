@@ -15,13 +15,11 @@ import './root.css';
 import Localization from './components/contexts/Localization';
 import LoadingPage from './components/LoadingPage';
 import rspc, { client, queryClient } from './api-setup';
+import { baseLocale } from './i18n/i18n-util';
 
 export default function Root() {
-    //TODO: fix/file vite issue:
-    //const lang = usePrefferedLocale("pl");
-    const lang = 'pl';
     return (
-        <Html lang={lang}>
+        <Html lang={baseLocale}>
             <Head>
                 <Title>SolidStart - Bare</Title>
                 <Meta charset="utf-8" />
@@ -31,7 +29,7 @@ export default function Root() {
                 <ErrorBoundary>
                     <Suspense fallback={LoadingPage}>
                         <rspc.Provider client={client} queryClient={queryClient}>
-                            <Localization locale={lang}>
+                            <Localization>
                                 <div class="mx-5">
                                     <Routes>
                                         <FileRoutes />
