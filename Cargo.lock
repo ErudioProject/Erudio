@@ -81,6 +81,7 @@ dependencies = [
  "rust-argon2",
  "serde",
  "serde_json",
+ "serde_zod",
  "services",
  "tokio",
  "tower-cookies",
@@ -3153,6 +3154,18 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "serde_zod"
+version = "0.0.0"
+source = "git+https://github.com/shakyShane/serde-zod.git#main#b844875732299961c8167c3380e7aab81525ab66"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_json",
+ "syn",
 ]
 
 [[package]]

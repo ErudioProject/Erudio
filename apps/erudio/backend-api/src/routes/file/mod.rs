@@ -1,4 +1,4 @@
-mod upload;
+pub mod upload;
 
 use crate::helpers::ctx::Auth;
 use crate::helpers::idempotent;

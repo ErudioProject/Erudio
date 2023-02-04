@@ -15,6 +15,9 @@ mod helpers;
 mod routes;
 mod shutdown_signal;
 
+use crate::routes::file::upload::UploadRequest;
+use crate::routes::public::login::LoginRequest;
+use crate::routes::public::register::RegisterRequest;
 use crate::{eyre::Context, helpers::ctx::Public, routes::router};
 use axum::routing::get;
 use color_eyre::eyre;
@@ -44,6 +47,17 @@ pub fn main() {
 
 #[tokio::main]
 async fn start() -> eyre::Result<()> {
+	let lines = vec![
+		// I don't like the fact that this is manual
+		LoginRequest::print_imports(),
+		LoginRequest::codegen(),
+		UploadRequest::codegen(),
+		RegisterRequest::codegen(),
+	];
+	fs::write("./apps/erudio/zod.ts", lines.join("\n"))
+		.await
+		.expect("hooray!");
+
 	// TODO pull over http from server
 	let contents = fs::read_to_string("./Config.ron")
 		.await

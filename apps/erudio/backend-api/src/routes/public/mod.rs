@@ -1,6 +1,6 @@
-mod login;
-mod register;
-mod version;
+pub mod login;
+pub mod register;
+pub mod version;
 
 use crate::routes::public::login::login;
 use crate::routes::public::register::register;
@@ -11,7 +11,7 @@ use rspc::{Router, RouterBuilder};
 pub fn mount() -> RouterBuilder<Public> {
 	Router::<Public>::new()
 		.query("version", |t| t(version))
-		.query("login", |t| t(login))
+		.mutation("login", |t| t(login))
 		.mutation("register", |t| {
 			t(idempotent!(register, Public, register::RegisterRequest, ()))
 		})

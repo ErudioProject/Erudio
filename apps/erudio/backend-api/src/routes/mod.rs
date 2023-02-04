@@ -1,6 +1,6 @@
-mod file;
-mod public;
-mod user;
+pub mod file;
+pub mod public;
+pub mod user;
 
 use crate::helpers::{
 	consts::SESSION_COOKIE_NAME,
