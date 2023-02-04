@@ -32,4 +32,4 @@ tower-http = { version = "^0.3", features = ["cors"] }
 axum = "^0.5"
 tower-cookies = "^0.7"
 cookie = "^0.16"
-serde_zod = { git = "https://github.com/shakyShane/serde-zod.git" }
+serde_zod = { git = "https://github.com/shakyShane/serde-zod.git", rev = "b844875732299961c8167c3380e7aab81525ab66" }
