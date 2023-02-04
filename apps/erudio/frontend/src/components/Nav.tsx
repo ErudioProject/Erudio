@@ -1,9 +1,9 @@
 import { Component } from "solid-js";
 import Me from "./Me";
 
-interface NavProps {
-    displayName?: string,
-    userId?: string
+type NavProps = {
+    displayName: string,
+    userId: string
 }
 
 const getAvatarColor = (id: string) => {
@@ -28,7 +28,7 @@ const Nav: Component<NavProps> = (props) => {
                 </picture>
             </div>
             <div class="flex-none">
-                <Me displayName={props.displayName ?? ""} bgColor={getAvatarColor(props.userId ?? "")} />
+                <Me displayName={props.displayName} bgColor={getAvatarColor(props.userId)} />
             </div>
         </div>
     )

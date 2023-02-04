@@ -9,7 +9,7 @@ import { Locales } from '../../i18n/i18n-types';
 import { locales } from '../../i18n/i18n-util';
 import { loadLocaleAsync } from '../../i18n/i18n-util.async';
 
-interface LocalizationProps {
+type LocalizationProps = {
     locale: Locales
 }
 

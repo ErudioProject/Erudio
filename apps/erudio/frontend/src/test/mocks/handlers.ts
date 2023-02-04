@@ -4,7 +4,7 @@ import { apiTestData } from "../data";
 
 const url = "http://127.0.0.1:3001/rspc" //TODO: process.env.FRONTEND_API_URL;
 
-interface RSPCError {
+type RSPCError = {
     code: number,
     message: string,
     data: object | null

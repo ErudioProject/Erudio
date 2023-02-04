@@ -1,6 +1,6 @@
 import { Component } from "solid-js";
 
-interface MeProps {
+type MeProps = {
     displayName: string
     bgColor: string
 }
