@@ -16,6 +16,7 @@ import Localization from './components/contexts/Localization';
 import LoadingPage from './components/LoadingPage';
 import rspc, { client, queryClient } from './api-setup';
 import { baseLocale } from './i18n/i18n-util';
+import PromptPWA from './components/PromptPWA';
 
 export default function Root() {
     return (
@@ -31,6 +32,7 @@ export default function Root() {
                         <rspc.Provider client={client} queryClient={queryClient}>
                             <Localization>
                                 <div class="mx-5">
+                                    <PromptPWA />
                                     <Routes>
                                         <FileRoutes />
                                     </Routes>
