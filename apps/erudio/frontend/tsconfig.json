@@ -8,12 +8,14 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "types": [
-      "vite/client"
+      "vite/client",
+      "vite-plugin-pwa/client"
     ],
     "noEmit": true,
     "isolatedModules": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "node_modules/vite-plugin-pwa/client.d.ts"
   ]
 }
