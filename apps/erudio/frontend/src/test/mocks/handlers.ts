@@ -2,7 +2,7 @@ import { rest, RestRequest } from "msw";
 import { LoginRequest, LoginResponse, SchoolRelationType, UserMeResponse } from "../../../../bindings";
 import { apiTestData } from "../data";
 
-const url = "http://127.0.0.1:3001/rspc" //TODO: process.env.FRONTEND_API_URL;
+const url = "http://localhost:4000/rspc" //TODO: process.env.FRONTEND_API_URL;
 
 type RSPCError = {
     code: number,

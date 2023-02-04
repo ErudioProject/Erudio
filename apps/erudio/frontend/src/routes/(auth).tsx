@@ -1,23 +1,16 @@
 import { Show } from "solid-js";
-import { createRouteData, Navigate, Outlet, useRouteData } from "solid-start";
-import { FetchClient } from "../api-setup";
+import { Navigate, Outlet } from "solid-start";
+import rspc from "../api-setup";
 import Nav from "../components/Nav";
 
-export function routeData() {
-    return createRouteData(async () => {
-        return await FetchClient
-            .query(['user.me'])
-    });
-}
-
 export default function AuthLayout() {
-    const me = useRouteData<typeof routeData>();
+    const me = rspc.createQuery(() => ["user.me"], { retry: false });
     return (
         <>
-            <Show when={me.state !== "pending" && me.state === "errored"}>
+            <Show when={me.isError}>
                 <Navigate href="/" />
             </Show>
-            <Nav displayName={me()?.display_name ?? ""} userId={me()?.id ?? ""} />
+            <Nav displayName={me.data?.display_name ?? ""} userId={me.data?.id ?? ""} />
             <Outlet />
         </>
     );

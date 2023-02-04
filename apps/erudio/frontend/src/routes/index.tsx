@@ -1,15 +1,8 @@
-import { createRouteAction, createRouteData, FormError, FormProps, Navigate, redirect, useRouteData } from 'solid-start';
+import { createRouteAction, FormError, FormProps, Navigate, redirect } from 'solid-start';
 import { Component, ParentComponent, Show } from 'solid-js';
 import { useI18nContext } from '../i18n/i18n-solid';
-import { FetchClient } from '../api-setup';
+import rspc, { client } from '../api-setup';
 import LoadingPage from '../components/LoadingPage';
-
-export function routeData() {
-    return createRouteData(async () => {
-        return await FetchClient
-            .query(['user.me'])
-    });
-}
 
 type LoginPageProps = {
     FormElement: ParentComponent<FormProps>
@@ -59,12 +52,12 @@ const LoginPage: Component<LoginPageProps> = (props) => {
 }
 
 export default function Index() {
-    const me = useRouteData<typeof routeData>();
+    const me = rspc.createQuery(() => ['user.me'], { retry: false });
     const [logging, login] = createRouteAction(async (formData: FormData) => {
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
         try {
-            let response = await FetchClient
+            let response = await client
                 .query(['public.login', { email: email, password: password }])
             if (response.t === 'Success') return redirect('/dashboard');
         }
@@ -74,11 +67,11 @@ export default function Index() {
     });
     return (
         <>
-            <Show when={me.state === "pending"}
+            <Show when={me.isLoading}
                 fallback={<LoginPage FormElement={login.Form} loading={logging.pending} error={logging.error} />}>
                 <LoadingPage />
             </Show>
-            <Show when={me.state !== "pending" && me.state !== "errored"}>
+            <Show when={me.isSuccess}>
                 <Navigate href="/dashboard" />
             </Show>
         </>
