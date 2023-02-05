@@ -1,16 +1,18 @@
 import { Show } from "solid-js";
 import { Navigate, Outlet } from "solid-start";
-import rspc from "../api-setup";
 import Nav from "../components/Nav";
+import createSession from "../lib/session";
 
 export default function AuthLayout() {
-    const me = rspc.createQuery(() => ["user.me"], { retry: false });
+    const session = createSession();
     return (
         <>
-            <Show when={me.isError}>
+            <Show when={session.isError}>
                 <Navigate href="/" />
             </Show>
-            <Nav displayName={me.data?.display_name ?? ""} userId={me.data?.id ?? ""} />
+            <Show when={session.data}>
+                <Nav displayName={session.data!.display_name} userId={session.data!.id} />
+            </Show>
             <Outlet />
         </>
     );
