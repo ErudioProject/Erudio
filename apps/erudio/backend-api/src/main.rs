@@ -54,7 +54,7 @@ async fn start() -> eyre::Result<()> {
 		UploadRequest::codegen(),
 		RegisterRequest::codegen(),
 	];
-	fs::write("./apps/erudio/zod.ts", lines.join("\n"))
+	fs::write("./apps/erudio/frontend/src/lib/zod.ts", lines.join("\n"))
 		.await
 		.expect("hooray!");
 
