@@ -36,6 +36,10 @@ function getData<T>(req: RestRequest): T {
     return JSON.parse(req.url.searchParams.get("input") ?? "{}") as T
 }
 
+async function postData<T>(req: RestRequest): Promise<T> {
+    return await req.json()
+}
+
 export const handlers = [
     rest.get(`${url}/user.me`, (_, res, ctx) => {
         if (sessionStorage.getItem('is-authenticated') === 'true') {
@@ -59,8 +63,8 @@ export const handlers = [
             )
         }
     }),
-    rest.get(`${url}/public.login`, (req, res, ctx) => {
-        const data = getData<LoginRequest>(req);
+    rest.post(`${url}/public.login`, async (req, res, ctx) => {
+        const data = await postData<LoginRequest>(req);
         if (data.email === apiTestData.authorizedMail && data.password === apiTestData.authorizedPassword) {
             sessionStorage.setItem('is-authenticated', 'true')
             return res(
