@@ -46,5 +46,5 @@ pub async fn me(ctx: Auth, _: ()) -> RspcResult<UserMeResponse> {
 				.map(|relation| (relation.school_relation_type, relation.school.name.clone()))
 				.collect(),
 		})
-		.ok_or_else(|| InternalError::IntoRspc(ErrorCode::NotFound, "User not found".into()).into())
+		.ok_or_else(|| InternalError::IntoRspc(ErrorCode::NotFound, None).into())
 }
