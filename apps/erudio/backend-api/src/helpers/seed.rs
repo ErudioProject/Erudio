@@ -7,11 +7,11 @@ use prisma_client::prisma::PrismaClient;
 use rand::RngCore;
 
 pub async fn seed_super_admin(db: &PrismaClient, config: Config) -> InternalResult<()> {
-	let mut rng = rand::thread_rng();
 	let argon_config = get_argon_config(&config.argon2);
 	for (login, admin_data) in config.admins {
 		let mut salt = vec![0; config.salt_size];
 		{
+			let mut rng = rand::thread_rng();
 			rng.fill_bytes(&mut salt);
 		}
 
