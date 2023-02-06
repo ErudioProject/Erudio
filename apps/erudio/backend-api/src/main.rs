@@ -15,6 +15,7 @@ mod helpers;
 mod routes;
 mod shutdown_signal;
 
+use crate::helpers::seed;
 use crate::routes::file::upload::UploadRequest;
 use crate::routes::public::login::LoginRequest;
 use crate::routes::public::register::RegisterRequest;
@@ -22,7 +23,7 @@ use crate::{eyre::Context, helpers::ctx::Public, routes::router};
 use axum::extract::ConnectInfo;
 use axum::routing::get;
 use color_eyre::eyre;
-use color_eyre::eyre::ContextCompat;
+use color_eyre::eyre::{eyre, ContextCompat};
 use config::Config;
 use error_handler::{FieldErrorType, InternalResult};
 use log::{debug, error, info, warn};
@@ -92,6 +93,10 @@ async fn start() -> eyre::Result<()> {
 	db._db_push().await?;
 	#[cfg(not(debug_assertions))]
 	db._migrate_deploy().await?;
+
+	seed::seed_super_admin(&db, config.clone())
+		.await
+		.map_err(|e| eyre!("Error {e:?}"))?;
 
 	let redis = redis::Client::open(config.redis_url.clone())?;
 	let conn = redis

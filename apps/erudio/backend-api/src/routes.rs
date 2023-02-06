@@ -1,6 +1,6 @@
-pub mod admin;
 pub mod file;
 pub mod public;
+pub mod super_admin;
 pub mod user;
 
 use crate::helpers::consts::ADMIN_COOKIE_NAME;
@@ -79,7 +79,7 @@ pub fn router() -> rspc::Router<Public> {
 				}
 			})
 		})
-		.merge("admin.", admin::mount())
+		.merge("super_admin.", super_admin::mount())
 		.build()
 }
 

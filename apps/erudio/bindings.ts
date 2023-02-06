@@ -2,8 +2,8 @@
 
 export type Procedures = {
     queries: 
-        { key: "admin.version", input: never, result: string } | 
         { key: "public.version", input: never, result: string } | 
+        { key: "super_admin.version", input: never, result: string } | 
         { key: "user.me", input: never, result: UserMeResponse },
     mutations: 
         { key: "file.upload", input: UploadRequest, result: UploadResponse } | 
