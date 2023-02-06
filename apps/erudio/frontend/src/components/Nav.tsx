@@ -20,7 +20,7 @@ const getAvatarColor = (id: string) => {
 }
 const Nav: Component<NavProps> = (props) => {
     return (
-        <div class="navbar bg-base-100 w-full">
+        <div class="navbar bg-base-100 w-full bg-opacity-90 backdrop-blur shadow-sm">
             <div class="flex-1">
                 <picture>
                     <source srcset="logo.svg" />
