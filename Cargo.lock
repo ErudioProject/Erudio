@@ -486,6 +486,7 @@ dependencies = [
 name = "config"
 version = "0.1.0"
 dependencies = [
+ "derivative",
  "serde",
 ]
 
@@ -694,6 +695,17 @@ dependencies = [
  "once_cell",
  "psl",
  "regex",
+]
+
+[[package]]
+name = "derivative"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fcc3dd5e9e9c0b295d6e1e4d811fb6f157d5ffd784b8d202fc62eac8035a770b"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -3159,7 +3171,7 @@ dependencies = [
 [[package]]
 name = "serde_zod"
 version = "0.0.0"
-source = "git+https://github.com/shakyShane/serde-zod.git#main#b844875732299961c8167c3380e7aab81525ab66"
+source = "git+https://github.com/shakyShane/serde-zod.git?rev=b844875732299961c8167c3380e7aab81525ab66#b844875732299961c8167c3380e7aab81525ab66"
 dependencies = [
  "proc-macro2",
  "quote",

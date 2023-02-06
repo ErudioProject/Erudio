@@ -8,17 +8,12 @@ use crate::helpers::{
 };
 use rspc::{Config, ErrorCode};
 use services::session;
-use std::path::PathBuf;
 
 pub type RspcResult<T> = Result<T, rspc::Error>;
 
 pub fn router() -> rspc::Router<Public> {
 	rspc::Router::<Public>::new()
-		.config(
-			Config::new()
-				// Doing this will automatically export the bindings when the `build` function is called.
-				.export_ts_bindings(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../bindings.ts")),
-		)
+		.config(Config::new())
 		.merge("public.", public::mount())
 		.middleware(|mw| {
 			mw.middleware(|mw| async move {
