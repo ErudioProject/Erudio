@@ -1,4 +1,4 @@
-use error_handler::InternalError;
+use error_handler::{FieldErrorType, InternalError};
 use prisma_client::{
 	prisma::{session, PrismaClient},
 	prisma_client_rust::rspc::ErrorCode,
@@ -15,7 +15,7 @@ pub async fn destroy<R: AsyncCommands>(
 	let session_id = hex::decode(client_secret).map_err(|err| {
 		InternalError::IntoRspcWithCause(
 			ErrorCode::BadRequest,
-			"Invalid session string".to_string(),
+			Some(vec![("session".to_string(), FieldErrorType::NotFound)]),
 			Arc::new(err),
 		)
 	})?;
@@ -104,7 +104,7 @@ mod tests {
 		let result = destroy(&db, &mut mock_redis, "NOT A VALID SECRET").await;
 		assert!(matches!(
 			result,
-			Err(InternalError::IntoRspcWithCause(ErrorCode::BadRequest, message, _)) if message == "Invalid session string"
+			Err(InternalError::IntoRspcWithCause(ErrorCode::BadRequest, _, _))
 		));
 		assert_eq!(mock_redis.get("last").await, Ok("OK".to_string()));
 		Ok(())

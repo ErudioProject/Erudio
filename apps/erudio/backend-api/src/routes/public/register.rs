@@ -4,11 +4,11 @@ use crate::{
 	routes::{RspcResult, SESSION_COOKIE_NAME},
 	Public,
 };
-use error_handler::InternalError;
+use error_handler::{FieldErrorType, InternalError};
 use log::debug;
 use prisma_client::prisma::{pii_data, user, GrammaticalForm};
 use rand::RngCore;
-use rspc::{ErrorCode, Type};
+use rspc::Type;
 use services::session;
 
 #[serde_zod::codegen]
@@ -26,10 +26,11 @@ pub struct RegisterRequest {
 pub async fn register(ctx: Public, req: RegisterRequest) -> RspcResult<()> {
 	debug!("Register Request : {:?}", req);
 	if req.password.len() > 1024 {
-		return Err(rspc::Error::new(
-			ErrorCode::BadRequest,
-			"Max password length is 1024 characters".into(),
-		));
+		return Err(InternalError::IntoRspc(
+			rspc::ErrorCode::Conflict,
+			Some(vec![("password".to_string(), FieldErrorType::TooLong(1024))]),
+		)
+		.into());
 	}
 	let argon_config = get_argon_config(&ctx.config.argon2);
 	let mut salt = vec![0; ctx.config.salt_size];
@@ -64,7 +65,7 @@ pub async fn register(ctx: Public, req: RegisterRequest) -> RspcResult<()> {
 			if !user.is_empty() {
 				return Err(InternalError::IntoRspc(
 					rspc::ErrorCode::Conflict,
-					"E-Mail Already in use".into(),
+					Some(vec![("email".to_string(), FieldErrorType::Conflict)]),
 				));
 			}
 

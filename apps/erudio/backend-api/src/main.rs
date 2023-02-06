@@ -21,8 +21,9 @@ use crate::routes::public::register::RegisterRequest;
 use crate::{eyre::Context, helpers::ctx::Public, routes::router};
 use axum::routing::get;
 use color_eyre::eyre;
+use color_eyre::eyre::ContextCompat;
 use config::Config;
-use error_handler::InternalResult;
+use error_handler::{FieldErrorType, InternalResult};
 use log::{debug, error, info, warn};
 use prisma_client::{prisma, prisma::PrismaClient};
 use prisma_client_rust::{chrono::Utc, raw};
@@ -48,16 +49,22 @@ pub fn main() {
 
 #[tokio::main]
 async fn start() -> eyre::Result<()> {
+	// cursed i will
+	let field_error_type = FieldErrorType::codegen();
+	let split = field_error_type.split('=');
+	let def = split.last().context("Zod strange")?;
+
 	let lines = vec![
 		// I don't like the fact that this is manual
 		LoginRequest::print_imports(),
+		format!("export const ErrorFields = z.tuple([z.string(), {def}]).array()"),
 		LoginRequest::codegen(),
 		UploadRequest::codegen(),
 		RegisterRequest::codegen(),
 	];
 	fs::write("./apps/erudio/frontend/src/lib/zod.ts", lines.join("\n"))
 		.await
-		.expect("hooray!");
+		.context("Zod failed")?;
 
 	// TODO pull over http from server
 	let contents = fs::read_to_string("./Config.ron")

@@ -1,5 +1,16 @@
 import z from "zod";
 
+export const ErrorFields = z.tuple([z.string(), 
+  z.union([
+    z.literal("NotFound"),
+    z.literal("Conflict"),
+    z.object({
+      TooLong: z.number(),
+    }),
+    z.object({
+      TooShort: z.number(),
+    }),
+  ])]).array()
 export const LoginRequest =
   z.object({
     email: z.string(),

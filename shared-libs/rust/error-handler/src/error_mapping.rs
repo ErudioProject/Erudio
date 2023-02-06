@@ -8,8 +8,8 @@ use std::sync::Arc;
 
 #[derive(Debug)]
 pub enum InternalError {
-	IntoRspc(ErrorCode, String),
-	IntoRspcWithCause(ErrorCode, String, Arc<dyn std::error::Error + Send + Sync>),
+	IntoRspc(ErrorCode, Option<Errors>),
+	IntoRspcWithCause(ErrorCode, Option<Errors>, Arc<dyn std::error::Error + Send + Sync>),
 	Rspc(rspc::Error),
 	ServerError(String, Report),
 	TestError(String), // This is for tests TODO check if there is a way to enforce it
@@ -21,6 +21,17 @@ impl InternalError {
 	pub const fn new_rspc(code: ErrorCode, message: String) -> Self {
 		Self::Rspc(rspc::Error::new(code, message))
 	}
+}
+
+pub type Errors = Vec<(String, FieldErrorType)>;
+
+#[serde_zod::codegen]
+#[derive(serde::Serialize, Debug)]
+pub enum FieldErrorType {
+	NotFound,
+	Conflict,
+	TooLong(usize),
+	TooShort(usize),
 }
 
 impl From<serde_json::Error> for InternalError {
@@ -79,12 +90,20 @@ impl From<InternalError> for rspc::Error {
 				Self::new(ErrorCode::InternalServerError, format!("#trace#{trace_id}#"))
 			}
 			InternalError::IntoRspc(code, message) => {
-				debug!("Rspc Error: {code:?} Message: {message}");
-				Self::new(code, message)
+				debug!("Rspc Error: {code:?} Message: {message:?}");
+				match message {
+					None => Self::new(code, String::new()),
+					Some(map) => Self::new(code, format!("^{}", serde_json::to_string(&map).expect("how?"))),
+				}
 			}
 			InternalError::IntoRspcWithCause(code, message, cause) => {
-				debug!("Rspc Error: {code:?} Message: {message}  Cause {cause:?}");
-				Self::with_cause(code, message, cause)
+				debug!("Rspc Error: {code:?} Message: {message:?}  Cause {cause:?}");
+				match message {
+					None => Self::with_cause(code, String::new(), cause),
+					Some(map) => {
+						Self::with_cause(code, format!("^{}", serde_json::to_string(&map).expect("how?")), cause)
+					}
+				}
 			}
 		}
 	}

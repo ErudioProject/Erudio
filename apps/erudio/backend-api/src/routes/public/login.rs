@@ -43,7 +43,7 @@ pub async fn login(ctx: Public, req: LoginRequest) -> RspcResult<LoginResponse> 
 		.with(user::user_school_relation::fetch(vec![]))
 		.exec()
 		.await?
-		.ok_or_else(|| rspc::Error::new(ErrorCode::NotFound, "Email not found".to_string()))?;
+		.ok_or_else(|| InternalError::IntoRspc(ErrorCode::NotFound, None))?;
 
 	if !argon2::verify_encoded_ext(
 		&user.password_hash,
@@ -53,7 +53,7 @@ pub async fn login(ctx: Public, req: LoginRequest) -> RspcResult<LoginResponse> 
 	)
 	.map_err(Into::<InternalError>::into)?
 	{
-		return Err(rspc::Error::new(ErrorCode::Forbidden, "Wrong password".into()));
+		return Err(InternalError::IntoRspc(ErrorCode::NotFound, None).into());
 	}
 
 	let mut connection_secret = vec![0; ctx.config.secret_size];
