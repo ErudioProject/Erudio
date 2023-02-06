@@ -46,7 +46,7 @@ pub async fn register(ctx: Public, req: RegisterRequest) -> RspcResult<()> {
 			format!("{} {}", req.first_name, req.last_name)
 		}
 		Some(middle_name) => {
-			format!("{} {} {}", req.first_name, middle_name, req.last_name)
+			format!("{} {middle_name} {}", req.first_name, req.last_name)
 		}
 	};
 	let display_name = format!("{} {}", req.first_name, req.last_name);

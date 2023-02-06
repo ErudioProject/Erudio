@@ -1,3 +1,4 @@
+use derivative::Derivative;
 use serde::Deserialize;
 use std::collections::HashMap;
 
@@ -14,12 +15,15 @@ pub struct Config {
 	pub buckets: HashMap<Buckets, BucketConfig>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Clone, Deserialize, Derivative)]
+#[derivative(Debug)]
 pub struct Argon2ConfigVec {
+	#[derivative(Debug = "ignore")]
 	pub ad: Vec<u8>,
 	pub hash_length: u32,
 	pub lanes: u32,
 	pub mem_cost: u32,
+	#[derivative(Debug = "ignore")]
 	pub secret: Vec<u8>,
 	pub thread_mode: ThreadModeDef,
 	pub time_cost: u32,
