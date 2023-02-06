@@ -23,5 +23,17 @@ Config (
             region: "region",
             //credentials: ()
         )
+    },
+    admins: {
+        "jk2k": (
+            password: "",
+            password_hash: Some("$argon2i$v=19$m=16384,t=3,p=4$AR/+SZjHj/MjqlSGavWUqg/WmnyfsnjsZ9FogroF2zM$8TjBzx2X7fP4P9wx37IB2YmxRyNUU/aYngLKRYhqsP8"),
+            two_factor_auth: "TODO"
+        ),
+        "problemMan": (
+            password: "Password#123",
+            password_hash: None,
+            two_factor_auth: "TODO"
+        ),
     }
 )

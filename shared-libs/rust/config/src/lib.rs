@@ -13,6 +13,17 @@ pub struct Config {
 	pub region_id: String,
 	pub api_port: u16,
 	pub buckets: HashMap<Buckets, BucketConfig>,
+	pub admins: HashMap<String, SuperAdminConfig>,
+}
+
+#[derive(Clone, Deserialize, Derivative)]
+#[derivative(Debug)]
+pub struct SuperAdminConfig {
+	#[derivative(Debug = "ignore")]
+	pub password: String,
+	#[derivative(Debug = "ignore")]
+	pub password_hash: Option<String>,
+	pub two_factor_auth: String,
 }
 
 #[derive(Clone, Deserialize, Derivative)]
