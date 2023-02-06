@@ -19,6 +19,7 @@ use crate::routes::file::upload::UploadRequest;
 use crate::routes::public::login::LoginRequest;
 use crate::routes::public::register::RegisterRequest;
 use crate::{eyre::Context, helpers::ctx::Public, routes::router};
+use axum::extract::ConnectInfo;
 use axum::routing::get;
 use color_eyre::eyre;
 use color_eyre::eyre::ContextCompat;
@@ -124,11 +125,12 @@ async fn start() -> eyre::Result<()> {
 			router
 				.endpoint({
 					let config = config.clone();
-					move |cookies: Cookies| Public {
+					move |cookies: Cookies, ConnectInfo(addr): ConnectInfo<SocketAddr>| Public {
 						config,
 						db: db.clone(),
 						redis: conn,
 						cookies,
+						ip: addr.ip(),
 					}
 				})
 				.axum(),
@@ -144,7 +146,7 @@ async fn start() -> eyre::Result<()> {
 	let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, config.api_port));
 	info!("listening on {}", addr);
 	axum::Server::try_bind(&addr)?
-		.serve(app.into_make_service())
+		.serve(app.into_make_service_with_connect_info::<SocketAddr>())
 		.with_graceful_shutdown(shutdown_signal::shutdown_signal())
 		.await?;
 
