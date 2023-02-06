@@ -20,7 +20,7 @@ export default function Index() {
         //NOTE: We need to return more specific errors from the server to do more here
         onError: (errors) => {
             console.error(errors);
-            setServerError(LL().INVALIDLOGIN());
+            setServerError(LL().index.invalid());
         }
     });
     const { form, touched, isSubmitting } = createForm<z.infer<typeof LoginRequest>>({
@@ -42,10 +42,10 @@ export default function Index() {
                             <source srcset="logo.svg" />
                             <img src="logo.svg" alt="Logo" style={{ "width": "200px", "height": "auto" }} />
                         </picture>
-                        <TextInput type='email' name='email' required disabled={isSubmitting()} display={LL().EMAIL()} touched={touched().email} />
-                        <TextInput type='password' name='password' required disabled={isSubmitting()} display={LL().PASSWORD()} touched={touched().password} />
+                        <TextInput type='email' name='email' required disabled={isSubmitting()} display={LL().index.email()} touched={touched().email} />
+                        <TextInput type='password' name='password' required disabled={isSubmitting()} display={LL().index.password()} touched={touched().password} />
                         <button type="submit" class="btn btn-primary" classList={{ 'loading': isSubmitting() }}>
-                            {LL().LOGINBUTTON()}
+                            {LL().index.login()}
                         </button>
                         <Show when={serverError()}>
                             <div class="alert alert-error w-auto">
