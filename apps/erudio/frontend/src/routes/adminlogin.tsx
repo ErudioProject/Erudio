@@ -1,4 +1,3 @@
-import { reporter } from "@felte/reporter-solid";
 import { createForm } from "@felte/solid";
 import { validator } from "@felte/validator-zod";
 import { createSignal, Show } from "solid-js";
@@ -29,7 +28,7 @@ export default function AdminLogin() {
         password: z.string().min(1, LL().index.errors.required())
     })
     const { form, errors, setErrors, isSubmitting } = createForm<z.infer<typeof AdminLoginRequestSchema>>({
-        extend: [validator({ schema: AdminLoginRequestSchema }), reporter],
+        extend: [validator({ schema: AdminLoginRequestSchema })],
         onSubmit: (values) => {
             login.mutate(values)
         },
