@@ -70,7 +70,6 @@ importers:
     specifiers:
       '@capacitor/core': ^4.6.1
       '@capacitor/preferences': ^4.0.2
-      '@felte/reporter-solid': ^1.2.5
       '@felte/solid': ^1.2.7
       '@felte/validator-zod': ^1.0.13
       '@rspc/client': ^0.1.2
@@ -96,7 +95,6 @@ importers:
     dependencies:
       '@capacitor/core': 4.6.1
       '@capacitor/preferences': 4.0.2_@capacitor+core@4.6.1
-      '@felte/reporter-solid': 1.2.5_solid-js@1.6.2
       '@felte/solid': 1.2.7_solid-js@1.6.2
       '@felte/validator-zod': 1.0.13_zod@3.20.2
       '@rspc/client': 0.1.2
@@ -1331,16 +1329,6 @@ packages:
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dependencies:
       '@felte/common': 1.1.4
-    dev: false
-
-  /@felte/reporter-solid/1.2.5_solid-js@1.6.2:
-    resolution: {integrity: sha512-6foQqKRzz9ubZSEPhAbc9apMg8HOthZpvvbRhLDsyP3WnM5WXdVmEd7HuFsNTWx3Qd1JDc/QWi0BzYdtFJRtUw==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-    peerDependencies:
-      solid-js: ^1.2.0
-    dependencies:
-      '@felte/common': 1.1.4
-      solid-js: 1.6.2
     dev: false
 
   /@felte/solid/1.2.7_solid-js@1.6.2:
