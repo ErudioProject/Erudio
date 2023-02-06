@@ -27,15 +27,25 @@ type RootTranslation = {
 		/**
 		 * Z​a​l​o​g​u​j​ ​s​i​ę
 		 */
-		login: string
+		loginButton: string
 		/**
 		 * N​i​e​p​r​a​w​i​d​ł​o​w​e​ ​d​a​n​e​ ​l​o​g​o​w​a​n​i​a
 		 */
 		invalid: string
 		/**
-		 * T​r​y​b​ ​c​i​e​m​n​y
+		 * L​o​g​i​n
 		 */
-		darkMode: string
+		login: string
+		errors: {
+			/**
+			 * P​o​l​e​ ​w​y​m​a​g​a​n​e
+			 */
+			required: string
+			/**
+			 * P​o​d​a​j​ ​p​o​p​r​a​w​n​y​ ​a​d​r​e​s​ ​e​-​m​a​i​l
+			 */
+			email: string
+		}
 	}
 	dashboard: {
 		/**
@@ -70,15 +80,25 @@ export type TranslationFunctions = {
 		/**
 		 * Zaloguj się
 		 */
-		login: () => LocalizedString
+		loginButton: () => LocalizedString
 		/**
 		 * Nieprawidłowe dane logowania
 		 */
 		invalid: () => LocalizedString
 		/**
-		 * Tryb ciemny
+		 * Login
 		 */
-		darkMode: () => LocalizedString
+		login: () => LocalizedString
+		errors: {
+			/**
+			 * Pole wymagane
+			 */
+			required: () => LocalizedString
+			/**
+			 * Podaj poprawny adres e-mail
+			 */
+			email: () => LocalizedString
+		}
 	}
 	dashboard: {
 		/**

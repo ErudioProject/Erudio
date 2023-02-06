@@ -1,5 +1,4 @@
-import { ValidationMessage } from "@felte/reporter-solid"
-import { VoidComponent } from "solid-js"
+import { Show, VoidComponent } from "solid-js"
 
 type TextInputProps = {
     type: string,
@@ -7,7 +6,7 @@ type TextInputProps = {
     disabled: boolean,
     name: string,
     display: string,
-    touched: boolean
+    errors: string[] | null
 }
 
 export const TextInput: VoidComponent<TextInputProps> = (props) => (
@@ -17,13 +16,11 @@ export const TextInput: VoidComponent<TextInputProps> = (props) => (
                 {props.display}
             </span>
         </label>
-        <input type={props.type} required={props.required} disabled={props.disabled} name={props.name} id={props.name} classList={{ "invalid:input-error invalid:text-error": props.touched }} class="input input-primary input-bordered" />
-        <label class="label">
-            <ValidationMessage for={props.name}>
-                {(messages) =>
-                    <span class="label-text-alt text-error">{messages?.[0]}</span>
-                }
-            </ValidationMessage>
-        </label>
+        <input type={props.type} required={props.required} disabled={props.disabled} name={props.name} id={props.name} classList={{ "input-error text-error": props.errors !== null }} class="input input-primary input-bordered" />
+        <Show when={props.errors !== null}>
+            <label class="label">
+                <span class="label-text-alt text-error">{props.errors?.[0]}</span>
+            </label>
+        </Show>
     </div>
 )

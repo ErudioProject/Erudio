@@ -4,9 +4,13 @@ const pl: BaseTranslation = {
   index: {
     email: 'Email',
     password: 'Hasło',
-    login: 'Zaloguj się',
+    loginButton: 'Zaloguj się',
     invalid: 'Nieprawidłowe dane logowania',
-    darkMode: 'Tryb ciemny'
+    login: 'Login',
+    errors: {
+      required: 'Pole wymagane',
+      email: 'Podaj poprawny adres e-mail'
+    }
   },
   dashboard: {
     teacher: "Nauczyciel",
