@@ -27,8 +27,8 @@ export default function Root() {
                 <Meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
             <Body>
-                <ErrorBoundary>
-                    <Suspense fallback={LoadingPage}>
+                <Suspense fallback={LoadingPage}>
+                    <ErrorBoundary>
                         <rspc.Provider client={client} queryClient={queryClient}>
                             <Localization>
                                 <div class="mx-5">
@@ -39,8 +39,8 @@ export default function Root() {
                                 </div>
                             </Localization>
                         </rspc.Provider>
-                    </Suspense>
-                </ErrorBoundary>
+                    </ErrorBoundary>
+                </Suspense>
                 <Scripts />
             </Body>
         </Html>
