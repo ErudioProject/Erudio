@@ -3,6 +3,8 @@
 export type Procedures = {
     queries: 
         { key: "public.version", input: never, result: string } | 
+        { key: "super_admin.getSchool", input: GetSchoolRequest, result: School } | 
+        { key: "super_admin.searchSchools", input: SearchSchoolsRequest, result: Array<School> } | 
         { key: "super_admin.version", input: never, result: string } | 
         { key: "user.me", input: never, result: UserMeResponse },
     mutations: 
@@ -10,23 +12,37 @@ export type Procedures = {
         { key: "public.login", input: LoginRequest, result: LoginResponse } | 
         { key: "public.login.admin", input: AdminLoginRequest, result: AdminLoginResponse } | 
         { key: "public.register", input: RegisterRequest, result: null } | 
+        { key: "super_admin.addSchool", input: AddSchoolRequest, result: School } | 
+        { key: "super_admin.updateSchool", input: UpdateSchoolRequest, result: School } | 
         { key: "user.logout", input: never, result: null },
     subscriptions: never
 };
+
+export interface AddSchoolRequest { idempotence_token: string, name: string }
 
 export interface AdminLoginRequest { login: string, password: string }
 
 export type AdminLoginResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
 
+export interface GetSchoolRequest { id: string }
+
 export interface LoginRequest { email: string, password: string }
 
 export type LoginResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
 
+export interface Pagination { skip: bigint, take: bigint }
+
 export interface RegisterRequest { idempotence_token: string, email: string, password: string, first_name: string, middle_name: string | null, last_name: string, code: string | null }
+
+export interface School { id: string, name: string, previous_data: Array<any> }
 
 export type SchoolRelationType = "student" | "teacher" | "admin" | "director"
 
+export interface SearchSchoolsRequest { page: Pagination | null, name: string }
+
 export type TwoFactorAuthType = "GoogleAuth" | "Sms" | "EMail"
+
+export interface UpdateSchoolRequest { idempotence_token: string, id: string, name: string | null }
 
 export interface UploadRequest { idempotence_token: string, idk: string }
 

@@ -49,7 +49,7 @@ pub async fn login(ctx: Public, req: LoginRequest) -> RspcResult<LoginResponse> 
 		&user.password_hash,
 		req.password.as_bytes(),
 		&ctx.config.argon2.secret,
-		&[],
+		&ctx.config.argon2.ad,
 	)
 	.map_err(Into::<InternalError>::into)?
 	{

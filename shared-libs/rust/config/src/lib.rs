@@ -14,6 +14,8 @@ pub struct Config {
 	pub api_port: u16,
 	pub buckets: HashMap<Buckets, BucketConfig>,
 	pub admins: HashMap<String, SuperAdminConfig>,
+	pub db_default_take: i64,
+	pub db_max_take: i64,
 }
 
 #[derive(Clone, Deserialize, Derivative)]

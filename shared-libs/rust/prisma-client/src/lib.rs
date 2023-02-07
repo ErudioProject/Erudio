@@ -1,7 +1,6 @@
 #![forbid(unsafe_code)]
 #![recursion_limit = "256"]
 pub mod prisma;
-
 use crate::prisma::PrismaClient;
 pub use prisma_client_rust;
 use rand::{thread_rng, Rng};

@@ -35,5 +35,7 @@ Config (
             password_hash: None,
             two_factor_auth: "TODO"
         ),
-    }
+    },
+    db_default_take: 50,
+    db_max_take: 100,
 )

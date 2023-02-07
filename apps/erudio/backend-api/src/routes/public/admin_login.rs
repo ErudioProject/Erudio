@@ -43,7 +43,7 @@ pub async fn admin_login(ctx: Public, req: AdminLoginRequest) -> RspcResult<Admi
 		&user.password_hash,
 		req.password.as_bytes(),
 		&ctx.config.argon2.secret,
-		&[],
+		&ctx.config.argon2.ad,
 	)
 	.map_err(Into::<InternalError>::into)?
 	{
