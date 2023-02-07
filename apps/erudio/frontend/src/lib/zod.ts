@@ -58,3 +58,29 @@ export const SearchSchoolsRequest =
     page: Pagination.optional(),
     name: z.string(),
   })
+
+export const GetSchoolRequest =
+  z.object({
+    id: z.string(),
+  })
+
+export const AddUserToSchoolRequest =
+  z.object({
+    idempotence_token: z.string(),
+    school_id: z.string(),
+    user_id: z.string(),
+    relation_type: SchoolRelationType,
+  })
+
+export const GetUserRequest =
+  z.object({
+    id: z.string(),
+    school_id: z.string().optional(),
+  })
+
+export const SearchUsersRequest =
+  z.object({
+    page: Pagination.optional(),
+    school_id: z.string(),
+    query: z.string(),
+  })
