@@ -2,15 +2,21 @@ use crate::helpers::ctx::SuperAdmin;
 use rspc::{Router, RouterBuilder};
 
 pub mod add_school;
+pub mod add_user_to_school;
 pub mod get_school;
+pub mod get_user;
 pub mod search_schools;
+pub mod search_users;
 pub mod update_school;
 pub mod version;
 use crate::helpers::{ctx, idempotent};
 use add_school::add_school;
+use add_user_to_school::add_user_to_school;
 use get_school::get_school;
+use get_user::get_user;
 use prisma_client::prisma;
 use search_schools::search_schools;
+use search_users::search_users;
 use update_school::update_school;
 use version::version;
 
@@ -36,12 +42,27 @@ pub fn mount() -> RouterBuilder<SuperAdmin> {
 				prisma::school::Data
 			))
 		})
+		// User
+		.query("searchUsers", |t| t(search_users)) // TODO move to user space while adding validation
+		.query("getUser", |t| t(get_user))
+		.mutation("addUserToSchool", |t| {
+			t(idempotent!(
+				add_user_to_school,
+				ctx::SuperAdmin,
+				add_user_to_school::AddUserToSchoolRequest,
+				prisma::user_school_relation::Data
+			))
+		})
 }
 
+prisma::user::include!((filters: Vec<prisma::user_school_relation::WhereParam>) => user_full {
+	user_school_relation(filters): include {
+		school
+	}
+	pii_data
+});
+
 /*
-admin.searchSchoolUsers
-admin.getUser
-admin.addSchoolUser
 admin.editUser
 
 -
@@ -49,4 +70,8 @@ admin.addSchool
 admin.getSchool
 admin.updateSchool
 admin.searchSchools
+
+admin.searchUsers
+admin.getUser
+admin.addUserToSchool
  */

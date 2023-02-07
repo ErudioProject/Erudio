@@ -4,7 +4,9 @@ export type Procedures = {
     queries: 
         { key: "public.version", input: never, result: string } | 
         { key: "super_admin.getSchool", input: GetSchoolRequest, result: School } | 
+        { key: "super_admin.getUser", input: GetUserRequest, result: UserFull } | 
         { key: "super_admin.searchSchools", input: SearchSchoolsRequest, result: Array<School> } | 
+        { key: "super_admin.searchUsers", input: SearchUsersRequest, result: Array<UserFull> } | 
         { key: "super_admin.version", input: never, result: string } | 
         { key: "user.me", input: never, result: UserMeResponse },
     mutations: 
@@ -13,6 +15,7 @@ export type Procedures = {
         { key: "public.login.admin", input: AdminLoginRequest, result: AdminLoginResponse } | 
         { key: "public.register", input: RegisterRequest, result: null } | 
         { key: "super_admin.addSchool", input: AddSchoolRequest, result: School } | 
+        { key: "super_admin.addUserToSchool", input: AddUserToSchoolRequest, result: UserSchoolRelation } | 
         { key: "super_admin.updateSchool", input: UpdateSchoolRequest, result: School } | 
         { key: "user.logout", input: never, result: null },
     subscriptions: never
@@ -20,17 +23,25 @@ export type Procedures = {
 
 export interface AddSchoolRequest { idempotence_token: string, name: string }
 
+export interface AddUserToSchoolRequest { idempotence_token: string, school_id: string, user_id: string, relation_type: SchoolRelationType }
+
 export interface AdminLoginRequest { login: string, password: string }
 
 export type AdminLoginResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
 
 export interface GetSchoolRequest { id: string }
 
+export interface GetUserRequest { id: string, school_id: string | null }
+
+export type GrammaticalForm = "masculinine" | "feminine" | "indeterminate"
+
 export interface LoginRequest { email: string, password: string }
 
 export type LoginResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
 
 export interface Pagination { skip: bigint, take: bigint }
+
+export interface PiiData { id: string, user_id: string, grammatical_form: GrammaticalForm, email: string | null, pesel: string | null, birth_date: string | null, legal_name: string, display_name: string, phone_prefix: string | null, phone_number: string | null, previous_data: Array<any> }
 
 export interface RegisterRequest { idempotence_token: string, email: string, password: string, first_name: string, middle_name: string | null, last_name: string, code: string | null }
 
@@ -39,6 +50,8 @@ export interface School { id: string, name: string, previous_data: Array<any> }
 export type SchoolRelationType = "student" | "teacher" | "admin" | "director"
 
 export interface SearchSchoolsRequest { page: Pagination | null, name: string }
+
+export interface SearchUsersRequest { page: Pagination | null, school_id: string, query: string }
 
 export type TwoFactorAuthType = "GoogleAuth" | "Sms" | "EMail"
 
@@ -49,3 +62,7 @@ export interface UploadRequest { idempotence_token: string, idk: string }
 export interface UploadResponse { presigned_url: string }
 
 export interface UserMeResponse { id: string, display_name: string, school_relations: Array<[SchoolRelationType, string]> }
+
+export interface UserSchoolRelation { user_id: string, school_id: string, school_relation_type: SchoolRelationType }
+
+export interface UserFull { id: string, password_hash: string, two_factor_auth_settings_id: string | null, user_school_relation: Array<{ user_id: string, school_id: string, school_relation_type: SchoolRelationType, school: School }>, pii_data: PiiData | null }
