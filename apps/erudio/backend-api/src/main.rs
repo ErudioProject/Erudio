@@ -19,6 +19,9 @@ use crate::helpers::seed;
 use crate::routes::file::upload::UploadRequest;
 use crate::routes::public::login::LoginRequest;
 use crate::routes::public::register::RegisterRequest;
+use crate::routes::super_admin::add_school::AddSchoolRequest;
+use crate::routes::super_admin::search_schools::SearchSchoolsRequest;
+use crate::routes::super_admin::update_school::UpdateSchoolRequest;
 use crate::{eyre::Context, helpers::ctx::Public, routes::router};
 use axum::extract::ConnectInfo;
 use axum::routing::get;
@@ -63,6 +66,9 @@ async fn start() -> eyre::Result<()> {
 		LoginRequest::codegen(),
 		UploadRequest::codegen(),
 		RegisterRequest::codegen(),
+		AddSchoolRequest::codegen(),
+		UpdateSchoolRequest::codegen(),
+		SearchSchoolsRequest::codegen(),
 	];
 	fs::write("./apps/erudio/frontend/src/lib/zod.ts", lines.join("\n"))
 		.await

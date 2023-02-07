@@ -33,3 +33,16 @@ export const RegisterRequest =
     last_name: z.string(),
     code: z.string().optional(),
   })
+
+export const AddSchoolRequest =
+  z.object({
+    idempotence_token: z.string(),
+    name: z.string(),
+  })
+
+export const UpdateSchoolRequest =
+  z.object({
+    idempotence_token: z.string(),
+    id: z.string(),
+    name: z.string().optional(),
+  })

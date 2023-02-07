@@ -1,6 +1,7 @@
 pub mod argon;
 pub mod consts;
 pub mod ctx;
+pub mod pagination;
 pub mod seed;
 
 #[derive(Serialize, Deserialize)]
