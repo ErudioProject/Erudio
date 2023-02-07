@@ -15,12 +15,17 @@ mod helpers;
 mod routes;
 mod shutdown_signal;
 
+use crate::helpers::pagination::Pagination;
 use crate::helpers::seed;
 use crate::routes::file::upload::UploadRequest;
 use crate::routes::public::login::LoginRequest;
 use crate::routes::public::register::RegisterRequest;
 use crate::routes::super_admin::add_school::AddSchoolRequest;
+use crate::routes::super_admin::add_user_to_school::AddUserToSchoolRequest;
+use crate::routes::super_admin::get_school::GetSchoolRequest;
+use crate::routes::super_admin::get_user::GetUserRequest;
 use crate::routes::super_admin::search_schools::SearchSchoolsRequest;
+use crate::routes::super_admin::search_users::SearchUsersRequest;
 use crate::routes::super_admin::update_school::UpdateSchoolRequest;
 use crate::{eyre::Context, helpers::ctx::Public, routes::router};
 use axum::extract::ConnectInfo;
@@ -59,9 +64,11 @@ async fn start() -> eyre::Result<()> {
 	let split = field_error_type.split('=');
 	let def = split.last().context("Zod strange")?;
 
+	// TODO refactor it already is hard to find what is missing
 	let lines = vec![
 		// I don't like the fact that this is manual
 		LoginRequest::print_imports(),
+		Pagination::codegen(),
 		format!("export const ErrorFields = z.tuple([z.string(), {def}]).array()"),
 		LoginRequest::codegen(),
 		UploadRequest::codegen(),
@@ -69,6 +76,10 @@ async fn start() -> eyre::Result<()> {
 		AddSchoolRequest::codegen(),
 		UpdateSchoolRequest::codegen(),
 		SearchSchoolsRequest::codegen(),
+		GetSchoolRequest::codegen(),
+		AddUserToSchoolRequest::codegen(),
+		GetUserRequest::codegen(),
+		SearchUsersRequest::codegen(),
 	];
 	fs::write("./apps/erudio/frontend/src/lib/zod.ts", lines.join("\n"))
 		.await

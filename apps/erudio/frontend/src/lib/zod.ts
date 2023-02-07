@@ -1,5 +1,11 @@
 import z from "zod";
 
+export const Pagination =
+  z.object({
+    skip: z.number(),
+    take: z.number(),
+  })
+
 export const ErrorFields = z.tuple([z.string(), 
   z.union([
     z.literal("NotFound"),
@@ -45,4 +51,10 @@ export const UpdateSchoolRequest =
     idempotence_token: z.string(),
     id: z.string(),
     name: z.string().optional(),
+  })
+
+export const SearchSchoolsRequest =
+  z.object({
+    page: Pagination.optional(),
+    name: z.string(),
   })
