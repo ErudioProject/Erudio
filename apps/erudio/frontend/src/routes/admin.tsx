@@ -7,7 +7,7 @@ export default function AdminLayout() {
     return (
         <>
             <Show when={admin.isError}>
-                <Navigate href="/admin/login" />
+                <Navigate href="/adminlogin" />
             </Show>
             <Show when={session.data}>
                 <Nav displayName={session.data!.display_name} userId={session.data!.id} />
