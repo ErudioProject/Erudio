@@ -1,8 +1,9 @@
 import { rest, RestRequest } from "msw";
 import { LoginRequest, LoginResponse, SchoolRelationType, UserMeResponse } from "../../../../bindings";
+import clientEnv from "../../lib/env";
 import { apiTestData } from "../data";
 
-const url = import.meta.env.VITE_API_URL
+const url = clientEnv.VITE_API_URL;
 
 type RSPCError = {
     code: number,

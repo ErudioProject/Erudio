@@ -26,5 +26,4 @@ export const defineDefaultConfig: UserConfigExport = {
     resolve: {
         conditions: ['development', 'browser'],
     },
-    envPrefix: 'FRONTEND_',
 };
