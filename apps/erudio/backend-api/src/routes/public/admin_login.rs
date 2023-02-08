@@ -4,7 +4,7 @@ use crate::routes::public::login::TwoFactorAuthType;
 use crate::{routes::RspcResult, Public};
 use cookie::time::{Duration, OffsetDateTime};
 use error_handler::InternalError;
-use log::{debug, info};
+use log::{debug, info, trace};
 use prisma_client::prisma::{pii_data, super_admin, user, GrammaticalForm};
 use rand::RngCore;
 use rspc::{ErrorCode, Type};
@@ -26,7 +26,7 @@ pub enum AdminLoginResponse {
 }
 
 pub async fn admin_login(ctx: Public, req: AdminLoginRequest) -> RspcResult<AdminLoginResponse> {
-	info!("Login Request: {:?}", req);
+	info!("Login Request from: {}", req.login);
 	if !ctx.ip.is_loopback() {
 		// allows only local host
 		return Err(InternalError::IntoRspc(ErrorCode::NotFound, None).into());
@@ -57,8 +57,8 @@ pub async fn admin_login(ctx: Public, req: AdminLoginRequest) -> RspcResult<Admi
 		rng.fill_bytes(&mut connection_secret);
 	}
 	let uuid = uuid::Uuid::new_v5(&uuid::Uuid::NAMESPACE_DNS, req.login.as_bytes());
-	debug!(
-		"{} {} {:?} {}",
+	trace!(
+		"Super Admin login uuid {} {} {:?} {}",
 		uuid::Uuid::NAMESPACE_DNS,
 		req.login,
 		req.login.as_bytes(),

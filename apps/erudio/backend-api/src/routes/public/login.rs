@@ -35,7 +35,7 @@ pub enum TwoFactorAuthType {
 }
 
 pub async fn login(ctx: Public, req: LoginRequest) -> RspcResult<LoginResponse> {
-	info!("Login Request: {:?}", req);
+	info!("Login Request from: {}", req.email);
 	let user = ctx
 		.db
 		.user()
