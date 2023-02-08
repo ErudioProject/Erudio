@@ -30,7 +30,7 @@ COPY . .
 #RUN cp -r .cargo-tmp/* ~/.cargo | true
 #RUN cp -r .cargo-tmp/.* ~/.cargo | true
 WORKDIR apps/erudio/backend-prisma-cli/
-RUN cargo run --release --target x86_64-unknown-linux-musl --bin prisma_cli -- generate
+RUN cargo run --target x86_64-unknown-linux-musl --bin prisma_cli -- generate # --relese don't work for some reason
 WORKDIR ../../../
 RUN cargo build --release --target x86_64-unknown-linux-musl --bin api
 
