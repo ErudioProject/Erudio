@@ -14,6 +14,7 @@ mod cookies;
 mod helpers;
 mod routes;
 mod shutdown_signal;
+#[cfg(debug_assertions)]
 mod zod_bindings;
 
 use crate::helpers::seed;
@@ -28,7 +29,6 @@ use log::{debug, error, info, warn};
 use prisma_client::{prisma, prisma::PrismaClient};
 use prisma_client_rust::{chrono::Utc, raw};
 use redis::AsyncCommands;
-use std::path::PathBuf;
 use std::{
 	net::{Ipv4Addr, SocketAddr},
 	sync::Arc,
