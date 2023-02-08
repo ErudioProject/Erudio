@@ -14,26 +14,16 @@ mod cookies;
 mod helpers;
 mod routes;
 mod shutdown_signal;
+mod zod_bindings;
 
-use crate::helpers::pagination::Pagination;
 use crate::helpers::seed;
-use crate::routes::file::upload::UploadRequest;
-use crate::routes::public::login::LoginRequest;
-use crate::routes::public::register::RegisterRequest;
-use crate::routes::super_admin::add_school::AddSchoolRequest;
-use crate::routes::super_admin::add_user_to_school::AddUserToSchoolRequest;
-use crate::routes::super_admin::get_school::GetSchoolRequest;
-use crate::routes::super_admin::get_user::GetUserRequest;
-use crate::routes::super_admin::search_schools::SearchSchoolsRequest;
-use crate::routes::super_admin::search_users::SearchUsersRequest;
-use crate::routes::super_admin::update_school::UpdateSchoolRequest;
 use crate::{eyre::Context, helpers::ctx::Public, routes::router};
 use axum::extract::ConnectInfo;
 use axum::routing::get;
 use color_eyre::eyre;
-use color_eyre::eyre::{eyre, ContextCompat};
+use color_eyre::eyre::eyre;
 use config::Config;
-use error_handler::{FieldErrorType, InternalResult};
+use error_handler::InternalResult;
 use log::{debug, error, info, warn};
 use prisma_client::{prisma, prisma::PrismaClient};
 use prisma_client_rust::{chrono::Utc, raw};
@@ -59,31 +49,8 @@ pub fn main() {
 
 #[tokio::main]
 async fn start() -> eyre::Result<()> {
-	// cursed i will
-	let field_error_type = FieldErrorType::codegen();
-	let split = field_error_type.split('=');
-	let def = split.last().context("Zod strange")?;
-
-	// TODO refactor it already is hard to find what is missing
-	let lines = vec![
-		// I don't like the fact that this is manual
-		LoginRequest::print_imports(),
-		Pagination::codegen(),
-		format!("export const ErrorFields = z.tuple([z.string(), {def}]).array()"),
-		LoginRequest::codegen(),
-		UploadRequest::codegen(),
-		RegisterRequest::codegen(),
-		AddSchoolRequest::codegen(),
-		UpdateSchoolRequest::codegen(),
-		SearchSchoolsRequest::codegen(),
-		GetSchoolRequest::codegen(),
-		AddUserToSchoolRequest::codegen(),
-		GetUserRequest::codegen(),
-		SearchUsersRequest::codegen(),
-	];
-	fs::write("./apps/erudio/frontend/src/lib/zod.ts", lines.join("\n"))
-		.await
-		.context("Zod failed")?;
+	#[cfg(debug_assertions)]
+	zod_bindings::generate_zod().await?;
 
 	// TODO pull over http from server
 	let contents = fs::read_to_string("./Config.ron")
@@ -122,6 +89,7 @@ async fn start() -> eyre::Result<()> {
 		.context("REDIS ERROR")?;
 
 	let router = router().arced();
+	#[cfg(debug_assertions)]
 	router
 		.export_ts(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../bindings.ts"))
 		.context("Binding export failed")?;
