@@ -4,6 +4,7 @@
         "license": "MIT",
         "devDependencies": {
                 "@capacitor/cli": "^4.6.1",
+                "@faker-js/faker": "^7.6.0",
                 "@rspc/client": "^0.1.2",
                 "@solidjs/meta": "^0.28.2",
                 "@solidjs/router": "^0.5.1",
