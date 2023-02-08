@@ -10,7 +10,7 @@ import createSession from '../lib/session';
 
 export default function Index() {
     const { LL } = useI18nContext();
-    const session = createSession(true);
+    const session = createSession();
     const [serverError, setServerError] = createSignal<string | null>(null);
     const utils = rspc.useContext();
 
@@ -37,7 +37,9 @@ export default function Index() {
     return (
         <>
             <Show when={session.data}>
-                <Navigate href="/dashboard" />
+                <Show when={session.isSuccess}>
+                    <Navigate href="/dashboard" />
+                </Show>
             </Show>
             <Show when={session.isError}>
                 <form use:form>

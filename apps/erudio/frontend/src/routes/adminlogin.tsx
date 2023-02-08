@@ -11,7 +11,7 @@ import { createAdminSession } from "../lib/session";
 export default function AdminLogin() {
     const { LL } = useI18nContext();
     const [serverError, setServerError] = createSignal<string | null>(null);
-    const [admin] = createAdminSession(true);
+    const [admin] = createAdminSession();
     const utils = rspc.useContext();
 
     const login = rspc.createMutation("public.login.admin", {

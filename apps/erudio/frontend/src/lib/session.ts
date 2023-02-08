@@ -3,18 +3,16 @@ import { CreateQueryResult } from "@tanstack/solid-query";
 import { UserMeResponse } from "../../../bindings";
 import rspc from "../api-setup";
 
-const createSession = (login = false): CreateQueryResult<UserMeResponse, RSPCError> => rspc.createQuery(() => ['user.me'], {
-    retry: login ? false : (retryCount, error) => error.code !== 401 && retryCount < 3 ? true : false,
-    refetchOnWindowFocus: !login,
-    refetchInterval: login ? false : 1000 * 60 * 5,
+const createSession = (): CreateQueryResult<UserMeResponse, RSPCError> => rspc.createQuery(() => ['user.me'], {
+    retry: (retryCount, error) => error.code !== 401 && retryCount < 3 ? true : false,
+    refetchInterval: 1000 * 60 * 5,
     retryOnMount: false
 })
-export const createAdminSession = (login = false) => {
-    const userData = createSession(login);
+export const createAdminSession = () => {
+    const userData = createSession();
     const adminData = rspc.createQuery(() => ['super_admin.version'], {
-        retry: login ? false : (retryCount, error) => error.code !== 401 && retryCount < 3 ? true : false,
-        refetchOnWindowFocus: !login,
-        refetchInterval: login ? false : 1000 * 60 * 5,
+        retry: (retryCount, error) => error.code !== 401 && retryCount < 3 ? true : false,
+        refetchInterval: 1000 * 60 * 5,
         retryOnMount: false
     });
 
