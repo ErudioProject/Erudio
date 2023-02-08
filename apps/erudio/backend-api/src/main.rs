@@ -72,6 +72,12 @@ async fn start() -> eyre::Result<()> {
 	}
 	debug!("Config: {:?}", config);
 
+	let router = router().arced();
+	#[cfg(debug_assertions)]
+	router
+		.export_ts(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../bindings.ts"))
+		.context("Binding export failed")?;
+
 	let db: Arc<PrismaClient> = Arc::new(
 		PrismaClient::_builder()
 			.with_url(config.db_url.clone())
@@ -94,12 +100,6 @@ async fn start() -> eyre::Result<()> {
 		.get_multiplexed_async_connection()
 		.await
 		.context("REDIS ERROR")?;
-
-	let router = router().arced();
-	#[cfg(debug_assertions)]
-	router
-		.export_ts(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../bindings.ts"))
-		.context("Binding export failed")?;
 
 	let app = axum::Router::new()
 		.route("/", get(|| async { "Erudio" }))

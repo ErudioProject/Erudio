@@ -39,7 +39,7 @@ export interface LoginRequest { email: string, password: string }
 
 export type LoginResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
 
-export interface Pagination { skip: bigint, take: bigint }
+export interface Pagination { skip: number, take: number }
 
 export interface PiiData { id: string, user_id: string, grammatical_form: GrammaticalForm, email: string | null, pesel: string | null, birth_date: string | null, legal_name: string, display_name: string, phone_prefix: string | null, phone_number: string | null, previous_data: Array<any> }
 
