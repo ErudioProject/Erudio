@@ -5,8 +5,8 @@ use prisma_client_rust::rspc;
 #[serde_zod::codegen]
 #[derive(rspc::Type, serde::Deserialize, Debug, Default)]
 pub struct Pagination {
-	pub skip: i64,
-	pub take: i64,
+	pub skip: i32,
+	pub take: i32,
 }
 
 impl Pagination {
@@ -14,8 +14,8 @@ impl Pagination {
 		let take = if self.take.is_zero() {
 			config.db_default_take
 		} else {
-			self.take
+			self.take.into()
 		};
-		(self.skip, take.min(config.db_max_take))
+		(self.skip.into(), take.min(config.db_max_take))
 	}
 }
