@@ -32,6 +32,7 @@ ron = "^0.8"
 color-eyre = "^0.6"
 chrono = "^0.4"
 
+
 [profile.release]
 lto = true
 

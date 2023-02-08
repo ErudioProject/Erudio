@@ -50,6 +50,12 @@ pub fn main() {
 
 #[tokio::main]
 async fn start() -> eyre::Result<()> {
+	info!(
+		"Build Version: {}	Build Date: {} 	BuildHash: {}",
+		env!("CARGO_PKG_VERSION"),
+		env!("BUILD_DATE"),
+		env!("GIT_HASH")
+	);
 	#[cfg(debug_assertions)]
 	zod_bindings::generate_zod().await?;
 

@@ -4,7 +4,7 @@ use crate::routes::public::login::TwoFactorAuthType;
 use crate::{routes::RspcResult, Public};
 use cookie::time::{Duration, OffsetDateTime};
 use error_handler::InternalError;
-use log::{debug, info, trace};
+use log::{info, trace};
 use prisma_client::prisma::{pii_data, super_admin, user, GrammaticalForm};
 use rand::RngCore;
 use rspc::{ErrorCode, Type};
