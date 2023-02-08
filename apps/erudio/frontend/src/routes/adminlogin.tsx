@@ -1,7 +1,7 @@
 import { createForm } from "@felte/solid";
 import { validator } from "@felte/validator-zod";
 import { createSignal, Show } from "solid-js";
-import { Navigate, useNavigate } from "solid-start";
+import { Navigate } from "solid-start";
 import { z } from "zod";
 import rspc from "../api-setup";
 import { TextInput } from "../components/designSystem/Input";
@@ -12,10 +12,10 @@ export default function AdminLogin() {
     const { LL } = useI18nContext();
     const [serverError, setServerError] = createSignal<string | null>(null);
     const [admin] = createAdminSession(true);
-    const navigate = useNavigate();
+    const utils = rspc.useContext();
 
     const login = rspc.createMutation("public.login.admin", {
-        onSuccess: () => navigate('/admin'),
+        onSuccess: () => utils.queryClient.invalidateQueries({ predicate: (query) => query.queryKey[0] === 'user.me' || query.queryKey[0] === 'super_admin.version' }),
         onError: () => {
             setErrors({ login: " ", password: " " });
             setServerError(LL().index.invalid());
