@@ -12,6 +12,9 @@ const pl: BaseTranslation = {
       email: 'Podaj poprawny adres e-mail'
     }
   },
+  admin: {
+    schoolName: "Nazwa szkoły"
+  },
   dashboard: {
     teacher: "Nauczyciel",
     student: "Uczeń",
