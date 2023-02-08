@@ -3,6 +3,7 @@ use crate::{
 	routes::{RspcResult, SESSION_COOKIE_NAME},
 	Public,
 };
+use cookie::time::{Duration, OffsetDateTime};
 use error_handler::InternalError;
 use log::info;
 use prisma_client::prisma::{pii_data, user};
@@ -65,6 +66,7 @@ pub async fn login(ctx: Public, req: LoginRequest) -> RspcResult<LoginResponse> 
 	ctx.cookies.add(get_cookie(
 		SESSION_COOKIE_NAME,
 		session::init::session(&ctx.db, &mut ctx.redis.clone(), user, &connection_secret, Some(3600)).await?,
+		OffsetDateTime::now_utc() + Duration::weeks(52),
 	));
 
 	Ok(LoginResponse::Success)

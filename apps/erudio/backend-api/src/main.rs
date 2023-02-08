@@ -37,7 +37,6 @@ use std::{
 };
 use tokio::fs;
 use tower_cookies::{CookieManagerLayer, Cookies};
-use tower_http::{cors, cors::CorsLayer};
 
 // TODO clean up a bit
 pub fn main() {
@@ -126,12 +125,6 @@ async fn start() -> eyre::Result<()> {
 					}
 				})
 				.axum(),
-		)
-		.layer(
-			CorsLayer::new()
-				.allow_origin(cors::Any)
-				.allow_headers(cors::Any)
-				.allow_methods(cors::Any),
 		)
 		.layer(CookieManagerLayer::new());
 

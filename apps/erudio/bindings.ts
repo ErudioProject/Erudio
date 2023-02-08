@@ -53,6 +53,8 @@ export interface SearchSchoolsRequest { page: Pagination | null, name: string }
 
 export interface SearchUsersRequest { page: Pagination | null, school_id: string, query: string }
 
+export interface TwoFactorAuthSettings { id: string, user_id: string, previous_data: Array<any> }
+
 export type TwoFactorAuthType = "GoogleAuth" | "Sms" | "EMail"
 
 export interface UpdateSchoolRequest { idempotence_token: string, id: string, name: string | null }
@@ -65,4 +67,4 @@ export interface UserMeResponse { id: string, display_name: string, school_relat
 
 export interface UserSchoolRelation { user_id: string, school_id: string, school_relation_type: SchoolRelationType }
 
-export interface UserFull { id: string, password_hash: string, two_factor_auth_settings_id: string | null, user_school_relation: Array<{ user_id: string, school_id: string, school_relation_type: SchoolRelationType, school: School }>, pii_data: PiiData | null }
+export interface UserFull { id: string, two_factor_auth_settings: TwoFactorAuthSettings | null, user_school_relation: Array<{ user_id: string, school_id: string, school_relation_type: SchoolRelationType, school: School }>, pii_data: PiiData | null }

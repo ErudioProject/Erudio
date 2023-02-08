@@ -26,7 +26,7 @@ pub async fn search_users(ctx: SuperAdmin, req: SearchUsersRequest) -> RspcResul
 		])])
 		.skip(skip)
 		.take(take)
-		.include(super_admin::user_full::include(vec![
+		.select(super_admin::user_full::select(vec![
 			prisma::user_school_relation::school_id::equals(req.school_id),
 		]))
 		.exec()
