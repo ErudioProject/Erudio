@@ -20,6 +20,9 @@ const pl: BaseTranslation = {
     student: "Uczeń",
     admin: "Administrator",
     director: "Dyrektor"
+  },
+  user: {
+    logout: "Wyloguj się"
   }
 };
 

@@ -7,7 +7,7 @@ import createSession from "../../lib/session";
 const SchoolCard: Component<{ school: [SchoolRelationType, string] }> = (props) => {
     const { LL } = useI18nContext()
     return (
-        <div class="card border border-primary bg-base-100 text-primary hover:scale-110 hover:text-primary-focus hover:border-primary-focus shadow-xl hover:z-10 motion-safe:transition-transform">
+        <div class="card border border-primary bg-base-100 text-primary hover:scale-110 hover:text-primary-focus hover:border-primary-focus shadow-xl motion-safe:transition-transform relative">
             <div class="card-body">
                 <h2 class="card-title truncate">{props.school[1]}</h2>
                 <p>
@@ -41,7 +41,7 @@ export default function Dashboard() {
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 m-3">
                 <For each={session.data?.school_relations}>
                     {school =>
-                        <A href={`/${encodeURIComponent(school[1])}/${school[0]}`}>
+                        <A href={`/${encodeURIComponent(school[1])}/${school[0]}`} class="relative z-10">
                             <SchoolCard school={school} />
                         </A>
                     }

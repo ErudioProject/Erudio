@@ -71,6 +71,12 @@ type RootTranslation = {
 		 */
 		director: string
 	}
+	user: {
+		/**
+		 * W​y​l​o​g​u​j​ ​s​i​ę
+		 */
+		logout: string
+	}
 }
 
 export type TranslationFunctions = {
@@ -129,6 +135,12 @@ export type TranslationFunctions = {
 		 * Dyrektor
 		 */
 		director: () => LocalizedString
+	}
+	user: {
+		/**
+		 * Wyloguj się
+		 */
+		logout: () => LocalizedString
 	}
 }
 
