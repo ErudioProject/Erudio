@@ -47,6 +47,12 @@ type RootTranslation = {
 			email: string
 		}
 	}
+	admin: {
+		/**
+		 * N​a​z​w​a​ ​s​z​k​o​ł​y
+		 */
+		schoolName: string
+	}
 	dashboard: {
 		/**
 		 * N​a​u​c​z​y​c​i​e​l
@@ -99,6 +105,12 @@ export type TranslationFunctions = {
 			 */
 			email: () => LocalizedString
 		}
+	}
+	admin: {
+		/**
+		 * Nazwa szkoły
+		 */
+		schoolName: () => LocalizedString
 	}
 	dashboard: {
 		/**
