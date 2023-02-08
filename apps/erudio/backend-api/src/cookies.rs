@@ -7,10 +7,10 @@ where
 	V: Into<Cow<'c, str>>,
 	E: Into<Expiration>,
 {
-	Cookie::build(name, value) // TODO change one we set up nginx
+	Cookie::build(name, value)
 		.secure(true)
 		.http_only(true)
 		.expires(expires)
-		.same_site(SameSite::None)
+		.same_site(SameSite::Strict)
 		.finish()
 }
