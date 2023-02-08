@@ -94,6 +94,23 @@ export const handlers = [
             }))
         )
     }),
+    rest.post(`${url}/user.logout`, (_, res, ctx) => {
+        if (sessionStorage.getItem('is-authenticated') === 'true') {
+            sessionStorage.setItem('is-authenticated', 'false')
+            return res(
+                ctx.status(200),
+                ctx.json(wrapResponse(null))
+            )
+        }
+        return res(
+            ctx.status(200),
+            ctx.json(wrapError({
+                code: 401,
+                message: "Unauthorized",
+                data: null
+            }))
+        )
+    }),
     rest.post(`${url}/public.login`, async (req, res, ctx) => {
         const data = await postData<LoginRequest>(req);
         if (data.email === apiTestData.authorizedMail && data.password === apiTestData.authorizedPassword) {
