@@ -1,8 +1,9 @@
 import { rest, RestRequest } from "msw";
 import { LoginRequest, LoginResponse, SchoolRelationType, UserMeResponse } from "../../../../bindings";
+import clientEnv from "../../lib/env";
 import { apiTestData } from "../data";
 
-const url = "http://localhost:4000/rspc" //TODO: process.env.FRONTEND_API_URL;
+const url = clientEnv.VITE_API_URL;
 
 type RSPCError = {
     code: number,
@@ -41,6 +42,8 @@ async function postData<T>(req: RestRequest): Promise<T> {
 }
 
 export const handlers = [
+    rest.get(`${url}/super_admin.searchSchools`, (_, res, ctx) => {
+    }),
     rest.get(`${url}/user.me`, (_, res, ctx) => {
         if (sessionStorage.getItem('is-authenticated') === 'true') {
             return res(
