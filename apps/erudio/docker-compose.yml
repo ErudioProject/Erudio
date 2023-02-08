@@ -40,6 +40,13 @@ services:
       - ./redis.conf:/etc/redis.conf
       - redis_data:/data:rw
 
+  nginx:
+    image: nginx
+    restart: unless-stopped
+    network_mode: 'host'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+
 
 volumes:
   redis_data:

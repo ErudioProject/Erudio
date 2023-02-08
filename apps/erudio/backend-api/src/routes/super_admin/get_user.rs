@@ -14,7 +14,7 @@ pub async fn get_user(ctx: SuperAdmin, req: GetUserRequest) -> RspcResult<super_
 	ctx.db
 		.user()
 		.find_unique(prisma::user::UniqueWhereParam::IdEquals(req.id))
-		.include(super_admin::user_full::include(vec![
+		.select(super_admin::user_full::select(vec![
 			prisma::user_school_relation::school_id::equals(req.school_id.unwrap_or_default()),
 		]))
 		.exec()

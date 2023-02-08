@@ -33,3 +33,4 @@ tower-http = { version = "^0.3", features = ["cors"] }
 axum = "^0.5"
 tower-cookies = "^0.7"
 cookie = "^0.16"
+uuid = { version = "1.3.0", features = ["v5"], default-features = false }

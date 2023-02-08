@@ -4,6 +4,7 @@ use crate::{
 	routes::{RspcResult, SESSION_COOKIE_NAME},
 	Public,
 };
+use cookie::time::{Duration, OffsetDateTime};
 use error_handler::{FieldErrorType, InternalError};
 use log::debug;
 use prisma_client::prisma::{pii_data, user, GrammaticalForm};
@@ -100,6 +101,7 @@ pub async fn register(ctx: Public, req: RegisterRequest) -> RspcResult<()> {
 	ctx.cookies.add(get_cookie(
 		SESSION_COOKIE_NAME,
 		session::init::session(&ctx.db, &mut ctx.redis.clone(), user, &connection_secret, Some(3600)).await?,
+		OffsetDateTime::now_utc() + Duration::weeks(52),
 	));
 
 	Ok(())

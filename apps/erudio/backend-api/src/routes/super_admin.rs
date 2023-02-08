@@ -55,7 +55,9 @@ pub fn mount() -> RouterBuilder<SuperAdmin> {
 		})
 }
 
-prisma::user::include!((filters: Vec<prisma::user_school_relation::WhereParam>) => user_full {
+prisma::user::select!((filters: Vec<prisma::user_school_relation::WhereParam>) => user_full {
+	id
+	two_factor_auth_settings
 	user_school_relation(filters): include {
 		school
 	}

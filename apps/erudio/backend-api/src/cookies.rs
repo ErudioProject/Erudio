@@ -1,14 +1,16 @@
-use cookie::{Cookie, SameSite};
+use cookie::{Cookie, Expiration, SameSite};
 use std::borrow::Cow;
 
-pub fn get_cookie<'c, N, V>(name: N, value: V) -> Cookie<'c>
+pub fn get_cookie<'c, N, V, E>(name: N, value: V, expires: E) -> Cookie<'c>
 where
 	N: Into<Cow<'c, str>>,
 	V: Into<Cow<'c, str>>,
+	E: Into<Expiration>,
 {
-	Cookie::build(name, value)
-		.secure(false) // TODO change one we have ssl set up
+	Cookie::build(name, value) // TODO change one we set up nginx
+		.secure(true)
 		.http_only(true)
-		.same_site(SameSite::Strict)
+		.expires(expires)
+		.same_site(SameSite::None)
 		.finish()
 }
