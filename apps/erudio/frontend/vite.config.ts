@@ -2,6 +2,7 @@
 import solid from 'solid-start/vite';
 import { defineConfig, loadEnv } from 'vite';
 import { defineDefaultConfig } from "../../../vite.config.base";
+import { visualizer } from "rollup-plugin-visualizer";
 
 import { VitePWA } from "vite-plugin-pwa";
 
@@ -45,6 +46,10 @@ export default defineConfig(({ mode }) => {
       solid({
         ssr: false,
       }),
+      visualizer({
+        emitFile: true,
+        template: "treemap"
+      })
     ],
   }
 })
