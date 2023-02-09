@@ -7,13 +7,14 @@ const pl: BaseTranslation = {
     loginButton: 'Zaloguj się',
     invalid: 'Nieprawidłowe dane logowania',
     login: 'Login',
-    errors: {
-      required: 'Pole wymagane',
-      email: 'Podaj poprawny adres e-mail'
-    }
   },
   admin: {
-    schoolName: "Nazwa szkoły"
+    schoolName: "Nazwa szkoły",
+    page: "Strona: {0}",
+    addSchool: "Dodaj szkołę",
+    create: "Dodaj",
+    cancel: "Anuluj",
+    schoolNotFound: "Nie znaleziono szkoły"
   },
   dashboard: {
     teacher: "Nauczyciel",
@@ -23,6 +24,12 @@ const pl: BaseTranslation = {
   },
   user: {
     logout: "Wyloguj się"
+  },
+  common: {
+    errors: {
+      required: 'Pole wymagane',
+      email: 'Podaj poprawny adres e-mail'
+    }
   }
 };
 

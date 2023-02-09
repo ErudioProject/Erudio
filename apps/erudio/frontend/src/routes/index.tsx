@@ -24,8 +24,8 @@ export default function Index() {
     });
 
     const LoginRequest = z.object({
-        email: z.string().min(1, LL().index.errors.required()).email(LL().index.errors.email()),
-        password: z.string().min(1, LL().index.errors.required()),
+        email: z.string().min(1, LL().common.errors.required()).email(LL().common.errors.email()),
+        password: z.string().min(1, LL().common.errors.required()),
     })
     const { form, errors, setErrors, isSubmitting } = createForm<z.infer<typeof LoginRequest>>({
         extend: [validator({ schema: LoginRequest })],

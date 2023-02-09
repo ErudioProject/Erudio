@@ -1,7 +1,7 @@
 import { rest, RestRequest } from "msw";
-import { AdminLoginRequest, AdminLoginResponse, LoginRequest, LoginResponse, School, UserMeResponse } from "../../../../bindings";
+import { AddSchoolRequest, AdminLoginRequest, AdminLoginResponse, LoginRequest, LoginResponse, School, SearchSchoolsRequest, UserMeResponse } from "../../../../bindings";
 import clientEnv from "../../lib/env";
-import { apiTestData } from "../data";
+import { apiTestData, createSchool } from "../data";
 
 const url = clientEnv.VITE_API_URL;
 
@@ -42,11 +42,31 @@ async function postData<T>(req: RestRequest): Promise<T> {
 }
 
 export const handlers = [
-    rest.get(`${url}/super_admin.searchSchools`, (_, res, ctx) => {
+    rest.get(`${url}/super_admin.searchSchools`, (req, res, ctx) => {
         if (sessionStorage.getItem('is-admin') === 'true') {
+            const search = getData<SearchSchoolsRequest>(req);
             return res(
                 ctx.status(200),
-                ctx.json(wrapResponse<Array<School>>(apiTestData.schools))
+                ctx.json(wrapResponse<Array<School>>(apiTestData.schools.slice(search.page!.skip, search.page!.skip + search.page!.take).filter(x => x.name.includes(search.name))))
+            )
+        }
+        return res(
+            ctx.status(200),
+            ctx.json(wrapError({
+                code: 401,
+                message: "Unauthorized",
+                data: null
+            }))
+        )
+    }),
+    rest.post(`${url}/super_admin.addSchool`, async (req, res, ctx) => {
+        if (sessionStorage.getItem('is-admin') === 'true') {
+            const data = await postData<AddSchoolRequest>(req);
+            const school = createSchool(data.name)
+            apiTestData.schools.push(school)
+            return res(
+                ctx.status(200),
+                ctx.json(wrapResponse<School>(school))
             )
         }
         return res(
