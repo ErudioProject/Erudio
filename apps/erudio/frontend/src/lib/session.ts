@@ -4,10 +4,7 @@ import { UserMeResponse } from "../../../bindings";
 import rspc from "../api-setup";
 
 const retryFunction = (retryCount: number, error: RSPCError) => {
-    const unrecoverableCodes = [
-        401
-    ];
-    if (retryCount >= 3 || unrecoverableCodes.includes(error.code))
+    if (retryCount >= 3 || (error.code >= 300 && error.code < 500))
         return false;
     return true
 }
