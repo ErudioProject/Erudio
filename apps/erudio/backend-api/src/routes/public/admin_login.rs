@@ -7,6 +7,7 @@ use error_handler::InternalError;
 use prisma_client::prisma::{pii_data, super_admin, user, GrammaticalForm};
 use rand::RngCore;
 use rspc::{ErrorCode, Type};
+use serde_json::Value;
 use services::session;
 use tracing::{info, trace};
 
@@ -87,6 +88,7 @@ pub async fn admin_login(ctx: Public, req: AdminLoginRequest) -> RspcResult<Admi
 						GrammaticalForm::Indeterminate,
 						req.login.clone(),
 						req.login,
+						Value::Array(vec![]),
 						user::id::equals(user.id.clone()),
 						vec![
 							pii_data::id::set(uuid.to_string())

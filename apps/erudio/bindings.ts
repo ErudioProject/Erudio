@@ -41,11 +41,11 @@ export type LoginResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFacto
 
 export interface Pagination { skip: number, take: number }
 
-export interface PiiData { id: string, user_id: string, grammatical_form: GrammaticalForm, email: string | null, pesel: string | null, birth_date: string | null, legal_name: string, display_name: string, phone_prefix: string | null, phone_number: string | null, previous_data: Array<any> }
+export interface PiiData { id: string, user_id: string, grammatical_form: GrammaticalForm, email: string | null, pesel: string | null, birth_date: string | null, legal_name: string, display_name: string, phone_prefix: string | null, phone_number: string | null, previous_data: any }
 
 export interface RegisterRequest { idempotence_token: string, email: string, password: string, first_name: string, middle_name: string | null, last_name: string, code: string | null }
 
-export interface School { id: string, name: string, previous_data: Array<any> }
+export interface School { id: string, name: string, previous_data: any }
 
 export type SchoolRelationType = "student" | "teacher" | "admin" | "director"
 
@@ -53,7 +53,7 @@ export interface SearchSchoolsRequest { page: Pagination | null, name: string }
 
 export interface SearchUsersRequest { page: Pagination | null, school_id: string, query: string }
 
-export interface TwoFactorAuthSettings { id: string, user_id: string, previous_data: Array<any> }
+export interface TwoFactorAuthSettings { id: string, user_id: string, previous_data: any }
 
 export type TwoFactorAuthType = "GoogleAuth" | "Sms" | "EMail"
 
