@@ -37,6 +37,7 @@ use std::{
 use tokio::fs;
 use tokio::net::TcpStream;
 use tower_cookies::{CookieManagerLayer, Cookies};
+use tower_http::trace::TraceLayer;
 use tracing::{debug, info, warn};
 use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
 use tracing_log::LogTracer;
@@ -158,9 +159,14 @@ async fn start() -> eyre::Result<()> {
 				})
 				.axum(),
 		)
-		.layer(CookieManagerLayer::new());
+		.layer(CookieManagerLayer::new())
+		.layer(TraceLayer::new_for_http());
 
-	let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, config.api_port));
+	let port = config.api_port;
+	#[cfg(debug_assertions)]
+	let port = port_selector::select_from_given_port(port).expect("What");
+
+	let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, port));
 	info!("listening on {}", addr);
 	axum::Server::try_bind(&addr)?
 		.serve(app.into_make_service_with_connect_info::<SocketAddr>())

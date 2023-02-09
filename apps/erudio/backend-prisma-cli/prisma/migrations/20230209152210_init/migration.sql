@@ -10,7 +10,7 @@ CREATE TYPE "mark_type" AS ENUM ('no_mark', 'mark', 'points', 'custom');
 -- CreateTable
 CREATE TABLE "session" (
     "user_id" UUID NOT NULL,
-    "session_id" BYTEA NOT NULL,
+    "session_id" BYTES NOT NULL,
     "valid_until" TIMESTAMP(3) NOT NULL
 );
 
@@ -19,14 +19,14 @@ CREATE TABLE "pii_data" (
     "id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
     "grammatical_form" "grammatical_form" NOT NULL,
-    "email" TEXT,
-    "pesel" TEXT,
+    "email" STRING,
+    "pesel" STRING,
     "birth_date" TIMESTAMP(3),
-    "legal_name" TEXT,
-    "display_name" TEXT,
-    "phone_prefix" TEXT,
-    "phone_number" TEXT,
-    "previous_data" JSONB[],
+    "legal_name" STRING NOT NULL,
+    "display_name" STRING NOT NULL,
+    "phone_prefix" STRING,
+    "phone_number" STRING,
+    "previous_data" JSONB NOT NULL,
 
     CONSTRAINT "pii_data_pkey" PRIMARY KEY ("id")
 );
@@ -35,15 +35,24 @@ CREATE TABLE "pii_data" (
 CREATE TABLE "two_factor_auth_settings" (
     "id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
-    "previous_data" JSONB[],
+    "previous_data" JSONB NOT NULL,
 
     CONSTRAINT "two_factor_auth_settings_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
+CREATE TABLE "super_admin" (
+    "id" UUID NOT NULL,
+    "password_hash" STRING NOT NULL,
+    "login" STRING NOT NULL,
+
+    CONSTRAINT "super_admin_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "user" (
     "id" UUID NOT NULL,
-    "password_hash" BYTEA NOT NULL,
+    "password_hash" STRING NOT NULL,
     "two_factor_auth_settings_id" UUID,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
@@ -52,8 +61,8 @@ CREATE TABLE "user" (
 -- CreateTable
 CREATE TABLE "school" (
     "id" UUID NOT NULL,
-    "name" TEXT NOT NULL,
-    "previous_data" JSONB[],
+    "name" STRING NOT NULL,
+    "previous_data" JSONB NOT NULL,
 
     CONSTRAINT "school_pkey" PRIMARY KEY ("id")
 );
@@ -62,7 +71,7 @@ CREATE TABLE "school" (
 CREATE TABLE "school_settings" (
     "id" UUID NOT NULL,
     "school_id" UUID NOT NULL,
-    "previous_data" JSONB[],
+    "previous_data" JSONB NOT NULL,
 
     CONSTRAINT "school_settings_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -81,11 +90,11 @@ CREATE TABLE "subject_admin" (
 CREATE TABLE "school_class" (
     "id" UUID NOT NULL,
     "school_id" UUID NOT NULL,
-    "name" TEXT NOT NULL,
+    "name" STRING NOT NULL,
     "class_admin_id" UUID NOT NULL,
     "parent_class_id" UUID NOT NULL,
-    "any_external_students" BOOLEAN NOT NULL,
-    "previous_data" JSONB[],
+    "any_external_students" BOOL NOT NULL,
+    "previous_data" JSONB NOT NULL,
 
     CONSTRAINT "school_class_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -95,12 +104,12 @@ CREATE TABLE "lesson" (
     "id" UUID NOT NULL,
     "school_id" UUID NOT NULL,
     "subject_id" UUID NOT NULL,
-    "topic" TEXT NOT NULL,
+    "topic" STRING NOT NULL,
     "attendance" JSONB NOT NULL,
     "starts" TIMESTAMP(3) NOT NULL,
     "ends" TIMESTAMP(3) NOT NULL,
-    "canceled" BOOLEAN NOT NULL,
-    "previous_data" JSONB[],
+    "canceled" BOOL NOT NULL,
+    "previous_data" JSONB NOT NULL,
 
     CONSTRAINT "lesson_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -109,8 +118,8 @@ CREATE TABLE "lesson" (
 CREATE TABLE "subject" (
     "id" UUID NOT NULL,
     "school_id" UUID NOT NULL,
-    "name" TEXT NOT NULL,
-    "previous_data" JSONB[],
+    "name" STRING NOT NULL,
+    "previous_data" JSONB NOT NULL,
 
     CONSTRAINT "subject_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -123,12 +132,12 @@ CREATE TABLE "mark_event" (
     "class_id" UUID NOT NULL,
     "subject_id" UUID NOT NULL,
     "lesson_event_category_id" UUID NOT NULL,
-    "associated_marks" BOOLEAN NOT NULL,
-    "name" TEXT NOT NULL,
+    "associated_marks" BOOL NOT NULL,
+    "name" STRING NOT NULL,
     "mark_type" "mark_type" NOT NULL,
-    "mark_type_value" INTEGER NOT NULL,
-    "canceled" BOOLEAN NOT NULL,
-    "previous_data" JSONB[],
+    "mark_type_value" INT4 NOT NULL,
+    "canceled" BOOL NOT NULL,
+    "previous_data" JSONB NOT NULL,
 
     CONSTRAINT "mark_event_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -138,9 +147,9 @@ CREATE TABLE "mark_event_category" (
     "id" UUID NOT NULL,
     "school_id" UUID NOT NULL,
     "allowed_mark_types_and_their_default_values" JSONB NOT NULL,
-    "name" TEXT NOT NULL,
-    "force_weigt_base" BOOLEAN NOT NULL,
-    "previous_data" JSONB[],
+    "name" STRING NOT NULL,
+    "force_weigt_base" BOOL NOT NULL,
+    "previous_data" JSONB NOT NULL,
 
     CONSTRAINT "mark_event_category_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -153,9 +162,9 @@ CREATE TABLE "mark" (
     "lesson_event_id" UUID NOT NULL,
     "subject_id" UUID NOT NULL,
     "teacher_id" UUID NOT NULL,
-    "description" TEXT NOT NULL,
-    "value" INTEGER NOT NULL,
-    "previous_data" JSONB[],
+    "description" STRING NOT NULL,
+    "value" INT4 NOT NULL,
+    "previous_data" JSONB NOT NULL,
 
     CONSTRAINT "mark_pkey" PRIMARY KEY ("id","school_id")
 );
@@ -240,10 +249,13 @@ CREATE UNIQUE INDEX "pii_data_user_id_key" ON "pii_data"("user_id");
 CREATE UNIQUE INDEX "pii_data_email_key" ON "pii_data"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "pii_data_phone_number_key" ON "pii_data"("phone_number");
+CREATE UNIQUE INDEX "pii_data_phone_prefix_phone_number_key" ON "pii_data"("phone_prefix", "phone_number");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "two_factor_auth_settings_user_id_key" ON "two_factor_auth_settings"("user_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "super_admin_login_key" ON "super_admin"("login");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "school_settings_school_id_key" ON "school_settings"("school_id");

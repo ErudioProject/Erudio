@@ -12,13 +12,41 @@ services:
     depends_on:
       - postgres
       - redis-stack-prod
-  postgres:
-    image: postgres:15.1
-    restart: unless-stopped
+
+  cocroach1:
+    container_name: cockroach1
+    hostname: cockroach1
+    image: cockroachdb/cockroach:v22.2.3
+    networks:
+      - roachnet
     ports:
-      - '5432:5432'
-    env_file:
-      - ../../.env.postgress
+      - "26257:26257"
+      - "8080:8080"
+    command: start --insecure --advertise-addr=cockroach1:26257
+    volumes:
+      - "roach1:/cockroach/cockroach-data:rw"
+  cocroach2:
+    container_name: cockroach2
+    hostname: cockroach2
+    image: cockroachdb/cockroach:v22.2.3
+    networks:
+      - roachnet
+    ports:
+      - "8081:8080"
+    command: start --insecure --join=cockroach1:26257
+    volumes:
+      - "roach2:/cockroach/cockroach-data:rw"
+  cocroach3:
+    container_name: cockroach3
+    hostname: cockroach3
+    image: cockroachdb/cockroach:v22.2.3
+    networks:
+      - roachnet
+    ports:
+      - "8082:8080"
+    command: start --insecure --join=cockroach1:26257
+    volumes:
+      - "roach3:/cockroach/cockroach-data:rw"
 
   redis-stack:
     profiles: ['']
@@ -45,7 +73,8 @@ services:
     restart: unless-stopped
     network_mode: 'host'
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/:/etc/nginx/
+      - ./frontend/dist/public:/www/data
 
   fluentbit:
     image: fluent/fluent-bit
@@ -58,3 +87,9 @@ services:
 
 volumes:
   redis_data:
+  roach1:
+  roach2:
+  roach3:
+
+networks:
+  roachnet:

@@ -9,6 +9,7 @@ use error_handler::{FieldErrorType, InternalError};
 use prisma_client::prisma::{pii_data, user, GrammaticalForm};
 use rand::RngCore;
 use rspc::Type;
+use serde_json::Value;
 use services::session;
 use tracing::debug;
 
@@ -85,6 +86,7 @@ pub async fn register(ctx: Public, req: RegisterRequest) -> RspcResult<()> {
 					GrammaticalForm::Indeterminate,
 					legal_name,
 					display_name,
+					Value::Array(vec![]),
 					user::id::equals(user.id.clone()),
 					vec![pii_data::email::Set(Some(req.email)).into()],
 				)
