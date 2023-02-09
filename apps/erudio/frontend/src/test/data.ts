@@ -2,10 +2,10 @@ import { PiiData, School, SchoolRelationType, UserFull } from "../../../bindings
 import { faker } from '@faker-js/faker/locale/pl';
 
 
-const createSchool = (): School => {
+export const createSchool = (name?: string): School => {
     return {
         id: faker.datatype.uuid(),
-        name: faker.company.name(),
+        name: name ?? faker.company.name(),
         previous_data: []
     }
 }
@@ -42,14 +42,13 @@ const createPiiData = (user_id: string): PiiData => {
     }
 }
 
-const createUser = (): UserFull => {
+export const createUser = (): UserFull => {
     const user_id = faker.datatype.uuid()
     let schoolRelations: Array<{ user_id: string, school_id: string, school_relation_type: SchoolRelationType, school: School }> = [];
     Array.from({ length: 3 }).forEach(() => schoolRelations.push(createSchoolRelation(user_id)))
     return {
         id: user_id,
-        password_hash: faker.datatype.string(64),
-        two_factor_auth_settings_id: null,
+        two_factor_auth_settings: null,
         user_school_relation: schoolRelations,
         pii_data: createPiiData(user_id)
     }

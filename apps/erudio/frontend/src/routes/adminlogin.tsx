@@ -24,8 +24,8 @@ export default function AdminLogin() {
 
 
     const AdminLoginRequestSchema = z.object({
-        login: z.string().min(1, LL().index.errors.required()),
-        password: z.string().min(1, LL().index.errors.required())
+        login: z.string().min(1, LL().common.errors.required()),
+        password: z.string().min(1, LL().common.errors.required())
     })
     const { form, errors, setErrors, isSubmitting } = createForm<z.infer<typeof AdminLoginRequestSchema>>({
         extend: [validator({ schema: AdminLoginRequestSchema })],
@@ -41,7 +41,7 @@ export default function AdminLogin() {
                     <Navigate href="/admin" />
                 </Show>
             </Show>
-            <Show when={admin.isError}>
+            <Show when={session.isError}>
                 <form use:form>
                     <div class="mx-auto flex flex-col justify-center items-center h-screen gap-4">
                         <picture>
