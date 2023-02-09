@@ -4,11 +4,11 @@ use crate::routes::public::login::TwoFactorAuthType;
 use crate::{routes::RspcResult, Public};
 use cookie::time::{Duration, OffsetDateTime};
 use error_handler::InternalError;
-use log::{info, trace};
 use prisma_client::prisma::{pii_data, super_admin, user, GrammaticalForm};
 use rand::RngCore;
 use rspc::{ErrorCode, Type};
 use services::session;
+use tracing::{info, trace};
 
 #[serde_zod::codegen]
 #[derive(Type, serde::Deserialize, Debug)]

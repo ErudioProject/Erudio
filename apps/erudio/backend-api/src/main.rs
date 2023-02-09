@@ -25,7 +25,6 @@ use color_eyre::eyre;
 use color_eyre::eyre::eyre;
 use config::Config;
 use error_handler::InternalResult;
-use log::{debug, error, info, warn};
 use prisma_client::{prisma, prisma::PrismaClient};
 use prisma_client_rust::{chrono::Utc, raw};
 use redis::AsyncCommands;
@@ -36,20 +35,47 @@ use std::{
 	sync::Arc,
 };
 use tokio::fs;
+use tokio::net::TcpStream;
 use tower_cookies::{CookieManagerLayer, Cookies};
+use tracing::{debug, info, warn};
+use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
+use tracing_log::LogTracer;
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::{fmt, EnvFilter, Registry};
 
 // TODO clean up a bit
 pub fn main() {
 	dotenvy::dotenv().ok();
-	env_logger::init();
+	LogTracer::init().expect("Unable to setup log tracer!");
 	let result = start();
 	if let Some(err) = result.err() {
-		error!("{:?}", err);
+		println!("ERROR: {err:?}");
 	}
 }
 
+#[allow(clippy::too_many_lines)] // TODO maybe remove
 #[tokio::main]
 async fn start() -> eyre::Result<()> {
+	let app_name = concat!(
+		env!("CARGO_PKG_NAME"),
+		"-",
+		env!("CARGO_PKG_VERSION"),
+		"-",
+		env!("GIT_HASH")
+	)
+	.to_string();
+
+	// manual approach maybe find something better or write something better
+	let stream = TcpStream::connect("127.0.0.1:5170").await?.into_std()?;
+	let (non_blocking_writer, _guard) = tracing_appender::non_blocking(stream);
+	let bunyan_formatting_layer = BunyanFormattingLayer::new(app_name, non_blocking_writer);
+	let subscriber = Registry::default()
+		.with(EnvFilter::from_default_env())
+		.with(JsonStorageLayer)
+		.with(bunyan_formatting_layer)
+		.with(fmt::layer().pretty());
+	tracing::subscriber::set_global_default(subscriber).expect("Tracing error");
+
 	info!(
 		"Build Version: {}	Build Date: {} 	BuildHash: {}",
 		env!("CARGO_PKG_VERSION"),

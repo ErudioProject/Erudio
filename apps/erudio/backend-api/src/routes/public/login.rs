@@ -5,11 +5,11 @@ use crate::{
 };
 use cookie::time::{Duration, OffsetDateTime};
 use error_handler::InternalError;
-use log::info;
 use prisma_client::prisma::{pii_data, user};
 use rand::RngCore;
 use rspc::{ErrorCode, Type};
 use services::session;
+use tracing::info;
 
 #[serde_zod::codegen]
 #[derive(Type, serde::Deserialize, Debug)]

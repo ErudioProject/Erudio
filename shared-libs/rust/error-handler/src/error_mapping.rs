@@ -1,10 +1,10 @@
 use color_eyre::Report;
 use hex::FromHexError;
-use log::{debug, error};
 use rand::Rng;
 use redis::RedisError;
 use rspc::ErrorCode;
 use std::sync::Arc;
+use tracing::{debug, error};
 
 #[derive(Debug)]
 pub enum InternalError {
