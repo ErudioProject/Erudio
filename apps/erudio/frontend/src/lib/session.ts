@@ -3,15 +3,24 @@ import { CreateQueryResult } from "@tanstack/solid-query";
 import { UserMeResponse } from "../../../bindings";
 import rspc from "../api-setup";
 
+const retryFunction = (retryCount: number, error: RSPCError) => {
+    const unrecoverableCodes = [
+        401
+    ];
+    if (retryCount >= 3 || unrecoverableCodes.includes(error.code))
+        return false;
+    return true
+}
+
 const createSession = (): CreateQueryResult<UserMeResponse, RSPCError> => rspc.createQuery(() => ['user.me'], {
-    retry: (retryCount, error) => error.code !== 401 && retryCount < 3 ? true : false,
+    retry: retryFunction,
     refetchInterval: 1000 * 60 * 5,
     retryOnMount: false
 })
 export const createAdminSession = () => {
     const userData = createSession();
     const adminData = rspc.createQuery(() => ['super_admin.version'], {
-        retry: (retryCount, error) => error.code !== 401 && retryCount < 3 ? true : false,
+        retry: retryFunction,
         refetchInterval: 1000 * 60 * 5,
         retryOnMount: false
     });
