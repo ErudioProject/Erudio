@@ -7,7 +7,7 @@ export default function AdminLayout() {
     const [admin, session] = createAdminSession();
     return (
         <>
-            <Show when={admin.isError}>
+            <Show when={admin.isError || session.isError}>
                 <Navigate href="/adminlogin" />
             </Show>
             <Show when={session.data}>
