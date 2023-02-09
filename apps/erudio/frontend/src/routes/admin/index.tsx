@@ -13,10 +13,10 @@ export default function SchoolLayout() {
     const { LL } = useI18nContext()
     const [page, setPage] = createSignal(0);
     const [query, setQuery] = createSignal("");
-    const perPage = 20n
+    const perPage = 20
 
     const schools = rspc.createQuery(() => ['super_admin.searchSchools', {
-        page: { skip: BigInt(page()) * perPage, take: perPage }, name: query()
+        page: { skip: page() * perPage, take: perPage }, name: query()
     }], {
         keepPreviousData: true
     })

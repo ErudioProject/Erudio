@@ -11,7 +11,7 @@ import { createAdminSession } from "../lib/session";
 export default function AdminLogin() {
     const { LL } = useI18nContext();
     const [serverError, setServerError] = createSignal<string | null>(null);
-    const [admin] = createAdminSession();
+    const [admin, session] = createAdminSession();
     const utils = rspc.useContext();
 
     const login = rspc.createMutation("public.login.admin", {
@@ -37,7 +37,9 @@ export default function AdminLogin() {
     return (
         <>
             <Show when={admin.data}>
-                <Navigate href="/admin" />
+                <Show when={session.isSuccess}>
+                    <Navigate href="/admin" />
+                </Show>
             </Show>
             <Show when={admin.isError}>
                 <form use:form>
