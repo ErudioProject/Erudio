@@ -35,12 +35,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: frontend-changes
     if: needs.frontend-changes.outputs.found == 'true'
+    strategy:
+      matrix:
+        environment: [dev]
     steps:
+      - name: Create .env
+        shell: bash
+        run: |
+          cp -a ./configs/${{ matrix.environment }}/. .
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-        
+
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
