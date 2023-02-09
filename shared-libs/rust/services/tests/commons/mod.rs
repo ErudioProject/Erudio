@@ -1,7 +1,6 @@
 use color_eyre::eyre::Context;
 use config::Config;
 use error_handler::{InternalError, InternalResult};
-use log::debug;
 use prisma_client::{
 	prisma::{pii_data, user, GrammaticalForm, PrismaClient},
 	prisma_mocked_client, User,
@@ -9,6 +8,7 @@ use prisma_client::{
 use rand::{thread_rng, RngCore};
 use redis::aio::Connection;
 use tokio::fs;
+use tracing::debug;
 
 pub(crate) async fn init_tests_with_user() -> InternalResult<(PrismaClient, Connection, User, Vec<u8>)> {
 	dotenvy::dotenv().ok();

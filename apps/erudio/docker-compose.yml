@@ -47,6 +47,14 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
 
+  fluentbit:
+    image: fluent/fluent-bit
+    command: /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit.conf
+    restart: unless-stopped
+    network_mode: 'host'
+    volumes:
+      - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+
 
 volumes:
   redis_data:

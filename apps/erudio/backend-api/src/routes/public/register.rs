@@ -6,11 +6,11 @@ use crate::{
 };
 use cookie::time::{Duration, OffsetDateTime};
 use error_handler::{FieldErrorType, InternalError};
-use log::debug;
 use prisma_client::prisma::{pii_data, user, GrammaticalForm};
 use rand::RngCore;
 use rspc::Type;
 use services::session;
+use tracing::debug;
 
 #[serde_zod::codegen]
 #[derive(Type, serde::Deserialize, Debug)]
