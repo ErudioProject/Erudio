@@ -15,7 +15,7 @@ Config (
     db_url: "postgresql://root@localhost:26257/defaultdb?sslmode=disable",
     db_url_test: "postgresql://root@localhost:26257/defaultdb?sslmode=disable",
     redis_url: "redis://127.0.0.1/",
-    region_id: "TEST_REGION",
+    region_id: "REGION_TEST",
     api_port: 3001,
     buckets: {
         MessageAttachments: (
