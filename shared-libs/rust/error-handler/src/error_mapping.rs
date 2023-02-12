@@ -28,6 +28,7 @@ pub type Errors = Vec<(String, FieldErrorType)>;
 #[serde_zod::codegen]
 #[derive(serde::Serialize, Debug)]
 pub enum FieldErrorType {
+	InvalidValue,
 	NotFound,
 	Conflict,
 	TooLong(usize),

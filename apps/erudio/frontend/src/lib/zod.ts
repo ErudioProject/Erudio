@@ -8,6 +8,7 @@ export const Pagination =
 
 export const ErrorFields = z.tuple([z.string(), 
   z.union([
+    z.literal("InvalidValue"),
     z.literal("NotFound"),
     z.literal("Conflict"),
     z.object({

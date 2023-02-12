@@ -21,10 +21,21 @@ macro_rules! idempotent {
 			let idempotence_token = req.idempotence_token.clone();
 
 			if !idempotence_token.starts_with(&ctx.config.region_id) {
-				return Err(rspc::Error::new(
-					rspc::ErrorCode::InternalServerError,
-					"NO REGION HANDLING YET".into(),
-				));
+				if !idempotence_token.starts_with("REGION_") {
+					return Err(error_handler::InternalError::IntoRspc(
+						rspc::ErrorCode::BadRequest,
+						Some(vec![(
+							"idempotence_token".to_string(),
+							error_handler::FieldErrorType::InvalidValue,
+						)]),
+					)
+					.into());
+				}
+				return Err(error_handler::InternalError::ServerError(
+					"No region handling YET".to_string(),
+					color_eyre::eyre::eyre!(""),
+				)
+				.into());
 			}
 
 			let load: Option<String> = redis

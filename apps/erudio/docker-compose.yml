@@ -10,13 +10,14 @@ services:
     env_file:
       - ../../.env
     depends_on:
-      - postgres
+      - cocroach1
       - redis-stack-prod
 
   cocroach1:
     container_name: cockroach1
     hostname: cockroach1
     image: cockroachdb/cockroach:v22.2.3
+    restart: unless-stopped
     networks:
       - roachnet
     ports:
@@ -29,6 +30,7 @@ services:
     container_name: cockroach2
     hostname: cockroach2
     image: cockroachdb/cockroach:v22.2.3
+    restart: unless-stopped
     networks:
       - roachnet
     ports:
@@ -40,6 +42,7 @@ services:
     container_name: cockroach3
     hostname: cockroach3
     image: cockroachdb/cockroach:v22.2.3
+    restart: unless-stopped
     networks:
       - roachnet
     ports:
@@ -77,12 +80,20 @@ services:
       - ./frontend/dist/public:/www/data
 
   fluentbit:
+    profiles: ['disabled']
     image: fluent/fluent-bit
     command: /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit.conf
     restart: unless-stopped
     network_mode: 'host'
     volumes:
       - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+
+  jeager:
+    image: jaegertracing/all-in-one:1.41
+    restart: unless-stopped
+    network_mode: 'host'
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
 
 
 volumes:
