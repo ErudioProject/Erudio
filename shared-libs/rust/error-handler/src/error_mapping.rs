@@ -24,6 +24,14 @@ impl InternalError {
 }
 
 pub type Errors = Vec<(String, FieldErrorType)>;
+fn errors_to_string(errors: &Errors) -> String {
+	format!("^{}", serde_json::to_string(errors).expect("how?"))
+}
+fn get_trace_id() -> String {
+	let buf = &mut [0u8; 128];
+	rand::thread_rng().fill(buf);
+	hex::encode(buf)
+}
 
 #[serde_zod::codegen]
 #[derive(serde::Serialize, Debug)]
@@ -69,6 +77,9 @@ impl From<prisma_client::prisma_client_rust::QueryError> for InternalError {
 	}
 }
 
+// tracing macros drive complexity ut tp 37/25 without them it should be around 7 or 2 depending on the way you calculate it (each macro adds 7).
+// There is complex issue about this https://github.com/rust-lang/rust-clippy/issues/3793
+#[allow(clippy::cognitive_complexity)]
 impl From<InternalError> for rspc::Error {
 	fn from(value: InternalError) -> Self {
 		match value {
@@ -84,27 +95,19 @@ impl From<InternalError> for rspc::Error {
 				)
 			}
 			InternalError::ServerError(message, report) => {
-				let buf = &mut [0u8; 128];
-				rand::thread_rng().fill(buf);
-				let trace_id = hex::encode(buf);
+				let trace_id = get_trace_id();
 				error!("trace: #{trace_id}# message: {message} err: {report:?}");
 				Self::new(ErrorCode::InternalServerError, format!("#trace#{trace_id}#"))
 			}
 			InternalError::IntoRspc(code, message) => {
 				debug!("Rspc Error: {code:?} Message: {message:?}");
-				match message {
-					None => Self::new(code, String::new()),
-					Some(map) => Self::new(code, format!("^{}", serde_json::to_string(&map).expect("how?"))),
-				}
+				let message = message.as_ref().map_or_else(String::new, errors_to_string);
+				Self::new(code, message)
 			}
 			InternalError::IntoRspcWithCause(code, message, cause) => {
 				debug!("Rspc Error: {code:?} Message: {message:?}  Cause {cause:?}");
-				match message {
-					None => Self::with_cause(code, String::new(), cause),
-					Some(map) => {
-						Self::with_cause(code, format!("^{}", serde_json::to_string(&map).expect("how?")), cause)
-					}
-				}
+				let message = message.as_ref().map_or_else(String::new, errors_to_string);
+				Self::with_cause(code, message, cause)
 			}
 		}
 	}
