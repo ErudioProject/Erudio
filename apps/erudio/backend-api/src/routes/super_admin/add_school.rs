@@ -1,4 +1,5 @@
 use crate::helpers::ctx::SuperAdmin;
+use crate::helpers::IdempotenceToken;
 use crate::routes::RspcResult;
 use prisma_client::prisma;
 use serde_json::Value;
@@ -6,7 +7,7 @@ use serde_json::Value;
 #[serde_zod::codegen]
 #[derive(rspc::Type, serde::Deserialize, Debug)]
 pub struct AddSchoolRequest {
-	pub idempotence_token: String,
+	pub idempotence_token: IdempotenceToken,
 	pub name: String,
 }
 

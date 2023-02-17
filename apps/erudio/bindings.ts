@@ -21,9 +21,9 @@ export type Procedures = {
     subscriptions: never
 };
 
-export interface AddSchoolRequest { idempotence_token: string, name: string }
+export interface AddSchoolRequest { idempotence_token: IdempotenceToken, name: string }
 
-export interface AddUserToSchoolRequest { idempotence_token: string, school_id: string, user_id: string, relation_type: SchoolRelationType }
+export interface AddUserToSchoolRequest { idempotence_token: IdempotenceToken, school_id: string, user_id: string, relation_type: SchoolRelationType }
 
 export interface AdminLoginRequest { login: string, password: string }
 
@@ -35,6 +35,8 @@ export interface GetUserRequest { id: string, school_id: string | null }
 
 export type GrammaticalForm = "masculinine" | "feminine" | "indeterminate"
 
+export interface IdempotenceToken { region: string, token: string }
+
 export interface LoginRequest { email: string, password: string }
 
 export type LoginResponse = { t: "Success" } | { t: "TwoFactorAuth", c: TwoFactorAuthType }
@@ -43,7 +45,7 @@ export interface Pagination { skip: number, take: number }
 
 export interface PiiData { id: string, user_id: string, grammatical_form: GrammaticalForm, email: string | null, pesel: string | null, birth_date: string | null, legal_name: string, display_name: string, phone_prefix: string | null, phone_number: string | null, previous_data: any }
 
-export interface RegisterRequest { idempotence_token: string, email: string, password: string, first_name: string, middle_name: string | null, last_name: string, code: string | null }
+export interface RegisterRequest { idempotence_token: IdempotenceToken, email: string, password: string, first_name: string, middle_name: string | null, last_name: string, code: string | null }
 
 export interface School { id: string, name: string, previous_data: any }
 
@@ -57,9 +59,9 @@ export interface TwoFactorAuthSettings { id: string, user_id: string, previous_d
 
 export type TwoFactorAuthType = "GoogleAuth" | "Sms" | "EMail"
 
-export interface UpdateSchoolRequest { idempotence_token: string, id: string, name: string | null }
+export interface UpdateSchoolRequest { idempotence_token: IdempotenceToken, id: string, name: string | null }
 
-export interface UploadRequest { idempotence_token: string, idk: string }
+export interface UploadRequest { idempotence_token: IdempotenceToken, idk: string }
 
 export interface UploadResponse { presigned_url: string }
 

@@ -1,5 +1,6 @@
 use crate::cookies::get_cookie;
 use crate::helpers::argon::get_argon_config;
+use crate::helpers::IdempotenceToken;
 use crate::{
 	routes::{RspcResult, SESSION_COOKIE_NAME},
 	Public,
@@ -16,7 +17,7 @@ use tracing::debug;
 #[serde_zod::codegen]
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct RegisterRequest {
-	pub idempotence_token: String,
+	pub idempotence_token: IdempotenceToken,
 	pub email: String,
 	pub password: String,
 	pub first_name: String,
