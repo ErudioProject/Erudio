@@ -78,7 +78,6 @@ async fn start() -> eyre::Result<()> {
 		.with(EnvFilter::from_default_env())
 		.with(JsonStorageLayer)
 		.with(bunyan_formatting_layer)
-		//.with(tracing_leyer)
 		.with(fmt::layer().pretty());
 
 	tracing::subscriber::set_global_default(subscriber).context("Tracing error")?;
@@ -89,8 +88,8 @@ async fn start() -> eyre::Result<()> {
 		env!("BUILD_DATE"),
 		env!("GIT_HASH")
 	);
-	#[cfg(debug_assertions)]
-	zod_bindings::generate_zod().await?;
+	//#[cfg(debug_assertions)]
+	//zod_bindings::generate_zod().await?;
 
 	// TODO pull over http from server
 	let contents = fs::read_to_string("./Config.ron")
@@ -121,8 +120,6 @@ async fn start() -> eyre::Result<()> {
 
 	#[cfg(debug_assertions)]
 	db._db_push().await?;
-	#[cfg(not(debug_assertions))]
-	db._migrate_deploy().await?;
 
 	seed::seed_super_admin(&db, config.clone())
 		.await
