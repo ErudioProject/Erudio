@@ -26,13 +26,13 @@ export const LoginRequest =
 
 export const UploadRequest =
   z.object({
-    idempotence_token: z.string(),
+    idempotence_token: IdempotenceToken,
     idk: z.string(),
   })
 
 export const RegisterRequest =
   z.object({
-    idempotence_token: z.string(),
+    idempotence_token: IdempotenceToken,
     email: z.string(),
     password: z.string(),
     first_name: z.string(),
@@ -43,13 +43,13 @@ export const RegisterRequest =
 
 export const AddSchoolRequest =
   z.object({
-    idempotence_token: z.string(),
+    idempotence_token: IdempotenceToken,
     name: z.string(),
   })
 
 export const UpdateSchoolRequest =
   z.object({
-    idempotence_token: z.string(),
+    idempotence_token: IdempotenceToken,
     id: z.string(),
     name: z.string().optional(),
   })
@@ -67,7 +67,7 @@ export const GetSchoolRequest =
 
 export const AddUserToSchoolRequest =
   z.object({
-    idempotence_token: z.string(),
+    idempotence_token: IdempotenceToken,
     school_id: z.string(),
     user_id: z.string(),
     relation_type: SchoolRelationType,
