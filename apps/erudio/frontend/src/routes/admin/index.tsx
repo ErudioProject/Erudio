@@ -36,7 +36,10 @@ export default function SchoolLayout() {
     const { form, errors, setErrors, isSubmitting } = createForm<z.infer<typeof addSchoolSchema>>({
         extend: [validator({ schema: addSchoolSchema })],
         onSubmit: (values) => addSchool.mutate({
-            idempotence_token: crypto.randomUUID(),
+            idempotence_token: {
+                token: crypto.randomUUID(),
+                region: "REGION_TEST"
+            },
             name: values.name
         })
     })

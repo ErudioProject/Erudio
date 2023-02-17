@@ -88,7 +88,7 @@ pub mod tests {
 			display_name: String::new(),
 			phone_prefix: None,
 			phone_number: None,
-			previous_data: vec![],
+			previous_data: serde_json::Value::Array(vec![]),
 			user: None,
 		}))),
 		two_factor_auth_settings: None,
