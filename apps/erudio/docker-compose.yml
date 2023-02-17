@@ -12,13 +12,12 @@ services:
     volumes:
       - ../../.env:/app/.env
       - ../../Config.ron:/app/Config.ron
-    #depends_on:
-    #  - cocroach1
-    #  - cocroach2
-    #  - cocroach3
-    #  - redis-stack
+    depends_on:
+      - cocroach-single
+      - redis-stack
 
-  cocroach1:
+
+  cocroach-single:
     container_name: cockroach1
     hostname: cockroach1
     image: cockroachdb/cockroach:v22.2.3
@@ -28,33 +27,17 @@ services:
     ports:
       - "26257:26257"
       - "8080:8080"
-    command: start --insecure --advertise-addr=cockroach1:26257 --join=cocroach1
+    command: start-single-node --insecure
     volumes:
-      - "roach1:/cockroach/cockroach-data:rw"
-  cocroach2:
-    container_name: cockroach2
-    hostname: cockroach2
+      - "roach:/cockroach/cockroach-data:rw"
+  cocroach-setup:
     image: cockroachdb/cockroach:v22.2.3
-    restart: unless-stopped
-    networks:
-      - roachnet
-    ports:
-      - "8081:8080"
-    command: start --insecure --join=cockroach1:26257
-    volumes:
-      - "roach2:/cockroach/cockroach-data:rw"
-  cocroach3:
-    container_name: cockroach3
-    hostname: cockroach3
-    image: cockroachdb/cockroach:v22.2.3
-    restart: unless-stopped
-    networks:
-      - roachnet
-    ports:
-      - "8082:8080"
-    command: start --insecure --join=cockroach1:26257
-    volumes:
-      - "roach3:/cockroach/cockroach-data:rw"
+    depends_on:
+      - cocroach-single
+    restart: "no"
+    network_mode: 'host'
+    entrypoint: [ "bash", "-c", "sleep 1 && cockroach sql --url 'postgresql://root@localhost:26257/defaultdb?sslmode=disable' --execute='CREATE DATABASE IF NOT EXISTS testdb'" ]
+
 
   redis-stack:
     image: redis/redis-stack:latest
@@ -102,9 +85,7 @@ services:
 
 volumes:
   redis_data:
-  roach1:
-  roach2:
-  roach3:
+  roach:
 
 networks:
   roachnet:
