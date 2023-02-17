@@ -7,5 +7,5 @@ license = "MIT OR Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-prisma-client-rust-cli.workspace = true
-serde.workspace = true
+prisma-client-rust-cli = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations", "mocking"], rev = "13fdf89503de65156011b9a135d9d12fb589e8f8"}
+serde = "^1.0"

@@ -5,6 +5,8 @@ members = [
     "shared-libs/rust/prisma-client",
     "shared-libs/rust/services",
     "apps/erudio/backend-api",
+]
+exclude = [
     "apps/erudio/backend-prisma-cli"
 ]
 [workspace.dependencies]
@@ -14,7 +16,6 @@ error_handler = { path = "shared-libs/rust/error-handler" }
 config = { path = "shared-libs/rust/config" }
 
 prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations", "mocking"], rev = "13fdf89503de65156011b9a135d9d12fb589e8f8"}
-prisma-client-rust-cli = { git = "https://github.com/Brendonovich/prisma-client-rust", default-features = false, features=["postgresql", "rspc", "migrations", "mocking"], rev = "13fdf89503de65156011b9a135d9d12fb589e8f8"}
 redis = {version = "^0.22", features = ["aio", "ahash", "tokio-comp", "json"]}
 tokio = { version = "^1.23", features = ["macros", "parking_lot", "signal"] }
 openssl = { version = "^0.10", features = ["vendored"] } # daem openssl
@@ -35,6 +36,7 @@ chrono = "^0.4"
 
 [profile.release]
 lto = true
+debug = true
 
 [profile.dev]
 opt-level = 1

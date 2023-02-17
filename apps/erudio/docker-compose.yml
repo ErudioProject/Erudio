@@ -10,13 +10,13 @@ services:
     env_file:
       - ../../.env
     volumes:
-      - ../../.env:/usr/local/bin/.env
-      - ../../Config.ron:/usr/local/bin/Config.ron
-    depends_on:
-      - cocroach1
-      - cocroach2
-      - cocroach3
-      - redis-stack
+      - ../../.env:/app/.env
+      - ../../Config.ron:/app/Config.ron
+    #depends_on:
+    #  - cocroach1
+    #  - cocroach2
+    #  - cocroach3
+    #  - redis-stack
 
   cocroach1:
     container_name: cockroach1

@@ -5,3 +5,9 @@ node_modules/
 .vscode/
 target/
 /shared-libs/rust/prisma-client/src/prisma.rs
+**/Dockerfile
+**/*.yml
+**/*.conf
+configs
+Config.ron
+.dockerignore
