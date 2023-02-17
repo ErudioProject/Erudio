@@ -17,7 +17,7 @@ COPY ./apps/erudio/backend-prisma-cli/ ./apps/erudio/backend-prisma-cli/
 #RUN cp -r .cargo-tmp/.* ~/.cargo | true
 WORKDIR apps/erudio/backend-prisma-cli/
 RUN cargo run --release --bin prisma_cli -- generate
-RUN cargo run --release --bin prisma_cli -- migrate depoly
+RUN cargo run --release --bin prisma_cli -- migrate deploy
 RUN mkdir -p ../../../../shared-libs/rust/prisma-client/src/
 WORKDIR ../../../
 COPY . .
