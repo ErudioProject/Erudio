@@ -1,6 +1,7 @@
 use color_eyre::eyre::Context;
 use config::Config;
 use error_handler::{InternalError, InternalResult};
+use prisma_client::prisma_client_rust::serde_json::Value;
 use prisma_client::{
 	prisma::{pii_data, user, GrammaticalForm, PrismaClient},
 	prisma_mocked_client, User,
@@ -66,6 +67,7 @@ pub(crate) async fn init_tests_with_user() -> InternalResult<(PrismaClient, Conn
 			GrammaticalForm::Indeterminate,
 			"legal_name".into(),
 			"diplay_name".into(),
+			Value::Array(vec![]),
 			user::id::equals(user.id.clone()),
 			vec![pii_data::email::Set(Some(hex::encode(random_data_for_email))).into()],
 		)

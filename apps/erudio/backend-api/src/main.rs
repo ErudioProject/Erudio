@@ -57,6 +57,7 @@ pub fn main() {
 #[allow(clippy::too_many_lines)] // TODO maybe remove
 #[tokio::main]
 async fn start() -> eyre::Result<()> {
+	std::env::set_var("RUST_BACKTRACE", "1");
 	let app_name = concat!(
 		env!("CARGO_PKG_NAME"),
 		"-",

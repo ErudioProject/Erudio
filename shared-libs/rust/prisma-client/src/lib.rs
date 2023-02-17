@@ -29,14 +29,6 @@ mod tests {
 	use super::*;
 	use prisma_client_rust::tokio;
 	use serial_test::serial;
-	use std::env;
-
-	#[tokio::test]
-	async fn test_prisma_mock() {
-		dotenvy::dotenv().expect(".env file loading error");
-		let db = prisma_mocked_client(env::var("DATABASE_URL_TESTS").expect("DATABASE_URL_TESTS not found")).await;
-		assert!(db.is_ok())
-	}
 
 	#[tokio::test]
 	#[serial]
