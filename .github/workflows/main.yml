@@ -126,7 +126,7 @@ jobs:
         toolchain:
           - stable
           - beta
-          #- nightly TODO readable nightly
+          #- nightly TODO reenable nightly
         environment: [dev] # test, staging, production
     steps:
       - uses: actions/checkout@v3
