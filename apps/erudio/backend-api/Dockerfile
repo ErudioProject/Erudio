@@ -13,6 +13,7 @@ RUN rustup component add clippy
 RUN cargo search
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY ./apps/erudio/backend-prisma-cli/ ./apps/erudio/backend-prisma-cli/
+COPY .env .env
 #RUN cp -r .cargo-tmp/* ~/.cargo | true
 #RUN cp -r .cargo-tmp/.* ~/.cargo | true
 WORKDIR apps/erudio/backend-prisma-cli/
