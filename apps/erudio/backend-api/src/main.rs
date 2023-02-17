@@ -25,18 +25,11 @@ use color_eyre::eyre;
 use color_eyre::eyre::eyre;
 use config::Config;
 use error_handler::InternalResult;
-use opentelemetry::sdk::export::trace::stdout;
-use opentelemetry::sdk::{trace, Resource};
-use opentelemetry::trace::Tracer;
-use opentelemetry::KeyValue;
-use opentelemetry_otlp::WithExportConfig;
 use prisma_client::{prisma, prisma::PrismaClient};
 use prisma_client_rust::{chrono::Utc, raw};
 use redis::AsyncCommands;
-use std::collections::HashMap;
 #[cfg(debug_assertions)]
 use std::path::PathBuf;
-use std::time::Duration;
 use std::{
 	net::{Ipv4Addr, SocketAddr},
 	sync::Arc,
@@ -45,7 +38,7 @@ use tokio::fs;
 use tokio::net::TcpStream;
 use tower_cookies::{CookieManagerLayer, Cookies};
 use tower_http::trace::TraceLayer;
-use tracing::{debug, debug_span, info, warn};
+use tracing::{debug, info, warn};
 use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
 use tracing_log::LogTracer;
 use tracing_subscriber::layer::SubscriberExt;
@@ -73,23 +66,21 @@ async fn start() -> eyre::Result<()> {
 	)
 	.to_string();
 
-	let exporter = opentelemetry_otlp::new_exporter().tonic();
-	let otlp_tracer = opentelemetry_otlp::new_pipeline()
-		.tracing()
-		.with_exporter(exporter)
-		.with_trace_config(trace::config().with_resource(Resource::new(vec![KeyValue::new(
-			opentelemetry_semantic_conventions::resource::SERVICE_NAME,
-			app_name,
-		)])))
-		.install_batch(opentelemetry::runtime::Tokio)
-		.context("Error - Failed to create tracer.")?;
-	let tracing_leyer = tracing_opentelemetry::layer().with_tracer(otlp_tracer);
+	let stream = TcpStream::connect("127.0.0.1:5170")
+		.await
+		.context("fluent bit connect")?
+		.into_std()?;
+	let (non_blocking_writer, _guard) = tracing_appender::non_blocking(stream);
+	let bunyan_formatting_layer = BunyanFormattingLayer::new(app_name.clone(), non_blocking_writer);
 
 	let subscriber = Registry::default()
 		.with(EnvFilter::from_default_env())
-		.with(tracing_leyer)
+		.with(JsonStorageLayer)
+		.with(bunyan_formatting_layer)
+		//.with(tracing_leyer)
 		.with(fmt::layer().pretty());
-	tracing::subscriber::set_global_default(subscriber).expect("Tracing error");
+
+	tracing::subscriber::set_global_default(subscriber).context("Tracing error")?;
 
 	info!(
 		"Build Version: {}	Build Date: {} 	BuildHash: {}",

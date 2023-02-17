@@ -1,5 +1,5 @@
 use crate::{
-	helpers::{consts::SESSION_COOKIE_NAME, ctx::Auth},
+	helpers::{consts::ADMIN_COOKIE_NAME, consts::SESSION_COOKIE_NAME, ctx::Auth},
 	routes::RspcResult,
 };
 use cookie::Cookie;
@@ -11,5 +11,6 @@ pub async fn logout(ctx: Auth, _: ()) -> RspcResult<()> {
 		.await
 		.map_err(Into::<InternalError>::into)?;
 	ctx.cookies.remove(Cookie::new(SESSION_COOKIE_NAME, ""));
+	ctx.cookies.remove(Cookie::new(ADMIN_COOKIE_NAME, ""));
 	Ok(())
 }

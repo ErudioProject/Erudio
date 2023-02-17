@@ -1,4 +1,4 @@
-use crate::helpers::ctx::Auth;
+use crate::helpers::{ctx::Auth, IdempotenceToken};
 use crate::routes::RspcResult;
 use config::Buckets;
 use rspc::Type;
@@ -7,7 +7,7 @@ use services::s3::get_bucket;
 #[serde_zod::codegen]
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct UploadRequest {
-	pub idempotence_token: String,
+	pub idempotence_token: IdempotenceToken,
 	pub idk: String,
 }
 

@@ -23,7 +23,7 @@ services:
     ports:
       - "26257:26257"
       - "8080:8080"
-    command: start --insecure --advertise-addr=cockroach1:26257
+    command: start --insecure --advertise-addr=cockroach1:26257 --join=cocroach1
     volumes:
       - "roach1:/cockroach/cockroach-data:rw"
   cocroach2:
@@ -80,7 +80,6 @@ services:
       - ./frontend/dist/public:/www/data
 
   fluentbit:
-    profiles: ['disabled']
     image: fluent/fluent-bit
     command: /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit.conf
     restart: unless-stopped
@@ -89,6 +88,7 @@ services:
       - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
 
   jeager:
+    profiles: ['disabled']
     image: jaegertracing/all-in-one:1.41
     restart: unless-stopped
     network_mode: 'host'

@@ -1,13 +1,15 @@
 use crate::helpers::ctx::SuperAdmin;
+use crate::helpers::IdempotenceToken;
 use crate::routes::RspcResult;
 use color_eyre::eyre::eyre;
 use error_handler::InternalError;
 use prisma_client::prisma;
 use serde_json::Value;
+
 #[serde_zod::codegen]
 #[derive(rspc::Type, serde::Deserialize, Debug)]
 pub struct UpdateSchoolRequest {
-	pub idempotence_token: String,
+	pub idempotence_token: IdempotenceToken,
 	pub id: String,
 	pub name: Option<String>,
 }
