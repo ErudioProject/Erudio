@@ -11,7 +11,6 @@ use rspc::{ErrorCode, Type};
 use services::session;
 use tracing::info;
 
-#[serde_zod::codegen]
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct LoginRequest {
 	pub email: String,

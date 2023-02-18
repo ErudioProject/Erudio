@@ -14,7 +14,6 @@ use serde_json::Value;
 use services::session;
 use tracing::debug;
 
-#[serde_zod::codegen]
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct RegisterRequest {
 	pub idempotence_token: IdempotenceToken,

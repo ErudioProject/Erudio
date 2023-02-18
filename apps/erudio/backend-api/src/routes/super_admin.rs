@@ -10,6 +10,8 @@ pub mod search_users;
 pub mod update_school;
 pub mod version;
 use crate::helpers::{ctx, idempotent};
+use crate::routes::super_admin::search_schools::search_schools_amount;
+use crate::routes::super_admin::search_users::search_users_amount;
 use add_school::add_school;
 use add_user_to_school::add_user_to_school;
 use get_school::get_school;
@@ -26,6 +28,7 @@ pub fn mount() -> RouterBuilder<SuperAdmin> {
 		// School
 		.query("getSchool", |t| t(get_school))
 		.query("searchSchools", |t| t(search_schools))
+		.query("searchSchoolsAmount", |t| t(search_schools_amount))
 		.mutation("addSchool", |t| {
 			t(idempotent!(
 				add_school,
@@ -44,6 +47,7 @@ pub fn mount() -> RouterBuilder<SuperAdmin> {
 		})
 		// User
 		.query("searchUsers", |t| t(search_users)) // TODO move to user space while adding validation
+		.query("searchUsersAmount", |t| t(search_users_amount))
 		.query("getUser", |t| t(get_user))
 		.mutation("addUserToSchool", |t| {
 			t(idempotent!(

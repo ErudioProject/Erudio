@@ -11,7 +11,6 @@ use serde_json::Value;
 use services::session;
 use tracing::{info, trace};
 
-#[serde_zod::codegen]
 #[derive(Type, serde::Deserialize, Debug)]
 pub struct AdminLoginRequest {
 	pub login: String,

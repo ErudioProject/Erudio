@@ -10,7 +10,6 @@ pub struct IdempotentSaveState {
 	pub data: String,
 }
 
-#[serde_zod::codegen]
 #[derive(rspc::Type, serde::Serialize, Deserialize, Debug, Clone)]
 pub struct IdempotenceToken {
 	pub region: String,

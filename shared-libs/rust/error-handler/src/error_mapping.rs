@@ -33,7 +33,6 @@ fn get_trace_id() -> String {
 	hex::encode(buf)
 }
 
-#[serde_zod::codegen]
 #[derive(serde::Serialize, Debug)]
 pub enum FieldErrorType {
 	InvalidValue,
