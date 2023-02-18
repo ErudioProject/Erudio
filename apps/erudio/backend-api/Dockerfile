@@ -13,19 +13,18 @@ RUN rustup component add clippy
 RUN cargo search
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY ./apps/erudio/backend-prisma-cli/ ./apps/erudio/backend-prisma-cli/
-COPY .env .env
 #RUN cp -r .cargo-tmp/* ~/.cargo | true
 #RUN cp -r .cargo-tmp/.* ~/.cargo | true
 WORKDIR apps/erudio/backend-prisma-cli/
 RUN cargo run --release --bin prisma_cli -- generate
+COPY .env .env
 RUN cargo run --release --bin prisma_cli -- migrate deploy
-RUN mkdir -p ../../../../shared-libs/rust/prisma-client/src/
 WORKDIR ../../../
 COPY . .
 RUN cargo build --release --bin api
 
-
 FROM debian:bullseye-slim AS runtime
 WORKDIR app
 COPY --from=builder /app/target/release/api /usr/local/bin
+COPY --from=builder /app/apps/erudio/backend-prisma-cli/prisma /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/api"]

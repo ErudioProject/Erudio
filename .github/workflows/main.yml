@@ -175,6 +175,9 @@ jobs:
             cocroach-setup
             redis-stack-prod
             api
+      - run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $ --password-stdin
+      - run: docker tag ghcr.io/erudioproject/backend-api:main ghcr.io/erudioproject/backend-api:${GITHUB_REF##*/}
+      - run: docker push ghcr.io/erudioproject/backend-api:${GITHUB_REF##*/}
       - uses: isbang/compose-action@v1.4.1
         with:
           compose-file: "./apps/erudio/docker-compose.yml"

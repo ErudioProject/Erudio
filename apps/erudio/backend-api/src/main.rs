@@ -88,8 +88,8 @@ async fn start() -> eyre::Result<()> {
 		env!("BUILD_DATE"),
 		env!("GIT_HASH")
 	);
-	//#[cfg(debug_assertions)]
-	//zod_bindings::generate_zod().await?;
+	#[cfg(debug_assertions)]
+	zod_bindings::generate_zod().await?;
 
 	// TODO pull over http from server
 	let contents = fs::read_to_string("./Config.ron")
@@ -120,6 +120,9 @@ async fn start() -> eyre::Result<()> {
 
 	#[cfg(debug_assertions)]
 	db._db_push().await?;
+	//println!("{:?}", prisma::MIGRATIONS_DIR);
+	//#[cfg(not(debug_assertions))]
+	//db._migrate_deploy().await?;
 
 	seed::seed_super_admin(&db, config.clone())
 		.await

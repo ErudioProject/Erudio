@@ -1,6 +1,7 @@
 version: '3.9'
 services:
   api:
+    image: ghcr.io/erudioproject/backend-api:main
     profiles: ['prod']
     build:
       context: ../..
@@ -36,7 +37,8 @@ services:
       - cocroach-single
     restart: "no"
     network_mode: 'host'
-    entrypoint: [ "bash", "-c", "sleep 1 && cockroach sql --url 'postgresql://root@localhost:26257/defaultdb?sslmode=disable' --execute='CREATE DATABASE IF NOT EXISTS testdb'" ]
+    # long sleep is to make sure it won't fail and since it is run before build in ci it should never need to be up in less tak few minutes
+    entrypoint: [ "bash", "-c", "sleep 20 && cockroach sql --url 'postgresql://root@localhost:26257/defaultdb?sslmode=disable' --execute='CREATE DATABASE IF NOT EXISTS testdb'" ]
 
 
   redis-stack:

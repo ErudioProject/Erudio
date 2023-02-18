@@ -36,7 +36,6 @@ chrono = "^0.4"
 
 [profile.release]
 lto = "thin"
-debug = true
 
 [profile.dev]
 opt-level = 1
