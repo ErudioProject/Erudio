@@ -14,8 +14,6 @@ mod cookies;
 mod helpers;
 mod routes;
 mod shutdown_signal;
-#[cfg(debug_assertions)]
-mod zod_bindings;
 
 use crate::helpers::seed;
 use crate::{eyre::Context, helpers::ctx::Public, routes::router};
@@ -88,8 +86,6 @@ async fn start() -> eyre::Result<()> {
 		env!("BUILD_DATE"),
 		env!("GIT_HASH")
 	);
-	#[cfg(debug_assertions)]
-	zod_bindings::generate_zod().await?;
 
 	// TODO pull over http from server
 	let contents = fs::read_to_string("./Config.ron")

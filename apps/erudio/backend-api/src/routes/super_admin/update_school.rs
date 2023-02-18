@@ -6,7 +6,6 @@ use error_handler::InternalError;
 use prisma_client::prisma;
 use serde_json::Value;
 
-#[serde_zod::codegen]
 #[derive(rspc::Type, serde::Deserialize, Debug)]
 pub struct UpdateSchoolRequest {
 	pub idempotence_token: IdempotenceToken,

@@ -19,7 +19,6 @@ prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust
 redis = {version = "^0.22", features = ["aio", "ahash", "tokio-comp", "json"]}
 tokio = { version = "^1.23", features = ["macros", "parking_lot", "signal"] }
 openssl = { version = "^0.10", features = ["vendored"] } # daem openssl
-serde_zod = { git = "https://github.com/ErudioProject/serde-zod.git", rev = "d590ff43f39795dcac0ad144ceaa6c487b70dfc3" }
 tracing = "0.1.37"
 rspc = "0.1.2"
 serde = "^1.0"

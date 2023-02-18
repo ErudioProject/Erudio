@@ -4,7 +4,6 @@ use crate::routes::RspcResult;
 use prisma_client::prisma;
 use prisma_client::prisma::SchoolRelationType;
 
-#[serde_zod::codegen]
 #[derive(rspc::Type, serde::Deserialize, Debug)]
 pub struct AddUserToSchoolRequest {
 	pub idempotence_token: IdempotenceToken,

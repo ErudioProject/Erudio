@@ -6,7 +6,9 @@ export type Procedures = {
         { key: "super_admin.getSchool", input: GetSchoolRequest, result: School } | 
         { key: "super_admin.getUser", input: GetUserRequest, result: UserFull } | 
         { key: "super_admin.searchSchools", input: SearchSchoolsRequest, result: Array<School> } | 
+        { key: "super_admin.searchSchoolsAmount", input: SearchSchoolsAmountRequest, result: number } | 
         { key: "super_admin.searchUsers", input: SearchUsersRequest, result: Array<UserFull> } | 
+        { key: "super_admin.searchUsersAmount", input: SearchUsersAmountRequest, result: number } | 
         { key: "super_admin.version", input: never, result: string } | 
         { key: "user.me", input: never, result: UserMeResponse },
     mutations: 
@@ -51,7 +53,11 @@ export interface School { id: string, name: string, previous_data: any }
 
 export type SchoolRelationType = "student" | "teacher" | "admin" | "director"
 
+export interface SearchSchoolsAmountRequest { name: string }
+
 export interface SearchSchoolsRequest { page: Pagination | null, name: string }
+
+export interface SearchUsersAmountRequest { school_id: string, query: string }
 
 export interface SearchUsersRequest { page: Pagination | null, school_id: string, query: string }
 

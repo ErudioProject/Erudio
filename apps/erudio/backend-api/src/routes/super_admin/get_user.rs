@@ -3,7 +3,6 @@ use crate::routes::{super_admin, RspcResult};
 use error_handler::InternalError;
 use prisma_client::prisma;
 
-#[serde_zod::codegen]
 #[derive(rspc::Type, serde::Deserialize, Debug)]
 pub struct GetUserRequest {
 	pub id: String,
