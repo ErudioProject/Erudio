@@ -1,22 +1,23 @@
-version: '3.9'
+version: "3.9"
 services:
   api:
     image: ghcr.io/erudioproject/backend-api:main
-    profiles: ['prod']
+    profiles: ["prod"]
     build:
       context: ../..
       dockerfile: apps/erudio/backend-api/Dockerfile
       network: host
-    network_mode: 'host'
+    network_mode: "host"
     env_file:
       - ../../.env
     volumes:
       - ../../.env:/app/.env
       - ../../Config.ron:/app/Config.ron
     depends_on:
+      - fluentbit
+      - nginx
       - cocroach-single
       - redis-stack
-
 
   cocroach-single:
     container_name: cockroach1
@@ -36,25 +37,29 @@ services:
     depends_on:
       - cocroach-single
     restart: "no"
-    network_mode: 'host'
+    network_mode: "host"
     # long sleep is to make sure it won't fail and since it is run before build in ci it should never need to be up in less tak few minutes
-    entrypoint: [ "bash", "-c", "sleep 20 && cockroach sql --url 'postgresql://root@localhost:26257/defaultdb?sslmode=disable' --execute='CREATE DATABASE IF NOT EXISTS testdb'" ]
-
+    entrypoint:
+      [
+        "bash",
+        "-c",
+        "sleep 20 && cockroach sql --url 'postgresql://root@localhost:26257/defaultdb?sslmode=disable' --execute='CREATE DATABASE IF NOT EXISTS testdb'",
+      ]
 
   redis-stack:
     image: redis/redis-stack:latest
     restart: unless-stopped
-    network_mode: 'host'
+    network_mode: "host"
     command: redis-server /etc/redis-stack.conf
     volumes:
       - ./redis.conf:/etc/redis.conf
       - redis_data:/data:rw
 
   redis-stack-prod:
-    profiles: ['prod']
+    profiles: ["prod"]
     image: redis/redis-stack-server:latest
     restart: unless-stopped
-    network_mode: 'host'
+    network_mode: "host"
     command: redis-server /etc/redis-stack.conf
     volumes:
       - ./redis.conf:/etc/redis.conf
@@ -63,7 +68,7 @@ services:
   nginx:
     image: nginx
     restart: unless-stopped
-    network_mode: 'host'
+    network_mode: "host"
     volumes:
       - ./docker/nginx/:/etc/nginx/
       - ./frontend/dist/public:/www/data
@@ -72,18 +77,17 @@ services:
     image: fluent/fluent-bit
     command: /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit.conf
     restart: unless-stopped
-    network_mode: 'host'
+    network_mode: "host"
     volumes:
       - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
 
   jeager:
-    profiles: ['disabled']
+    profiles: ["disabled"]
     image: jaegertracing/all-in-one:1.41
     restart: unless-stopped
-    network_mode: 'host'
+    network_mode: "host"
     environment:
       - COLLECTOR_OTLP_ENABLED=true
-
 
 volumes:
   redis_data:
