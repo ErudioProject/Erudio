@@ -53,6 +53,6 @@ pub async fn search_users_amount(ctx: SuperAdmin, req: SearchUsersAmountRequest)
 		])])
 		.exec()
 		.await
-		.map(|res| res.min(i32::MAX.into()).try_into().expect("Unreachable"))
+		.map(|count| i32::try_from(count).unwrap_or(i32::MAX))
 		.map_err(std::convert::Into::into)
 }
